@@ -98,3 +98,12 @@ test("führt ohne Ratespiel über konkrete Filmfragen und Sofortfeedback", async
   assert.match(gameUi, /Die gesuchte Information fehlt noch/);
   assert.doesNotMatch(gameUi, /Welche sichtbare Beobachtung belegt Modernität/);
 });
+
+test("erklärt gesperrte Phasen dezent und benennt den nächsten Schritt", async () => {
+  const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
+  assert.match(gameUi, /nach Spurensuche/);
+  assert.match(gameUi, /nach Filmantwort/);
+  assert.match(gameUi, /nach Kartenarbeit/);
+  assert.match(gameUi, /Quellen öffnen/);
+  assert.match(gameUi, /Schaltet den nächsten Arbeitsschritt frei/);
+});

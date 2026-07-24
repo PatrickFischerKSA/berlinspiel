@@ -42,6 +42,7 @@ type Room = {
 
 const phases = ["Störung", "Spurensuche", "Quellen", "Karte", "Urteil"];
 const phaseIcons = ["!", "⌁", "◫", "⌖", "✓"];
+const phaseUnlockHints = ["", "nach Aktenstart", "nach Spurensuche", "nach Filmantwort", "nach Kartenarbeit"];
 
 function makeDemoRoom(teamSize: 2 | 3 = 3): Room {
   const names = teamSize === 3 ? ["Mira", "Yusuf", "Leonie"] : ["Mira", "Yusuf"];
@@ -577,11 +578,17 @@ function GameShell({
       </aside>
       <nav className="phase-nav" aria-label="Phasen">
         {phases.map((phase, index) => (
-          <button key={phase} className={index === room.phase ? "current" : index < room.phase ? "done" : ""} disabled={index > room.phase} onClick={() => {
+          <button
+            key={phase}
+            className={index === room.phase ? "current" : index < room.phase ? "done" : ""}
+            disabled={index > room.phase}
+            title={index > room.phase ? `${phase}: ${phaseUnlockHints[index]}` : phase}
+            onClick={() => {
             const tabs = ["case", "case", "sources", "map", "verdict"] as const;
             setTab(tabs[index]);
           }}>
-            <span>{phaseIcons[index]}</span><b>{phase}</b>
+            <span>{index > room.phase ? "⌑" : phaseIcons[index]}</span>
+            <span className="phase-copy"><b>{phase}</b>{index > room.phase && <small>{phaseUnlockHints[index]}</small>}</span>
           </button>
         ))}
       </nav>
@@ -632,7 +639,8 @@ function CaseView({ mission, room, role, onAdvance, busy }: { mission: Mission; 
           <div className="role-card">
             <span>DEIN AUFTRAG</span><b>{roleForTeam(role, room.teamSize)}</b><p>{mission.roles[role]}</p>
           </div>
-          <button className="primary" disabled={busy} onClick={onAdvance}>Spurensuche starten →</button>
+          <button className="primary" disabled={busy} onClick={onAdvance}>{room.phase === 0 ? "Spurensuche starten →" : "Quellen öffnen →"}</button>
+          <small className="advance-hint">{room.phase === 0 ? "Schaltet den nächsten Arbeitsschritt frei." : "Öffnet die konkrete Filmfrage."}</small>
         </div>
       </div>
       <TeamStrip room={room} />

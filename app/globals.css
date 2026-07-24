@@ -111,11 +111,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .mission-rail .final-button { margin-top: auto; margin-bottom: 16px; font-size: 20px; border-top: 1px solid #292d2d; }
 .phase-nav { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: repeat(5, 1fr); border-bottom: 1px solid var(--line); background: #101213; }
 .phase-nav button { display: flex; justify-content: center; align-items: center; gap: 9px; border: 0; border-right: 1px solid #262929; background: transparent; color: #555958; font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
-.phase-nav button span { width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid #333737; border-radius: 50%; }
+.phase-nav button > span:first-child { width: 22px; height: 22px; display: grid; place-items: center; flex: 0 0 22px; border: 1px solid #333737; border-radius: 50%; }
+.phase-nav button:disabled { cursor: default; }
+.phase-copy { display: grid; gap: 2px; text-align: left; }
+.phase-copy small { color: #484c4b; font: 7px var(--mono); letter-spacing: .04em; text-transform: none; white-space: nowrap; }
 .phase-nav button.current { color: #fff; background: #181b1c; }
-.phase-nav button.current span { border-color: var(--mission); color: var(--mission); }
+.phase-nav button.current > span:first-child { border-color: var(--mission); color: var(--mission); }
 .phase-nav button.done { color: #8a8d89; }
-.phase-nav button.done span { background: var(--mission); color: #111; border-color: var(--mission); }
+.phase-nav button.done > span:first-child { background: var(--mission); color: #111; border-color: var(--mission); }
 .utility-nav { grid-column: 3; grid-row: 2/4; position: sticky; top: 70px; height: calc(100vh - 70px); border-left: 1px solid var(--line); background: #0a0c0d; display: flex; flex-direction: column; z-index: 30; }
 .utility-nav button { min-height: 74px; border: 0; border-bottom: 1px solid #252828; background: transparent; color: #747876; cursor: pointer; font-size: 18px; display: grid; place-items: center; align-content: center; gap: 6px; }
 .utility-nav span { font: 8px var(--mono); letter-spacing: .08em; }
@@ -145,6 +148,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .stamp { position: absolute; right: 30px; bottom: 35px; border: 4px double #b84332; padding: 10px 14px; color: #b84332; font: 800 15px var(--mono); transform: rotate(-8deg); }
 .briefing h2 { margin: 0 0 18px; font: 500 31px/1.15 var(--serif); }
 .briefing > p:not(.eyebrow) { color: var(--muted); line-height: 1.7; }
+.advance-hint { display: block; margin-top: 9px; color: var(--faint); font-size: 9px; }
 .role-card { margin: 28px 0; padding: 22px; border-left: 3px solid var(--mission); background: #16191a; }
 .role-card span { color: var(--faint); font: 9px var(--mono); letter-spacing: .15em; }
 .role-card b { display: block; margin: 8px 0; font: 500 21px var(--serif); }
@@ -361,7 +365,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .mission-rail button { height: 54px; flex: 1; }
   .mission-rail .final-button { margin: 0; border-top: 0; border-left: 1px solid var(--line); }
   .phase-nav { grid-column: 1; grid-row: 3; position: static; height: 50px; }
-  .phase-nav button b { display: none; }
+  .phase-nav .phase-copy { display: none; }
   .phase-nav button { border-right: 0; }
   .workspace { grid-column: 1; grid-row: 4; padding: 23px 15px 80px; }
   .utility-nav { position: fixed; left: 0; right: 0; bottom: 0; top: auto; width: 100%; height: 62px; flex-direction: row; border-left: 0; border-top: 1px solid var(--line); z-index: 60; }
