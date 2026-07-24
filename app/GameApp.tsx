@@ -717,8 +717,8 @@ function SourcesView({
               <a href={selected.href} target="_blank" rel="noreferrer">Film starten ↗</a>
             </div>
           )}
-          <div className="viewing-focus"><span>KLARE AUSSAGE</span><p><b>Diese Aussage prüfst du</b>{selected.clearStatement}</p></div>
-          <div className="guided-task"><b>Dein enger Arbeitsauftrag</b><p>Finde genau eine Filmstelle, die den Satz oben belegt. Notiere nur: <strong>Was ist konkret zu sehen oder zu hören?</strong> und <strong>Was beweist dieses Detail?</strong></p></div>
+          <div className="viewing-focus"><span>FINDE HERAUS</span><p><b>Deine konkrete Filmfrage</b>{selected.researchQuestion}</p></div>
+          <div className="guided-task"><b>So arbeitest du</b><p>Suche die Information im Film und beantworte genau diese Frage. Der Timecode zeigt nur, <strong>woher deine Antwort stammt.</strong></p></div>
           <label className="watched-check"><input type="checkbox" checked={Boolean(watched[selected.id])} onChange={(event) => setWatched((current) => ({ ...current, [selected.id]: event.target.checked }))} /><span><b>Filmstelle angesehen</b>Ich kann im Film einen Timecode nennen und meine Antwort auf Bild oder Ton beziehen.</span></label>
         </article>
         <form className="evidence-form" onSubmit={(event) => {
@@ -732,32 +732,32 @@ function SourcesView({
             return;
           }
           if (!detailOk) {
-            setFeedback({ type: "error", text: "Deine Beobachtung ist noch zu kurz. Beschreibe mindestens zwei konkrete Einzelheiten aus Bild oder Ton." });
+            setFeedback({ type: "error", text: "Deine Antwort ist noch zu kurz. Nenne die gefragte Information und die passende Stelle aus Bild oder Ton." });
             return;
           }
           if (!signalOk) {
-            setFeedback({ type: "error", text: `Noch zu allgemein: Nenne ein tatsächlich sichtbares oder hörbares Filmsignal, zum Beispiel ${selected.signalWords.slice(0, 4).join(", ")}.` });
+            setFeedback({ type: "error", text: `Die gesuchte Information fehlt noch. Achte im Film zum Beispiel auf: ${selected.signalWords.slice(0, 4).join(", ")}.` });
             return;
           }
           onEvidence({ resourceId: selected.id, locator, note, category });
           setFeedback({ type: "success", text: selected.successFeedback });
         }}>
-          <p className="eyebrow">FILMBELEG SICHERN</p>
+          <p className="eyebrow">FILMANTWORT SICHERN</p>
           <label>Art<select disabled={!watched[selected.id]} value={category} onChange={(e) => setCategory(e.target.value)}><option>Sichtbare Beobachtung</option><option>Aussage im Ton</option><option>Deutung des Films</option><option>Auslassung</option></select></label>
           <label>Timecode im Film<input disabled={!watched[selected.id]} value={locator} onChange={(e) => { setLocator(e.target.value); setFeedback(null); }} placeholder="z. B. 04:32" /></label>
-          <label>Vervollständige den Belegsatz<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder={selected.evidencePrompt} /></label>
-          <ul className="live-checks" aria-label="Sofortfeedback zum Filmbeleg">
+          <label>Deine Antwort aus dem Film<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder={selected.evidencePrompt} /></label>
+          <ul className="live-checks" aria-label="Sofortfeedback zur Filmantwort">
             <li className={timecodeOk ? "passed" : ""}><span>{timecodeOk ? "✓" : "○"}</span> Timecode erkannt</li>
-            <li className={detailOk ? "passed" : ""}><span>{detailOk ? "✓" : "○"}</span> Konkrete Beobachtung ausführlich beschrieben</li>
-            <li className={signalOk ? "passed" : ""}><span>{signalOk ? "✓" : "○"}</span> Filmsignal genannt{matchedSignal ? `: ${matchedSignal}` : ""}</li>
+            <li className={detailOk ? "passed" : ""}><span>{detailOk ? "✓" : "○"}</span> Frage konkret beantwortet</li>
+            <li className={signalOk ? "passed" : ""}><span>{signalOk ? "✓" : "○"}</span> Gesuchte Filminformation genannt{matchedSignal ? `: ${matchedSignal}` : ""}</li>
           </ul>
-          <button className="primary" type="submit" disabled={!watched[selected.id] || feedback?.type === "success"}>{feedback?.type === "success" ? "Filmbeleg gesichert ✓" : "Filmbeleg an Belegwand übergeben"}</button>
-          {feedback && <div className={`instant-feedback ${feedback.type}`} role="status"><b>{feedback.type === "success" ? "Beleg gesichert" : "Noch nicht gesichert"}</b><p>{feedback.text}</p></div>}
+          <button className="primary" type="submit" disabled={!watched[selected.id] || feedback?.type === "success"}>{feedback?.type === "success" ? "Filmantwort gesichert ✓" : "Antwort an Belegwand übergeben"}</button>
+          {feedback && <div className={`instant-feedback ${feedback.type}`} role="status"><b>{feedback.type === "success" ? "Antwort gesichert" : "Noch nicht gesichert"}</b><p>{feedback.text}</p></div>}
           {!watched[selected.id] && <p className="form-lock">Sieh zuerst den Film beziehungsweise die benötigte Filmstelle an.</p>}
           <small>{room.evidence.length} Belege im Team gesichert</small>
         </form>
       </div>
-      <div className="next-bar"><span>Die klare Aussage mit genau einer Filmstelle belegen.</span><button onClick={onAdvance} disabled={missionEvidenceCount < 1}>Kartenraum öffnen →</button></div>
+      <div className="next-bar"><span>Die konkrete Filmfrage beantworten und den Fundort sichern.</span><button onClick={onAdvance} disabled={missionEvidenceCount < 1}>Kartenraum öffnen →</button></div>
     </div>
   );
 }
