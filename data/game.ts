@@ -29,6 +29,10 @@ export type Mission = {
     taskSteps: string[];
     signalWords: string[];
     successFeedback: string;
+    clearStatement: string;
+    answerOptions: string[];
+    correctAnswer: string;
+    evidencePrompt: string;
     excerpt: string;
     prompt: string;
   }[];
@@ -67,7 +71,7 @@ export const missions: Mission[] = [
     period: "1871–1918",
     title: "Metropole unter Hochdruck",
     subtitle: "Kaiserreich und Grossstadtwerdung",
-    problem: "Wie wird Berlin zu einer modernen, aber sozial gespaltenen Metropole?",
+    problem: "Prüfe den Satz: Berlins Modernisierung verbesserte das Leben nicht für alle.",
     damagedClaim:
       "Berlin wächst dank Technik und Kaiserreich zu einer modernen Weltstadt. Der Fortschritt verbessert das Leben der gesamten Bevölkerung.",
     disturbance:
@@ -75,7 +79,7 @@ export const missions: Mission[] = [
     accent: "#dbaf6b",
     roles: {
       source:
-        "Sichere zwei Belege, die Glanz und soziale Schattenseiten auseinanderhalten. Notiere, ob du Bildbeschreibung, Sprechertext oder Rückblick verwendest.",
+        "Entscheide, ob der Film den Satz zur ungleichen Modernisierung bestätigt, und sichere genau eine sichtbare Filmstelle.",
       space:
         "Vergleiche die Pläne 1871, 1877 und 1912. Verfolge Tiergarten, Potsdamer Platz und das Wachstum jenseits des alten Zentrums.",
       critic:
@@ -88,7 +92,7 @@ export const missions: Mission[] = [
         kind: "Dokumentarfilm · Berlin Channel",
         href: "https://www.youtube.com/watch?v=QhPR6fa68EY",
         embedUrl: "https://www.youtube-nocookie.com/embed/QhPR6fa68EY",
-        duration: "83 Min. · im Spiel mindestens zwei kontrastierende Stellen auswählen",
+        duration: "83 Min. · im Spiel genau eine Aussage prüfen",
         viewingFocus: "Suche im Film eine Szene mit technischem oder städtischem Fortschritt und eine zweite Szene mit Armut oder harter Arbeit.",
         taskSteps: [
           "Stoppe bei einer Szene mit Verkehr, neuen Bauten, Maschinen oder einer belebten Geschäftsstrasse.",
@@ -97,6 +101,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["strasse", "verkehr", "bahn", "auto", "haus", "bauten", "maschine", "arbeit", "fabrik", "hinterhof", "mietskaserne", "armut", "obdach"],
         successFeedback: "Guter Filmbeleg: Ort, sichtbares Detail und Timecode sind überprüfbar. Sichere jetzt noch die kontrastierende Szene, damit Fortschritt und soziale Schattenseite direkt vergleichbar werden.",
+        clearStatement: "Berlins Modernisierung war sichtbar, verbesserte das Leben aber nicht für alle Menschen.",
+        answerOptions: [
+          "Neue Verkehrsmittel und grosse Bauten beseitigten die sozialen Unterschiede in Berlin.",
+          "Berlins Modernisierung war sichtbar, verbesserte das Leben aber nicht für alle Menschen.",
+          "Armut und harte Arbeit verschwanden bereits während der Kaiserzeit aus Berlin.",
+        ],
+        correctAnswer: "Berlins Modernisierung war sichtbar, verbesserte das Leben aber nicht für alle Menschen.",
+        evidencePrompt: "Bei 04:32 sieht man … Das zeigt Modernisierung oder soziale Ungleichheit, weil …",
         excerpt:
           "Breite Strassen, imposante Häuser und eine unablässig treibende Menge stehen Mietskasernen, harter Arbeit und sozialer Trennung gegenüber.",
         prompt:
@@ -136,7 +148,7 @@ export const missions: Mission[] = [
     period: "1918–1933",
     title: "Goldlack",
     subtitle: "Weimarer Republik",
-    problem: "War das Berlin der Zwanzigerjahre tatsächlich «golden»?",
+    problem: "Prüfe den Satz: Die «Goldenen Zwanziger» waren kurz und sozial begrenzt.",
     damagedClaim:
       "Berlin 1926: Eine wohlhabende Vergnügungsmetropole wird von kriminellen Vereinigungen bedroht. Die moderne Polizei stellt die Ordnung wieder her.",
     disturbance:
@@ -144,7 +156,7 @@ export const missions: Mission[] = [
     accent: "#e56b50",
     roles: {
       source:
-        "Bestimme Beginn, Dauer und soziale Reichweite der «goldenen» Phase. Sichere je einen Beleg für Dynamik und Begrenzung.",
+        "Entscheide, ob der Film die «Goldenen Zwanziger» als kurze und sozial begrenzte Phase zeigt, und sichere eine Filmstelle.",
       space:
         "Prüfe Wedding, Friedrichshain und westliche Bezirke im Pharus-Plan 1928. Markiere nur so genau, wie die Quelle es erlaubt.",
       critic:
@@ -166,6 +178,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["arbeit", "lohn", "freizeit", "kino", "theater", "frauen", "wahl", "armut", "elend", "mietskaserne", "krise", "arbeitslos", "inflation"],
         successFeedback: "Dein Beleg unterscheidet Aufbruch und Begrenzung. Damit lässt sich konkret sagen, für welche Menschen und für welchen Zeitraum die Zwanziger „golden“ erscheinen.",
+        clearStatement: "Die „Goldenen Zwanziger“ waren eine kurze Aufbruchsphase und keine Erfolgsgeschichte für alle.",
+        answerOptions: [
+          "Die gesamten Jahre von 1918 bis 1933 waren für alle Berlinerinnen und Berliner golden.",
+          "Die „Goldenen Zwanziger“ waren eine kurze Aufbruchsphase und keine Erfolgsgeschichte für alle.",
+          "Krise, Armut und Arbeitslosigkeit spielten im Berlin der Zwanziger keine Rolle.",
+        ],
+        correctAnswer: "Die „Goldenen Zwanziger“ waren eine kurze Aufbruchsphase und keine Erfolgsgeschichte für alle.",
+        evidencePrompt: "Bei 06:15 wird … gezeigt oder gesagt. Das begrenzt die Bezeichnung „golden“, weil …",
         excerpt:
           "Stabilisierung, Innovation und kulturelle Dynamik sind real, aber kurz, sozial ungleich und von Krisen gerahmt.",
         prompt: "Nenne je einen Timecode für Aufbruch und Begrenzung. Für welche Zeit und welche Gruppen trägt die Metapher «golden»?",
@@ -185,6 +205,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["gefängnis", "zuchthaus", "arbeit", "wohnung", "ausweisung", "selbsthilfe", "ringverein", "strafe", "armut"],
         successFeedback: "Du hast den Entstehungskontext der Ringvereine belegt. Dadurch wird sichtbar, dass der reisserische Titel nur einen Teil ihrer Geschichte erzählt.",
+        clearStatement: "Ringvereine entstanden zunächst als Selbsthilfe ehemaliger Strafgefangener, die kaum Arbeit oder Wohnraum fanden.",
+        answerOptions: [
+          "Ringvereine entstanden ausschliesslich, um Verbrechen zu organisieren.",
+          "Ringvereine waren staatliche Hilfsvereine für Arbeitslose.",
+          "Ringvereine entstanden zunächst als Selbsthilfe ehemaliger Strafgefangener, die kaum Arbeit oder Wohnraum fanden.",
+        ],
+        correctAnswer: "Ringvereine entstanden zunächst als Selbsthilfe ehemaliger Strafgefangener, die kaum Arbeit oder Wohnraum fanden.",
+        evidencePrompt: "Bei 03:20 erklärt der Film … Das belegt den Ursprung als Selbsthilfe, weil …",
         excerpt:
           "Ringvereine beginnen als Selbsthilfe ehemaliger Strafgefangener gegen den Kreislauf aus Haft, Arbeits- und Wohnungslosigkeit.",
         prompt: "Welche Filmstelle zeigt, was das Etikett «kriminelle Clans» über Ursprung oder Funktion der Ringvereine unterschlägt?",
@@ -223,7 +251,7 @@ export const missions: Mission[] = [
     period: "1933–1945",
     title: "Unter der Oberfläche",
     subtitle: "Nationalsozialismus und Krieg",
-    problem: "Wie schreiben sich Diktatur, Verfolgung und Krieg in eine Stadt ein?",
+    problem: "Prüfe den Satz: Überleben hing von falschen Papieren, wechselnden Orten und Hilfe ab.",
     damagedClaim:
       "Die NS-Herrschaft veränderte Berlin vor allem durch monumentale Bauten und die Zerstörung im Bombenkrieg.",
     disturbance:
@@ -231,7 +259,7 @@ export const missions: Mission[] = [
     accent: "#ae7de8",
     roles: {
       source:
-        "Vergleiche eine Propagandastimme mit einer biografischen oder privaten Erfahrung. Kennzeichne Zeitpunkt und Zweck.",
+        "Entscheide, ob Ciomas Geschichte diesen Satz bestätigt, und sichere genau eine Filmstelle mit Ort und Gefahr.",
       space:
         "Verknüpfe Herrschaftsarchitektur mit mindestens einem Alltags- oder Verfolgungsraum. Suche auch ein nie verwirklichtes Projekt.",
       critic:
@@ -252,6 +280,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["kontrolle", "polizei", "gestapo", "ausweis", "kennkarte", "wohnung", "unterkunft", "werkstatt", "waldstrasse", "helfer", "flucht", "versteck"],
         successFeedback: "Du hast Verfolgung als räumlichen Alltag belegt: Kontrolle und Hilfe entstehen an konkreten Orten, obwohl ein gewöhnlicher Stadtplan sie nicht markiert.",
+        clearStatement: "Verfolgte Menschen überlebten in Berlin durch wechselnde Orte, falsche Papiere und Hilfe anderer.",
+        answerOptions: [
+          "Verfolgte Menschen konnten sich mit einem festen Wohnort sicher vor Kontrollen schützen.",
+          "Verfolgte Menschen überlebten in Berlin durch wechselnde Orte, falsche Papiere und Hilfe anderer.",
+          "Ein gewöhnlicher Stadtplan zeigte alle sicheren Verstecke und Hilfsnetzwerke.",
+        ],
+        correctAnswer: "Verfolgte Menschen überlebten in Berlin durch wechselnde Orte, falsche Papiere und Hilfe anderer.",
+        evidencePrompt: "Bei 12:40 muss Cioma … Der Ort ist gefährlich oder hilfreich, weil …",
         excerpt:
           "Cioma Schönhaus bewegt sich mit falschen Papieren durch ein Netz aus Kontrolle, Verstecken, Hilfe und Widerstand.",
         prompt: "Welche zwei Filmstellen zeigen, dass Verfolgung ein Netz aus Kontrolle, Verstecken und Hilfe erzeugt, das auf einem normalen Stadtplan unsichtbar bleibt?",
@@ -291,7 +327,7 @@ export const missions: Mission[] = [
     period: "1945–1989",
     title: "Frontstadt",
     subtitle: "Geteiltes Berlin und Kalter Krieg",
-    problem: "Wie verändern Systemkonkurrenz, Grenze und Mauer Alltag und Stadtraum?",
+    problem: "Prüfe den Satz: Die Mauer war ein gestaffeltes Grenzsystem, nicht nur eine Betonwand.",
     damagedClaim:
       "Die Mauer war eine Linie zwischen Ost und West. Sie teilte Berlin von 1961 bis 1989 und wurde am 9. November geöffnet.",
     disturbance:
@@ -299,7 +335,7 @@ export const missions: Mission[] = [
     accent: "#58b8d8",
     roles: {
       source:
-        "Sichere eine Ursache, eine Alltagserfahrung und eine Veränderung der Grenzanlage. Trenne Überblick und Zeitzeugnis.",
+        "Entscheide, ob der kurze Film die Mauer als Grenzsystem zeigt, und sichere eine Stelle mit drei Bestandteilen.",
       space:
         "Arbeite mit Sektoren, Luftkorridoren, Grenzring und wiederkehrenden Orten. Erkläre, warum die Mauer keine einfache Linie war.",
       critic:
@@ -320,6 +356,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["flugzeug", "flugplatz", "ladung", "kohle", "lebensmittel", "versorgung", "blockade", "luftbrücke", "berliner", "sowjet", "west"],
         successFeedback: "Du hast Bildbeobachtung und Sprecherperspektive getrennt. Genau dadurch wird der Film als historische Quelle prüfbar und nicht nur als neutrale Erklärung behandelt.",
+        clearStatement: "Die Luftbrücke versorgte West-Berlin aus der Luft; der Film erzählt dies aus westalliierter Sicht.",
+        answerOptions: [
+          "Die Luftbrücke versorgte West-Berlin aus der Luft; der Film erzählt dies aus westalliierter Sicht.",
+          "Die Sowjetunion versorgte während der Blockade ganz Berlin mit Flugzeugen.",
+          "Der Film zeigt die Blockade ohne erkennbare politische Perspektive.",
+        ],
+        correctAnswer: "Die Luftbrücke versorgte West-Berlin aus der Luft; der Film erzählt dies aus westalliierter Sicht.",
+        evidencePrompt: "Bei 01:10 sieht man … Im Kommentar heisst es … Daran erkennt man Versorgung und Perspektive.",
         excerpt:
           "Blockade und Luftbrücke machen Korridore, Flugplätze, Versorgung und politische Risiken räumlich sichtbar.",
         prompt: "Welche sichtbaren Hinweise erklären Versorgung aus der Luft – und woran erkennst du die westalliierte Perspektive des Films?",
@@ -339,6 +383,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["stacheldraht", "stolperdraht", "wachturm", "hund", "todesstreifen", "beton", "grenze", "mauer", "hochsicherheitszone", "schuss"],
         successFeedback: "Du hast mehrere Bestandteile des Grenzsystems erkannt. Damit kannst du die vereinfachte Vorstellung einer einzelnen Betonlinie konkret widerlegen.",
+        clearStatement: "Die Berliner Mauer war ein gestaffeltes Grenzsystem und nicht nur eine einzelne Betonwand.",
+        answerOptions: [
+          "Die Grenze bestand überall nur aus einer einzelnen Betonwand.",
+          "Die Berliner Mauer war ein gestaffeltes Grenzsystem und nicht nur eine einzelne Betonwand.",
+          "Wachtürme, Todesstreifen und Sperren lagen ausschliesslich auf West-Berliner Gebiet.",
+        ],
+        correctAnswer: "Die Berliner Mauer war ein gestaffeltes Grenzsystem und nicht nur eine einzelne Betonwand.",
+        evidencePrompt: "Bei 00:45 nennt oder zeigt der Film diese drei Teile: … Dadurch wird das Grenzsystem sichtbar.",
         excerpt:
           "Die Mauer ist ein gestaffeltes Grenzsystem, das Abwanderung stoppen und die DDR stabilisieren soll.",
         prompt: "Welche mindestens drei Bestandteile im Film widerlegen die Vorstellung einer einzelnen Mauerlinie?",
@@ -378,7 +430,7 @@ export const missions: Mission[] = [
     period: "1989–2040",
     title: "Nach der Linie",
     subtitle: "Mauerfall, Wiedervereinigung und Gegenwart",
-    problem: "Wann endet die Teilung einer Stadt wirklich?",
+    problem: "Prüfe den Satz: Grenzöffnung und Einheit waren Prozesse, keine Wirkung eines einzigen Satzes.",
     damagedClaim:
       "Ein Fehler Günter Schabowskis öffnete am 9. November 1989 die Mauer. Seitdem ist Berlin wiedervereinigt.",
     disturbance:
@@ -386,7 +438,7 @@ export const missions: Mission[] = [
     accent: "#7fce8a",
     roles: {
       source:
-        "Rekonstruiere die Ereigniskette des 9. November. Unterscheide Kontext, Kommunikation, Medien und Entscheidungen vor Ort.",
+        "Entscheide, ob Menge und Grenzer die Öffnung vor Ort mitbewirkten, und sichere genau eine Filmstelle.",
       space:
         "Vergleiche 1990, 1992/93, 1995 und die Gegenwart. Verfolge Bernauer Strasse und Bornholmer Strasse.",
       critic:
@@ -407,6 +459,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["tor", "aufmachen", "menge", "menschen", "grenz", "schlagbaum", "rufen", "warten", "diskutieren", "öffnen", "bornholmer"],
         successFeedback: "Dein Beleg zeigt handelnde Menschen und reagierende Grenzer. Der Mauerfall erscheint damit als Prozess vor Ort – nicht als automatische Folge eines einzigen Satzes.",
+        clearStatement: "An der Bornholmer Strasse öffnete sich die Grenze durch den Druck der Menge und Entscheidungen der Grenzer vor Ort.",
+        answerOptions: [
+          "Die Grenze öffnete sich überall automatisch unmittelbar nach Schabowskis Satz.",
+          "Die Grenzer erhielten rechtzeitig einen eindeutigen Befehl zur sofortigen Öffnung.",
+          "An der Bornholmer Strasse öffnete sich die Grenze durch den Druck der Menge und Entscheidungen der Grenzer vor Ort.",
+        ],
+        correctAnswer: "An der Bornholmer Strasse öffnete sich die Grenze durch den Druck der Menge und Entscheidungen der Grenzer vor Ort.",
+        evidencePrompt: "Bei 18:30 ruft oder tut die Menge … Die Grenzer reagieren mit … Das zeigt eine Entscheidung vor Ort.",
         excerpt:
           "Staatskrise, Reiseregelung, Pressekonferenz, Medien, Menschenmenge und Entscheidungen der Grenzer bilden eine Ereigniskette.",
         prompt: "Welche beobachtbaren Handlungen der Menge und der Grenzer widerlegen die Behauptung, ein einzelner Satz habe die Mauer automatisch geöffnet?",
@@ -425,6 +485,14 @@ export const missions: Mission[] = [
         ],
         signalWords: ["hoffnung", "freude", "wende", "einheit", "unsicherheit", "angst", "rassismus", "ausgrenzung", "vietnames", "bleiben", "alltag"],
         successFeedback: "Du hast Hoffnung und widersprüchliche Nachwendeerfahrung miteinander verbunden. Damit lässt sich begründen, warum politische Einheit nicht für alle sofort gesellschaftliche Zugehörigkeit bedeutete.",
+        clearStatement: "Die deutsche Einheit brachte Hoffnung, aber nicht allen Menschen sofort Sicherheit und Zugehörigkeit.",
+        answerOptions: [
+          "Die deutsche Einheit brachte Hoffnung, aber nicht allen Menschen sofort Sicherheit und Zugehörigkeit.",
+          "Nach 1990 verschwanden Unsicherheit, Ausgrenzung und Rassismus sofort.",
+          "Die Erfahrungen vietnamesischer Vertragsarbeiterinnen und Vertragsarbeiter waren für die Nachwendezeit bedeutungslos.",
+        ],
+        correctAnswer: "Die deutsche Einheit brachte Hoffnung, aber nicht allen Menschen sofort Sicherheit und Zugehörigkeit.",
+        evidencePrompt: "Bei 09:25 erzählt eine Person … Das zeigt Hoffnung oder fehlende Zugehörigkeit, weil …",
         excerpt:
           "An der Bernauer Strasse liegen Familiengeschichte, Gedenkort, Tourismus und normaler Alltag übereinander.",
         prompt: "Welche konkrete Filmszene zeigt, dass der Mauerfall nicht für alle Menschen sofort Zugehörigkeit und Sicherheit bedeutete?",
