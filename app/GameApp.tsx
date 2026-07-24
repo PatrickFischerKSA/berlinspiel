@@ -676,14 +676,23 @@ function SourcesView({
   const [selected, setSelected] = useState(mission.resources[0]);
   const [locator, setLocator] = useState("");
   const [note, setNote] = useState("");
-  const [category, setCategory] = useState("Beobachtung");
+  const [category, setCategory] = useState("Sichtbare Beobachtung");
   const [watched, setWatched] = useState<Record<string, boolean>>({});
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
   useEffect(() => {
     setSelected(mission.resources[0]);
+  }, [mission]);
+  useEffect(() => {
     setLocator("");
     setNote("");
-  }, [mission]);
-  const roleIndex = role === "source" ? 0 : role === "space" ? 1 : 2;
+    setFeedback(null);
+  }, [selected.id]);
+  const timecodeOk = /\b\d{1,2}:\d{2}\b/.test(locator);
+  const detailOk = note.trim().length >= 40;
+  const normalize = (value: string) => value.toLocaleLowerCase("de").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replaceAll("ß", "ss");
+  const normalizedNote = normalize(note);
+  const matchedSignal = selected.signalWords.find((word) => normalizedNote.includes(normalize(word)));
+  const signalOk = Boolean(matchedSignal);
   return (
     <div className="source-view">
       <div className="section-title"><div><p className="eyebrow">QUELLENUNTERSUCHUNG</p><h1>Material als Beweis</h1></div><p>Rolle: <b>{roleForTeam(role, room.teamSize)}</b></p></div>
@@ -708,20 +717,45 @@ function SourcesView({
             </div>
           )}
           <div className="viewing-focus"><span>VOR DEM START</span><p><b>Beobachtungsfokus</b>{selected.viewingFocus}</p></div>
+          <div className="film-task">
+            <p className="eyebrow">DEIN KONKRETER SUCHAUFTRAG</p>
+            <ol>{selected.taskSteps.map((step) => <li key={step}>{step}</li>)}</ol>
+            <p className="signal-bank"><b>Woran du anknüpfen kannst:</b> {selected.signalWords.slice(0, 8).join(" · ")}</p>
+          </div>
           <label className="watched-check"><input type="checkbox" checked={Boolean(watched[selected.id])} onChange={(event) => setWatched((current) => ({ ...current, [selected.id]: event.target.checked }))} /><span><b>Filmstelle angesehen</b>Ich kann im Film einen Timecode nennen und meine Antwort auf Bild oder Ton beziehen.</span></label>
-          <div className={`observation-prompt ${watched[selected.id] ? "" : "locked"}`}><span>{roleIndex + 1}</span><p><b>Auftrag nach dem Film</b>{watched[selected.id] ? selected.prompt : "Die Auswertungsfrage wird freigegeben, sobald du die Filmstelle angesehen hast."}</p></div>
         </article>
         <form className="evidence-form" onSubmit={(event) => {
           event.preventDefault();
-          if (!watched[selected.id] || !note.trim() || !locator.trim()) return;
+          if (!watched[selected.id]) {
+            setFeedback({ type: "error", text: "Bestätige zuerst, dass du die Filmstelle angesehen hast." });
+            return;
+          }
+          if (!timecodeOk) {
+            setFeedback({ type: "error", text: "Der Timecode fehlt oder ist nicht lesbar. Nutze zum Beispiel 04:32 oder 04:32–05:10." });
+            return;
+          }
+          if (!detailOk) {
+            setFeedback({ type: "error", text: "Deine Beobachtung ist noch zu kurz. Beschreibe mindestens zwei konkrete Einzelheiten aus Bild oder Ton." });
+            return;
+          }
+          if (!signalOk) {
+            setFeedback({ type: "error", text: `Noch zu allgemein: Nenne ein tatsächlich sichtbares oder hörbares Filmsignal, zum Beispiel ${selected.signalWords.slice(0, 4).join(", ")}.` });
+            return;
+          }
           onEvidence({ resourceId: selected.id, locator, note, category });
-          setNote(""); setLocator("");
+          setFeedback({ type: "success", text: selected.successFeedback });
         }}>
           <p className="eyebrow">FILMBELEG SICHERN</p>
           <label>Art<select disabled={!watched[selected.id]} value={category} onChange={(e) => setCategory(e.target.value)}><option>Sichtbare Beobachtung</option><option>Aussage im Ton</option><option>Deutung des Films</option><option>Auslassung</option></select></label>
-          <label>Timecode im Film<input disabled={!watched[selected.id]} value={locator} onChange={(e) => setLocator(e.target.value)} placeholder="z. B. 04:32–05:10" /></label>
-          <label>Beobachtung und Relevanz<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Was ist im Film konkret zu sehen oder zu hören – und was belegt es?" /></label>
-          <button className="primary" type="submit" disabled={!watched[selected.id]}>Filmbeleg an Belegwand übergeben</button>
+          <label>Timecode im Film<input disabled={!watched[selected.id]} value={locator} onChange={(e) => { setLocator(e.target.value); setFeedback(null); }} placeholder="z. B. 04:32–05:10" /></label>
+          <label>Was siehst oder hörst du genau?<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder="z. B. Bei 04:32 fahren Strassenbahnen zwischen dichtem Verkehr; im Hintergrund stehen mehrstöckige Häuser …" /></label>
+          <ul className="live-checks" aria-label="Sofortfeedback zum Filmbeleg">
+            <li className={timecodeOk ? "passed" : ""}><span>{timecodeOk ? "✓" : "○"}</span> Timecode erkannt</li>
+            <li className={detailOk ? "passed" : ""}><span>{detailOk ? "✓" : "○"}</span> Konkrete Beobachtung ausführlich beschrieben</li>
+            <li className={signalOk ? "passed" : ""}><span>{signalOk ? "✓" : "○"}</span> Filmsignal genannt{matchedSignal ? `: ${matchedSignal}` : ""}</li>
+          </ul>
+          <button className="primary" type="submit" disabled={!watched[selected.id] || feedback?.type === "success"}>{feedback?.type === "success" ? "Filmbeleg gesichert ✓" : "Filmbeleg an Belegwand übergeben"}</button>
+          {feedback && <div className={`instant-feedback ${feedback.type}`} role="status"><b>{feedback.type === "success" ? "Beleg gesichert" : "Noch nicht gesichert"}</b><p>{feedback.text}</p></div>}
           {!watched[selected.id] && <p className="form-lock">Sieh zuerst den Film beziehungsweise die benötigte Filmstelle an.</p>}
           <small>{room.evidence.length} Belege im Team gesichert</small>
         </form>
@@ -830,7 +864,7 @@ function EvidenceBoard({ mission, room }: { mission: Mission; room: Room }) {
     <div className="evidence-board">
       <div className="section-title"><div><p className="eyebrow">GEMEINSAME BELEGSAMMLUNG</p><h1>Was trägt die Rekonstruktion?</h1></div><p>{room.evidence.length} Quellenbelege · {room.mapPins.length} Kartenbezüge</p></div>
       <div className="evidence-columns">
-        {["Beobachtung", "Deutung", "Gegenbeleg", "Auslassung"].map((category) => (
+        {["Sichtbare Beobachtung", "Aussage im Ton", "Deutung des Films", "Auslassung"].map((category) => (
           <section key={category}><header><b>{category}</b><span>{room.evidence.filter((item) => item.category === category).length}</span></header>
             {room.evidence.filter((item) => item.category === category).map((item) => <article key={item.id}><span>{item.resourceId.toUpperCase()} · {item.locator}</span><p>{item.note}</p><footer>{item.actor} · {roleForTeam(item.role, room.teamSize)}</footer></article>)}
             {!room.evidence.some((item) => item.category === category) && <p className="empty">Noch kein Beleg</p>}

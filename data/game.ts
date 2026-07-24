@@ -26,6 +26,9 @@ export type Mission = {
     embedUrl?: string;
     duration: string;
     viewingFocus: string;
+    taskSteps: string[];
+    signalWords: string[];
+    successFeedback: string;
     excerpt: string;
     prompt: string;
   }[];
@@ -86,11 +89,18 @@ export const missions: Mission[] = [
         href: "https://www.youtube.com/watch?v=QhPR6fa68EY",
         embedUrl: "https://www.youtube-nocookie.com/embed/QhPR6fa68EY",
         duration: "83 Min. · im Spiel mindestens zwei kontrastierende Stellen auswählen",
-        viewingFocus: "Achte zuerst nur auf sichtbare Räume, Verkehr, Kleidung und Arbeit. Höre danach auf die Einordnung des Kommentars.",
+        viewingFocus: "Suche im Film eine Szene mit technischem oder städtischem Fortschritt und eine zweite Szene mit Armut oder harter Arbeit.",
+        taskSteps: [
+          "Stoppe bei einer Szene mit Verkehr, neuen Bauten, Maschinen oder einer belebten Geschäftsstrasse.",
+          "Notiere den Timecode und beschreibe genau zwei sichtbare Einzelheiten – ohne sie schon zu bewerten.",
+          "Suche danach eine Szene mit Hinterhof, Mietskaserne, Fabrikarbeit oder Obdachlosigkeit und sichere auch diesen Timecode.",
+        ],
+        signalWords: ["strasse", "verkehr", "bahn", "auto", "haus", "bauten", "maschine", "arbeit", "fabrik", "hinterhof", "mietskaserne", "armut", "obdach"],
+        successFeedback: "Guter Filmbeleg: Ort, sichtbares Detail und Timecode sind überprüfbar. Sichere jetzt noch die kontrastierende Szene, damit Fortschritt und soziale Schattenseite direkt vergleichbar werden.",
         excerpt:
           "Breite Strassen, imposante Häuser und eine unablässig treibende Menge stehen Mietskasernen, harter Arbeit und sozialer Trennung gegenüber.",
         prompt:
-          "Sichere zwei Filmstellen: Welche sichtbare Beobachtung belegt Modernität – und welche zweite Stelle begrenzt deren soziale Reichweite?",
+          "Vergleiche eine sichtbare Fortschrittsszene mit einer sichtbaren Szene von Armut oder harter Arbeit.",
       },
     ],
     map: {
@@ -148,7 +158,14 @@ export const missions: Mission[] = [
         href: "https://www.youtube.com/watch?v=04dyomiLGQ0",
         embedUrl: "https://www.youtube-nocookie.com/embed/04dyomiLGQ0",
         duration: "ca. 20 Min. · Kapitelmarken im Film",
-        viewingFocus: "Vergleiche die Abschnitte „Strahlende Aufbruchsstimmung“, „Goldene Freiheiten“ und „Das dunkle Ende“.",
+        viewingFocus: "Vergleiche eine Szene des Aufbruchs mit einer Szene, in der Armut, Krise oder Ausgrenzung sichtbar beziehungsweise genannt wird.",
+        taskSteps: [
+          "Wähle im Film das Kapitel „Strahlende Aufbruchsstimmung“ oder „Goldene Freiheiten“.",
+          "Stoppe bei einem konkreten Beispiel für Freizeit, Arbeit, Konsum oder neue Rechte und notiere den Timecode.",
+          "Wechsle zu „Schillernde Fassaden“ oder „Das dunkle Ende“ und sichere eine zweite Stelle, die das Wort „golden“ einschränkt.",
+        ],
+        signalWords: ["arbeit", "lohn", "freizeit", "kino", "theater", "frauen", "wahl", "armut", "elend", "mietskaserne", "krise", "arbeitslos", "inflation"],
+        successFeedback: "Dein Beleg unterscheidet Aufbruch und Begrenzung. Damit lässt sich konkret sagen, für welche Menschen und für welchen Zeitraum die Zwanziger „golden“ erscheinen.",
         excerpt:
           "Stabilisierung, Innovation und kulturelle Dynamik sind real, aber kurz, sozial ungleich und von Krisen gerahmt.",
         prompt: "Nenne je einen Timecode für Aufbruch und Begrenzung. Für welche Zeit und welche Gruppen trägt die Metapher «golden»?",
@@ -160,7 +177,14 @@ export const missions: Mission[] = [
         href: "https://www.youtube.com/watch?v=BcXI3nXqSmY",
         embedUrl: "https://www.youtube-nocookie.com/embed/BcXI3nXqSmY",
         duration: "ca. 14 Min.",
-        viewingFocus: "Notiere, wie der Film Entstehung, Selbsthilfe und spätere Kriminalisierung der Ringvereine miteinander verbindet.",
+        viewingFocus: "Suche die Filmstelle, an der erklärt wird, warum ehemalige Gefangene ohne Arbeit und Wohnung blieben.",
+        taskSteps: [
+          "Stoppe dort, wo der Kreislauf aus Gefängnis, fehlender Arbeit und fehlender Wohnung erklärt wird.",
+          "Notiere den Timecode und einen Satz dazu, warum Betroffene kaum aus diesem Kreislauf herauskamen.",
+          "Suche anschließend die Stelle zur ursprünglichen Selbsthilfe der Ringvereine und vergleiche sie mit dem Filmtitel „Clans“.",
+        ],
+        signalWords: ["gefängnis", "zuchthaus", "arbeit", "wohnung", "ausweisung", "selbsthilfe", "ringverein", "strafe", "armut"],
+        successFeedback: "Du hast den Entstehungskontext der Ringvereine belegt. Dadurch wird sichtbar, dass der reisserische Titel nur einen Teil ihrer Geschichte erzählt.",
         excerpt:
           "Ringvereine beginnen als Selbsthilfe ehemaliger Strafgefangener gegen den Kreislauf aus Haft, Arbeits- und Wohnungslosigkeit.",
         prompt: "Welche Filmstelle zeigt, was das Etikett «kriminelle Clans» über Ursprung oder Funktion der Ringvereine unterschlägt?",
@@ -220,7 +244,14 @@ export const missions: Mission[] = [
         kind: "Terra X History · ZDF-Film",
         href: "https://www.zdf.de/play/dokus/ein-tag-in-alle-folgen-100/ein-tag-in-berlin-1943-der-passfaelscher-cioma-schoenhaus-doku-100",
         duration: "45 Min. · Untertitel verfügbar",
-        viewingFocus: "Verfolge Wohnorte, Kontrollen, Werkstatt, Helfernetzwerk und Identitätswechsel Cioma Schönhaus'.",
+        viewingFocus: "Verfolge einen konkreten Weg Cioma Schönhaus' durch Berlin: Unterkunft, Kontrolle, Werkstatt oder Treffen mit Helfenden.",
+        taskSteps: [
+          "Stoppe bei einer Szene, in der Cioma eine Kontrolle vermeiden, seine Identität verbergen oder die Unterkunft wechseln muss.",
+          "Notiere Timecode, Ort und die konkrete Gefahr in dieser Szene.",
+          "Suche eine zweite Szene mit Werkstatt, gefälschten Papieren oder Helfern und beschreibe, wie dieser Ort Schutz ermöglicht.",
+        ],
+        signalWords: ["kontrolle", "polizei", "gestapo", "ausweis", "kennkarte", "wohnung", "unterkunft", "werkstatt", "waldstrasse", "helfer", "flucht", "versteck"],
+        successFeedback: "Du hast Verfolgung als räumlichen Alltag belegt: Kontrolle und Hilfe entstehen an konkreten Orten, obwohl ein gewöhnlicher Stadtplan sie nicht markiert.",
         excerpt:
           "Cioma Schönhaus bewegt sich mit falschen Papieren durch ein Netz aus Kontrolle, Verstecken, Hilfe und Widerstand.",
         prompt: "Welche zwei Filmstellen zeigen, dass Verfolgung ein Netz aus Kontrolle, Verstecken und Hilfe erzeugt, das auf einem normalen Stadtplan unsichtbar bleibt?",
@@ -281,7 +312,14 @@ export const missions: Mission[] = [
         kind: "Historischer Film · LeMO",
         href: "https://www.hdg.de/lemo/bestand/medien/video-berlin-blockade-und-luftbruecke.html",
         duration: "Wochenschauausschnitte 1948/49",
-        viewingFocus: "Achte auf Verkehrsmittel, Versorgungswege, wartende Menschen und die Perspektive der britisch-amerikanischen Wochenschau.",
+        viewingFocus: "Suche eine Einstellung, die zeigt, wie Waren nach West-Berlin gelangen, und achte auf die Sprache der Wochenschau.",
+        taskSteps: [
+          "Stoppe bei einem Flugzeug, Flugplatz, einer Ladung oder einer wartenden Menschenmenge.",
+          "Notiere Timecode und genau, was transportiert oder getan wird.",
+          "Schreibe ein Wort oder einen Satz aus dem Kommentar auf, der die westalliierte Sichtweise erkennen lässt.",
+        ],
+        signalWords: ["flugzeug", "flugplatz", "ladung", "kohle", "lebensmittel", "versorgung", "blockade", "luftbrücke", "berliner", "sowjet", "west"],
+        successFeedback: "Du hast Bildbeobachtung und Sprecherperspektive getrennt. Genau dadurch wird der Film als historische Quelle prüfbar und nicht nur als neutrale Erklärung behandelt.",
         excerpt:
           "Blockade und Luftbrücke machen Korridore, Flugplätze, Versorgung und politische Risiken räumlich sichtbar.",
         prompt: "Welche sichtbaren Hinweise erklären Versorgung aus der Luft – und woran erkennst du die westalliierte Perspektive des Films?",
@@ -293,7 +331,14 @@ export const missions: Mission[] = [
         href: "https://schule.zdf.de/video/die-berliner-mauer-creative-commons-100",
         embedUrl: "https://ngp.zdf.de/miniplayer/embed/?mediaID=SCMS_d17fd36e-df06-4928-bb31-fa5ff180f3e9",
         duration: "2 Min. · CC BY 4.0",
-        viewingFocus: "Zähle die im Film gezeigten beziehungsweise genannten Bestandteile der ausgebauten Grenzanlage.",
+        viewingFocus: "Zähle im kurzen Film mindestens drei verschiedene Teile der Grenzanlage.",
+        taskSteps: [
+          "Pausiere die Animation der Grenzanlage.",
+          "Notiere den Timecode und mindestens drei sichtbare oder genannte Bestandteile.",
+          "Erkläre in einem Satz, warum die Bezeichnung „eine Mauer“ dadurch ungenau ist.",
+        ],
+        signalWords: ["stacheldraht", "stolperdraht", "wachturm", "hund", "todesstreifen", "beton", "grenze", "mauer", "hochsicherheitszone", "schuss"],
+        successFeedback: "Du hast mehrere Bestandteile des Grenzsystems erkannt. Damit kannst du die vereinfachte Vorstellung einer einzelnen Betonlinie konkret widerlegen.",
         excerpt:
           "Die Mauer ist ein gestaffeltes Grenzsystem, das Abwanderung stoppen und die DDR stabilisieren soll.",
         prompt: "Welche mindestens drei Bestandteile im Film widerlegen die Vorstellung einer einzelnen Mauerlinie?",
@@ -354,7 +399,14 @@ export const missions: Mission[] = [
         kind: "SPIEGEL-TV-Drehmaterial · bpb",
         href: "https://www.bpb.de/mediathek/video/297768/der-9-november-1989-die-maueroeffner/",
         duration: "29 Min. · unkommentiertes Drehmaterial",
-        viewingFocus: "Beobachte Menschenmenge, Rufe, Verhandlungen und Handlungen der Grenzer an der Bornholmer Strasse.",
+        viewingFocus: "Beobachte genau, was Menschenmenge und Grenzer an der Bornholmer Strasse tatsächlich tun.",
+        taskSteps: [
+          "Stoppe bei einer Szene, in der die Menge ruft, wartet, diskutiert oder Druck aufbaut.",
+          "Notiere Timecode, einen hörbaren Ruf und eine sichtbare Handlung.",
+          "Suche den Moment, in dem Grenzer reagieren oder den Übergang öffnen, und beschreibe die Veränderung.",
+        ],
+        signalWords: ["tor", "aufmachen", "menge", "menschen", "grenz", "schlagbaum", "rufen", "warten", "diskutieren", "öffnen", "bornholmer"],
+        successFeedback: "Dein Beleg zeigt handelnde Menschen und reagierende Grenzer. Der Mauerfall erscheint damit als Prozess vor Ort – nicht als automatische Folge eines einzigen Satzes.",
         excerpt:
           "Staatskrise, Reiseregelung, Pressekonferenz, Medien, Menschenmenge und Entscheidungen der Grenzer bilden eine Ereigniskette.",
         prompt: "Welche beobachtbaren Handlungen der Menge und der Grenzer widerlegen die Behauptung, ein einzelner Satz habe die Mauer automatisch geöffnet?",
@@ -365,7 +417,14 @@ export const missions: Mission[] = [
         kind: "Dokumentarfilm · bpb",
         href: "https://www.bpb.de/mediathek/video/310871/wir-bleiben-hier/",
         duration: "32 Min. · Nachwendezeit",
-        viewingFocus: "Achte auf Hoffnungen nach 1989 und auf Erfahrungen, die in einer reinen Erfolgsgeschichte der Einheit fehlen.",
+        viewingFocus: "Suche eine Szene, in der Freude über den Umbruch mit Unsicherheit, Ausgrenzung oder Rassismus zusammenstößt.",
+        taskSteps: [
+          "Stoppe bei einer Person, die von einer Hoffnung nach dem Mauerfall erzählt.",
+          "Notiere Timecode und diese Hoffnung in eigenen Worten.",
+          "Suche eine zweite Szene mit Unsicherheit, Ausgrenzung oder Rassismus und beschreibe den sichtbaren oder hörbaren Gegensatz.",
+        ],
+        signalWords: ["hoffnung", "freude", "wende", "einheit", "unsicherheit", "angst", "rassismus", "ausgrenzung", "vietnames", "bleiben", "alltag"],
+        successFeedback: "Du hast Hoffnung und widersprüchliche Nachwendeerfahrung miteinander verbunden. Damit lässt sich begründen, warum politische Einheit nicht für alle sofort gesellschaftliche Zugehörigkeit bedeutete.",
         excerpt:
           "An der Bernauer Strasse liegen Familiengeschichte, Gedenkort, Tourismus und normaler Alltag übereinander.",
         prompt: "Welche konkrete Filmszene zeigt, dass der Mauerfall nicht für alle Menschen sofort Zugehörigkeit und Sicherheit bedeutete?",

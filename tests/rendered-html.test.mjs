@@ -81,3 +81,18 @@ test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
   assert.match(gameUi, /Timecode im Film/);
   assert.doesNotMatch(gameUi, /PDF S\. 2–3|Transkriptbeleg/);
 });
+
+test("führt mit konkreten Suchschritten und sofortigem Filmfeedback", async () => {
+  const [gameData, gameUi] = await Promise.all([
+    readFile(new URL("../data/game.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(gameData, /taskSteps:/);
+  assert.match(gameData, /signalWords:/);
+  assert.match(gameData, /successFeedback:/);
+  assert.match(gameUi, /DEIN KONKRETER SUCHAUFTRAG/);
+  assert.match(gameUi, /Sofortfeedback zum Filmbeleg/);
+  assert.match(gameUi, /Timecode erkannt/);
+  assert.match(gameUi, /Noch zu allgemein/);
+  assert.doesNotMatch(gameUi, /Welche sichtbare Beobachtung belegt Modernität/);
+});
