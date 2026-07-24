@@ -12,6 +12,8 @@ Ein kooperatives historisches Ermittlungs- und Kartenspiel für 2–3 Lernende a
 - Beweisboard, Urteile, Punkte und Rollenrotation
 - Lehrpersonenansicht mit Beitrags- und Prozessübersicht
 - zoombare lokale Karten sowie eingebettete interaktive Karten
+- Filmstationen mit eingebetteten oder verlinkten Originalfilmen
+- Fragen werden erst nach bestätigter Filmsichtung freigegeben; Belege benötigen Timecodes
 - Abschlussraum „Museum der Lücken“
 - responsive, tastaturbedienbare Oberfläche
 

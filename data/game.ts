@@ -23,6 +23,9 @@ export type Mission = {
     title: string;
     kind: string;
     href: string;
+    embedUrl?: string;
+    duration: string;
+    viewingFocus: string;
     excerpt: string;
     prompt: string;
   }[];
@@ -79,21 +82,15 @@ export const missions: Mission[] = [
       {
         id: "m02",
         title: "Berlin zur Kaiserzeit – Glanz und Schatten",
-        kind: "Transkript · 17 Seiten",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        kind: "Dokumentarfilm · Berlin Channel",
+        href: "https://www.youtube.com/watch?v=QhPR6fa68EY",
+        embedUrl: "https://www.youtube-nocookie.com/embed/QhPR6fa68EY",
+        duration: "83 Min. · im Spiel mindestens zwei kontrastierende Stellen auswählen",
+        viewingFocus: "Achte zuerst nur auf sichtbare Räume, Verkehr, Kleidung und Arbeit. Höre danach auf die Einordnung des Kommentars.",
         excerpt:
           "Breite Strassen, imposante Häuser und eine unablässig treibende Menge stehen Mietskasernen, harter Arbeit und sozialer Trennung gegenüber.",
         prompt:
-          "Welche Beobachtung belegt Modernität – und welche begrenzt ihre soziale Reichweite?",
-      },
-      {
-        id: "m03-origin",
-        title: "Ursprünge der Ringvereine",
-        kind: "Transkriptpassage",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "Industrialisierung und Zuzug lassen Berlin wachsen; viele Neuankömmlinge landen im Elend hastig errichteter Mietskasernen.",
-        prompt: "Welche Kausalkette verbindet Wachstum, Ausgrenzung und Stadtstruktur?",
+          "Sichere zwei Filmstellen: Welche sichtbare Beobachtung belegt Modernität – und welche zweite Stelle begrenzt deren soziale Reichweite?",
       },
     ],
     map: {
@@ -147,29 +144,26 @@ export const missions: Mission[] = [
       {
         id: "m05",
         title: "Waren die 20er wirklich golden?",
-        kind: "Terra X · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        kind: "Terra X · Film",
+        href: "https://www.youtube.com/watch?v=04dyomiLGQ0",
+        embedUrl: "https://www.youtube-nocookie.com/embed/04dyomiLGQ0",
+        duration: "ca. 20 Min. · Kapitelmarken im Film",
+        viewingFocus: "Vergleiche die Abschnitte „Strahlende Aufbruchsstimmung“, „Goldene Freiheiten“ und „Das dunkle Ende“.",
         excerpt:
           "Stabilisierung, Innovation und kulturelle Dynamik sind real, aber kurz, sozial ungleich und von Krisen gerahmt.",
-        prompt: "Für welche Zeit und welche Gruppen trägt die Metapher «golden»?",
+        prompt: "Nenne je einen Timecode für Aufbruch und Begrenzung. Für welche Zeit und welche Gruppen trägt die Metapher «golden»?",
       },
       {
         id: "m03",
         title: "Kriminelle Clans im Berlin der 20er",
-        kind: "Terra X · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        kind: "Terra X History · Film",
+        href: "https://www.youtube.com/watch?v=BcXI3nXqSmY",
+        embedUrl: "https://www.youtube-nocookie.com/embed/BcXI3nXqSmY",
+        duration: "ca. 14 Min.",
+        viewingFocus: "Notiere, wie der Film Entstehung, Selbsthilfe und spätere Kriminalisierung der Ringvereine miteinander verbindet.",
         excerpt:
           "Ringvereine beginnen als Selbsthilfe ehemaliger Strafgefangener gegen den Kreislauf aus Haft, Arbeits- und Wohnungslosigkeit.",
-        prompt: "Was unterschlägt das Etikett «kriminelle Clans»?",
-      },
-      {
-        id: "m04",
-        title: "5 Fakten: Sündenpfuhl Berlin",
-        kind: "Kurzformat · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "Nachtleben und moralische Entgrenzung stehen Armut gegenüber; Mordinspektion und Zentralkartei modernisieren die Polizei.",
-        prompt: "Welche Aussage ist Beobachtung, welche reisserischer Rahmen?",
+        prompt: "Welche Filmstelle zeigt, was das Etikett «kriminelle Clans» über Ursprung oder Funktion der Ringvereine unterschlägt?",
       },
     ],
     map: {
@@ -221,31 +215,15 @@ export const missions: Mission[] = [
     },
     resources: [
       {
-        id: "m07",
-        title: "Von Berlin nach Germania und zurück",
-        kind: "SPIEGEL TV 2002 · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "NS-Architektur materialisiert Herrschaft und Propaganda; Erhaltung und Nachnutzung erzeugen Deutungskonflikte.",
-        prompt: "Wie verändert die spätere Nachnutzung die Bedeutung eines Ortes?",
-      },
-      {
         id: "m08",
         title: "Ein Tag in Berlin 1943 – Der Passfälscher",
-        kind: "Biografische Rekonstruktion · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        kind: "Terra X History · ZDF-Film",
+        href: "https://www.zdf.de/play/dokus/ein-tag-in-alle-folgen-100/ein-tag-in-berlin-1943-der-passfaelscher-cioma-schoenhaus-doku-100",
+        duration: "45 Min. · Untertitel verfügbar",
+        viewingFocus: "Verfolge Wohnorte, Kontrollen, Werkstatt, Helfernetzwerk und Identitätswechsel Cioma Schönhaus'.",
         excerpt:
           "Cioma Schönhaus bewegt sich mit falschen Papieren durch ein Netz aus Kontrolle, Verstecken, Hilfe und Widerstand.",
-        prompt: "Welche Räume entstehen durch Verfolgung, obwohl sie auf einem Stadtplan unsichtbar bleiben?",
-      },
-      {
-        id: "m09",
-        title: "Berlin im fünften Kriegssommer",
-        kind: "Wochenschau + Erinnerung · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "Inszenierte Normalität und Durchhaltepropaganda stehen Bombenkrieg, Zwang, Erschöpfung und Gewalt gegenüber.",
-        prompt: "Ordne zwei Aussagen nach Urheber, Zeitpunkt und Zweck.",
+        prompt: "Welche zwei Filmstellen zeigen, dass Verfolgung ein Netz aus Kontrolle, Verstecken und Hilfe erzeugt, das auf einem normalen Stadtplan unsichtbar bleibt?",
       },
     ],
     map: {
@@ -300,38 +278,25 @@ export const missions: Mission[] = [
       {
         id: "m10",
         title: "Berlin-Blockade und Luftbrücke",
-        kind: "Erklärvideo · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        kind: "Historischer Film · LeMO",
+        href: "https://www.hdg.de/lemo/bestand/medien/video-berlin-blockade-und-luftbruecke.html",
+        duration: "Wochenschauausschnitte 1948/49",
+        viewingFocus: "Achte auf Verkehrsmittel, Versorgungswege, wartende Menschen und die Perspektive der britisch-amerikanischen Wochenschau.",
         excerpt:
           "Blockade und Luftbrücke machen Korridore, Flugplätze, Versorgung und politische Risiken räumlich sichtbar.",
-        prompt: "Warum ist die Karte für die Erklärung der Luftbrücke unverzichtbar?",
-      },
-      {
-        id: "m11",
-        title: "Der 17. Juni 1953",
-        kind: "Erklärvideo · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "Normerhöhungen, Versorgung und Repression führen vom Arbeitsprotest zu politischen Forderungen; sowjetische Gewalt beendet ihn.",
-        prompt: "Wie wird aus einem Ort des Arbeitens ein Protest- und Erinnerungsraum?",
+        prompt: "Welche sichtbaren Hinweise erklären Versorgung aus der Luft – und woran erkennst du die westalliierte Perspektive des Films?",
       },
       {
         id: "m12",
         title: "Die Berliner Mauer",
-        kind: "Erklärvideo · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        kind: "Terra X OER · Film",
+        href: "https://schule.zdf.de/video/die-berliner-mauer-creative-commons-100",
+        embedUrl: "https://ngp.zdf.de/miniplayer/embed/?mediaID=SCMS_d17fd36e-df06-4928-bb31-fa5ff180f3e9",
+        duration: "2 Min. · CC BY 4.0",
+        viewingFocus: "Zähle die im Film gezeigten beziehungsweise genannten Bestandteile der ausgebauten Grenzanlage.",
         excerpt:
           "Die Mauer ist ein gestaffeltes Grenzsystem, das Abwanderung stoppen und die DDR stabilisieren soll.",
-        prompt: "Welche Bestandteile widerlegen die Vorstellung einer einzelnen Mauerlinie?",
-      },
-      {
-        id: "m13",
-        title: "Krieg der Bauten",
-        kind: "Dokumentation · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "Fernsehturm, Stalinallee, Hansaviertel und Palast sind Wohnraum, Versprechen und Systemzeichen zugleich.",
-        prompt: "Wo wird Architektur zum politischen Argument?",
+        prompt: "Welche mindestens drei Bestandteile im Film widerlegen die Vorstellung einer einzelnen Mauerlinie?",
       },
     ],
     map: {
@@ -385,30 +350,25 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m14",
-        title: "Mauerfall in 24 Stunden",
-        kind: "Erklärvideo · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        title: "Der 9. November 1989: Die Maueröffner",
+        kind: "SPIEGEL-TV-Drehmaterial · bpb",
+        href: "https://www.bpb.de/mediathek/video/297768/der-9-november-1989-die-maueroeffner/",
+        duration: "29 Min. · unkommentiertes Drehmaterial",
+        viewingFocus: "Beobachte Menschenmenge, Rufe, Verhandlungen und Handlungen der Grenzer an der Bornholmer Strasse.",
         excerpt:
           "Staatskrise, Reiseregelung, Pressekonferenz, Medien, Menschenmenge und Entscheidungen der Grenzer bilden eine Ereigniskette.",
-        prompt: "Welche Knoten des Netzes fehlen in der Ein-Mann-Erzählung?",
+        prompt: "Welche beobachtbaren Handlungen der Menge und der Grenzer widerlegen die Behauptung, ein einzelner Satz habe die Mauer automatisch geöffnet?",
       },
       {
         id: "m15",
-        title: "Seit dem Mauerfall",
-        kind: "Generationen-Dokumentation · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
+        title: "Wir bleiben hier",
+        kind: "Dokumentarfilm · bpb",
+        href: "https://www.bpb.de/mediathek/video/310871/wir-bleiben-hier/",
+        duration: "32 Min. · Nachwendezeit",
+        viewingFocus: "Achte auf Hoffnungen nach 1989 und auf Erfahrungen, die in einer reinen Erfolgsgeschichte der Einheit fehlen.",
         excerpt:
           "An der Bernauer Strasse liegen Familiengeschichte, Gedenkort, Tourismus und normaler Alltag übereinander.",
-        prompt: "Wann ist ein historischer Ort zugleich Erinnerung und gewöhnlicher Lebensraum?",
-      },
-      {
-        id: "m01",
-        title: "Zeitreise Heimat Berlin",
-        kind: "Terra X · Transkript",
-        href: "https://planes-sit-wl6.craft.me/Xp6zj0gEIJRZ1w",
-        excerpt:
-          "Berlin erfindet sich wiederholt neu; Veränderung wird selbst zur Tradition und Heimat bleibt widersprüchlich.",
-        prompt: "Welche Kontinuität verbindet die fünf Akten?",
+        prompt: "Welche konkrete Filmszene zeigt, dass der Mauerfall nicht für alle Menschen sofort Zugehörigkeit und Sicherheit bedeutete?",
       },
     ],
     map: {

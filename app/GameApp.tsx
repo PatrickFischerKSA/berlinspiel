@@ -677,6 +677,7 @@ function SourcesView({
   const [locator, setLocator] = useState("");
   const [note, setNote] = useState("");
   const [category, setCategory] = useState("Beobachtung");
+  const [watched, setWatched] = useState<Record<string, boolean>>({});
   useEffect(() => {
     setSelected(mission.resources[0]);
     setLocator("");
@@ -695,27 +696,37 @@ function SourcesView({
           ))}
         </aside>
         <article className="source-reader">
-          <header><span>RESSOURCE {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Originalsammlung öffnen ↗</a></header>
-          <h2>{selected.title}</h2><p className="source-kind">{selected.kind}</p>
-          <blockquote>{selected.excerpt}</blockquote>
-          <div className="observation-prompt"><span>{roleIndex + 1}</span><p><b>Beobachtungsauftrag</b>{selected.prompt}</p></div>
-          <p className="source-warning">Transkriptbeleg: Film-Timecodes werden ergänzt, sobald direkte Filmressourcen freigegeben sind.</p>
+          <header><span>FILM {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Film separat öffnen ↗</a></header>
+          <h2>{selected.title}</h2><p className="source-kind">{selected.kind} · {selected.duration}</p>
+          {selected.embedUrl ? (
+            <div className="film-frame"><iframe src={selected.embedUrl} title={`Film: ${selected.title}`} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
+          ) : (
+            <div className="film-launch">
+              <span aria-hidden="true">▶</span>
+              <div><b>Film in der Mediathek ansehen</b><p>Der Anbieter erlaubt keinen sicheren Player im Spiel. Der Film öffnet in einem neuen Tab; kehre danach hierher zurück.</p></div>
+              <a href={selected.href} target="_blank" rel="noreferrer">Film starten ↗</a>
+            </div>
+          )}
+          <div className="viewing-focus"><span>VOR DEM START</span><p><b>Beobachtungsfokus</b>{selected.viewingFocus}</p></div>
+          <label className="watched-check"><input type="checkbox" checked={Boolean(watched[selected.id])} onChange={(event) => setWatched((current) => ({ ...current, [selected.id]: event.target.checked }))} /><span><b>Filmstelle angesehen</b>Ich kann im Film einen Timecode nennen und meine Antwort auf Bild oder Ton beziehen.</span></label>
+          <div className={`observation-prompt ${watched[selected.id] ? "" : "locked"}`}><span>{roleIndex + 1}</span><p><b>Auftrag nach dem Film</b>{watched[selected.id] ? selected.prompt : "Die Auswertungsfrage wird freigegeben, sobald du die Filmstelle angesehen hast."}</p></div>
         </article>
         <form className="evidence-form" onSubmit={(event) => {
           event.preventDefault();
-          if (!note.trim() || !locator.trim()) return;
+          if (!watched[selected.id] || !note.trim() || !locator.trim()) return;
           onEvidence({ resourceId: selected.id, locator, note, category });
           setNote(""); setLocator("");
         }}>
-          <p className="eyebrow">BELEG SICHERN</p>
-          <label>Art<select value={category} onChange={(e) => setCategory(e.target.value)}><option>Beobachtung</option><option>Deutung</option><option>Gegenbeleg</option><option>Auslassung</option></select></label>
-          <label>Stelle<input value={locator} onChange={(e) => setLocator(e.target.value)} placeholder="z. B. PDF S. 2–3" /></label>
-          <label>Paraphrase und Relevanz<textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Was zeigt die Stelle – und was beweist sie für die Akte?" /></label>
-          <button className="primary" type="submit">An Belegwand übergeben</button>
+          <p className="eyebrow">FILMBELEG SICHERN</p>
+          <label>Art<select disabled={!watched[selected.id]} value={category} onChange={(e) => setCategory(e.target.value)}><option>Sichtbare Beobachtung</option><option>Aussage im Ton</option><option>Deutung des Films</option><option>Auslassung</option></select></label>
+          <label>Timecode im Film<input disabled={!watched[selected.id]} value={locator} onChange={(e) => setLocator(e.target.value)} placeholder="z. B. 04:32–05:10" /></label>
+          <label>Beobachtung und Relevanz<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Was ist im Film konkret zu sehen oder zu hören – und was belegt es?" /></label>
+          <button className="primary" type="submit" disabled={!watched[selected.id]}>Filmbeleg an Belegwand übergeben</button>
+          {!watched[selected.id] && <p className="form-lock">Sieh zuerst den Film beziehungsweise die benötigte Filmstelle an.</p>}
           <small>{room.evidence.length} Belege im Team gesichert</small>
         </form>
       </div>
-      <div className="next-bar"><span>Mindestens zwei verschiedene Materialien vergleichen.</span><button onClick={onAdvance} disabled={room.evidence.length < 2}>Kartenraum öffnen →</button></div>
+      <div className="next-bar"><span>Mindestens zwei konkrete Filmstellen mit Timecode sichern.</span><button onClick={onAdvance} disabled={room.evidence.length < 2}>Kartenraum öffnen →</button></div>
     </div>
   );
 }

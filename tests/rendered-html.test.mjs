@@ -69,3 +69,15 @@ test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", asy
   assert.match(gameUi, /berlin-akte-solo/);
   assert.match(gameUi, /Quelle · Raum · Gegenprüfung/);
 });
+
+test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
+  const [gameData, gameUi] = await Promise.all([
+    readFile(new URL("../data/game.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(gameData, /youtube-nocookie\.com\/embed/);
+  assert.match(gameData, /ngp\.zdf\.de\/miniplayer\/embed/);
+  assert.match(gameUi, /Filmstelle angesehen/);
+  assert.match(gameUi, /Timecode im Film/);
+  assert.doesNotMatch(gameUi, /PDF S\. 2–3|Transkriptbeleg/);
+});
