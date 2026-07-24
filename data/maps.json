@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-24",
+  "zoomRequirement": {
+    "mandatory": true,
+    "desktop": ["buttons", "mouse-wheel", "drag", "fullscreen", "reset-view"],
+    "touch": ["buttons", "pinch", "two-finger-pan", "fullscreen", "reset-view"],
+    "keyboard": ["plus", "minus", "arrow-keys", "home"],
+    "fallback": "open-source-in-new-tab"
+  },
+  "maps": [
+    {
+      "id": "sineck-berlin-1871",
+      "title": "Grundriss von Berlin",
+      "year": 1871,
+      "kind": "local-raster",
+      "path": "original/sineck_grundriss_von_berlin_1871.jpeg",
+      "width": 1229,
+      "height": 1024,
+      "viewer": "open-seadragon",
+      "eras": ["kaiserreich"],
+      "licenseStatus": "unknown",
+      "publicUse": false
+    },
+    {
+      "id": "baedeker-berlin-1877",
+      "title": "Baedeker Stadtplan Berlin",
+      "year": 1877,
+      "kind": "local-raster",
+      "path": "original/baedeker_stadtplan_berlin_1877.jpg",
+      "width": 4461,
+      "height": 3174,
+      "viewer": "open-seadragon",
+      "eras": ["kaiserreich"],
+      "licenseStatus": "unknown",
+      "publicUse": false
+    },
+    {
+      "id": "pharus-berlin-1912",
+      "title": "Pharus-Plan Berlin",
+      "year": 1912,
+      "kind": "local-raster",
+      "path": "original/pharus_plan_berlin_1912.jpg",
+      "width": 14592,
+      "height": 10924,
+      "viewer": "open-seadragon",
+      "eras": ["kaiserreich"],
+      "licenseStatus": "unknown",
+      "publicUse": false
+    },
+    {
+      "id": "pharus-berlin-1928",
+      "title": "Pharus-Plan Berlin, Grosse Ausgabe",
+      "year": 1928,
+      "kind": "local-raster",
+      "path": "original/pharus_grosse_ausgabe_berlin_1928.jpg",
+      "width": 7024,
+      "height": 6274,
+      "viewer": "open-seadragon",
+      "eras": ["weimar"],
+      "licenseStatus": "unknown",
+      "publicUse": false
+    },
+    {
+      "id": "berlin-occupation-zones",
+      "title": "Berlin: Zones of Occupation",
+      "kind": "local-raster",
+      "path": "original/besatzungszonen_alamy_watermarked.jpg",
+      "width": 2116,
+      "height": 1598,
+      "viewer": "open-seadragon",
+      "eras": ["cold-war"],
+      "licenseStatus": "watermarked-commercial-preview",
+      "publicUse": false,
+      "notes": ["Nicht oeffentlich ausliefern, bis eine passende Lizenz vorliegt."]
+    },
+    {
+      "id": "berlin-wall-free-map",
+      "title": "Die Berliner Mauer",
+      "period": "1961-1989",
+      "kind": "local-pdf",
+      "path": "original/berlin-wall-map-free-de.pdf",
+      "viewer": "pdf-rendered-deep-zoom",
+      "eras": ["cold-war", "reunification"],
+      "creator": "berlinwallmap.info",
+      "licenseStatus": "free-private-and-school-use-per-visible-map-note",
+      "publicUse": false,
+      "notes": [
+        "Die sichtbare Kartenfusszeile nennt kostenlose private und schulische Nutzung.",
+        "Vor einer oeffentlichen Webauslieferung muessen die genauen Nutzungsbedingungen geprueft werden."
+      ]
+    },
+    {
+      "id": "pharus-berlin-1940-online",
+      "title": "Pharus-Plan Berlin",
+      "year": 1940,
+      "kind": "remote-leaflet-map",
+      "sourcePage": "https://www.berliner-stadtplansammlung.de/index.php/karten/1940-pharus-plan-berlin",
+      "viewer": "embedded-zoom-adapter",
+      "eras": ["national-socialism"],
+      "licenseStatus": "source-link-verified-embedding-permission-pending",
+      "publicUse": false
+    },
+    {
+      "id": "falk-berlin-1990-online",
+      "title": "Falk Plan Berlin mit Umgebungskarte",
+      "year": 1990,
+      "kind": "remote-leaflet-map",
+      "sourcePage": "https://www.berliner-stadtplansammlung.de/index.php/karten/1990-berlin-mit-umgebungskarte",
+      "viewer": "embedded-zoom-adapter",
+      "eras": ["reunification"],
+      "licenseStatus": "source-link-verified-embedding-permission-pending",
+      "publicUse": false
+    },
+    {
+      "id": "grosser-stadtplan-berlin-1992-93-online",
+      "title": "Grosser Stadtplan Berlin, 2. Auflage",
+      "period": "1992-1993",
+      "kind": "remote-leaflet-map",
+      "sourcePage": "https://www.berliner-stadtplansammlung.de/index.php/karten/1992-grosser-stadtplan-berlin",
+      "viewer": "embedded-zoom-adapter",
+      "eras": ["reunification"],
+      "licenseStatus": "source-link-verified-embedding-permission-pending",
+      "publicUse": false
+    },
+    {
+      "id": "uebersichtskarte-berlin-1995-online",
+      "title": "Uebersichtskarte Berlin",
+      "year": 1995,
+      "kind": "remote-leaflet-map",
+      "sourcePage": "https://www.berliner-stadtplansammlung.de/index.php/karten/1995-uebersichtskarte-berlin",
+      "viewer": "embedded-zoom-adapter",
+      "eras": ["reunification"],
+      "licenseStatus": "source-link-verified-embedding-permission-pending",
+      "publicUse": false
+    },
+    {
+      "id": "berlin-2026-umap",
+      "title": "Berlin 2026",
+      "year": 2026,
+      "kind": "remote-umap",
+      "sourcePage": "https://umap.openstreetmap.fr/en/map/berlin-2026_1394963#14/52.496551/13.377571",
+      "viewer": "iframe-umap",
+      "eras": ["reunification"],
+      "licenseStatus": "osm-attribution-required-map-sharing-status-to-verify",
+      "publicUse": false,
+      "notes": [
+        "OpenStreetMap attribution muss im eingebetteten Viewer sichtbar bleiben.",
+        "Der beim Pruefen sichtbare anonyme Bearbeitungsmodus darf nicht in die Lernanwendung uebernommen werden; verwendet wird nur eine schreibgeschuetzte Einbettung."
+      ]
+    }
+  ]
+}
