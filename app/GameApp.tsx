@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { finalPrompt, missions, roleLabels, type Mission } from "../data/game";
+import { timelineEras, timelineEvents, timelineSources, type TimelineEra } from "../data/timeline";
 
 type Role = keyof typeof roleLabels;
 type Member = { id: string; name: string; role: Role; lastSeenAt?: number };
@@ -540,7 +541,7 @@ function GameShell({
   onExit(): void;
 }) {
   const mission = missions[room.missionIndex];
-  const [tab, setTab] = useState<"case" | "sources" | "map" | "evidence" | "verdict" | "final">("case");
+  const [tab, setTab] = useState<"case" | "sources" | "map" | "timeline" | "evidence" | "verdict" | "final">("case");
   const [role, setRole] = useState<Role>(room.viewer?.role || "source");
   const effectiveRole = room.mode === "desktop" || room.mode === "demo" || room.mode === "solo" ? role : room.viewer?.role || "source";
   useEffect(() => {
@@ -605,6 +606,7 @@ function GameShell({
         {tab === "case" && <CaseView mission={mission} room={room} role={effectiveRole} onAdvance={() => onAction("advance")} busy={busy} />}
         {tab === "sources" && <SourcesView mission={mission} room={room} role={effectiveRole} onEvidence={(payload) => onAction("evidence", { ...payload, role: effectiveRole })} onAdvance={() => onAction("advance")} />}
         {tab === "map" && <MapView mission={mission} room={room} onPin={(payload) => onAction("pin", payload)} onAdvance={() => onAction("advance")} />}
+        {tab === "timeline" && <TimelineView mission={mission} />}
         {tab === "evidence" && <EvidenceBoard mission={mission} room={room} />}
         {tab === "verdict" && <VerdictView mission={mission} room={room} onSave={(verdict, submit) => onAction("verdict", { verdict, submit })} />}
         {tab === "final" && <Finale room={room} onSave={(finalMuseum) => onAction("final-museum", { finalMuseum })} />}
@@ -613,6 +615,7 @@ function GameShell({
         <button className={tab === "case" ? "active" : ""} onClick={() => setTab("case")}>▤<span>Akte</span></button>
         <button className={tab === "sources" ? "active" : ""} onClick={() => setTab("sources")}>◫<span>Quellen</span></button>
         <button className={tab === "map" ? "active" : ""} onClick={() => setTab("map")}>⌖<span>Karte</span></button>
+        <button className={tab === "timeline" ? "active" : ""} onClick={() => setTab("timeline")}>↔<span>Zeit</span></button>
         <button className={tab === "evidence" ? "active" : ""} onClick={() => setTab("evidence")}>⌁<span>Belege <i>{room.evidence.length}</i></span></button>
         <button className={tab === "verdict" ? "active" : ""} onClick={() => setTab("verdict")}>✓<span>Urteil</span></button>
       </nav>
@@ -766,6 +769,41 @@ function SourcesView({
         </form>
       </div>
       <div className="next-bar"><span>Die konkrete Filmfrage beantworten und den Fundort sichern.</span><button onClick={onAdvance} disabled={missionEvidenceCount < 1}>Kartenraum öffnen →</button></div>
+    </div>
+  );
+}
+
+function TimelineView({ mission }: { mission: Mission }) {
+  const [era, setEra] = useState<"Alle" | TimelineEra>("Alle");
+  const visibleEvents = era === "Alle" ? timelineEvents : timelineEvents.filter((event) => event.era === era);
+  return (
+    <div className="timeline-view">
+      <div className="section-title">
+        <div><p className="eyebrow">BERLIN IN DER ZEIT</p><h1>Vom Handelsort zur Hauptstadt</h1></div>
+        <p>{timelineEvents[0].year}–{timelineEvents[timelineEvents.length - 1].year}</p>
+      </div>
+      <div className="timeline-intro">
+        <p>Die Zeitleiste ordnet die fünf Akten in die längere Stadtgeschichte ein. Farbig markierte Ereignisse gehören zur aktuellen Akte <b>{mission.number}</b>.</p>
+        <div>
+          <a href={timelineSources["Zeitreisen Berlin"]} target="_blank" rel="noreferrer">Zeitreisen Berlin ↗</a>
+          <a href={timelineSources.Wikipedia} target="_blank" rel="noreferrer">Geschichte Berlins ↗</a>
+        </div>
+      </div>
+      <nav className="era-filter" aria-label="Zeitraum filtern">
+        {(["Alle", ...timelineEras] as const).map((item) => <button key={item} className={era === item ? "active" : ""} onClick={() => setEra(item)}>{item}</button>)}
+      </nav>
+      <div className="timeline-track" aria-label="Chronologie wichtiger Ereignisse">
+        {visibleEvents.map((event) => {
+          const active = event.missionId === mission.id;
+          return (
+            <article key={`${event.year}-${event.title}`} className={active ? "active" : ""}>
+              <time>{event.year}</time>
+              <i aria-hidden="true" />
+              <div><span>{event.era}</span><h2>{event.title}</h2><p>{event.text}</p><a href={timelineSources[event.source]} target="_blank" rel="noreferrer">{event.source} ↗</a></div>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }

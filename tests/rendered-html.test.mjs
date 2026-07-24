@@ -107,3 +107,18 @@ test("erklärt gesperrte Phasen dezent und benennt den nächsten Schritt", async
   assert.match(gameUi, /Quellen öffnen/);
   assert.match(gameUi, /Schaltet den nächsten Arbeitsschritt frei/);
 });
+
+test("enthält eine filterbare Zeitleiste mit Quellen und Schlüsselereignissen", async () => {
+  const [timelineData, gameUi] = await Promise.all([
+    readFile(new URL("../data/timeline.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+  ]);
+  for (const year of ["1237", "1871", "1920", "1933", "1945", "1948/49", "1961", "1989", "1990", "1991/99"]) {
+    assert.match(timelineData, new RegExp(year.replace("/", "\\/")));
+  }
+  assert.match(timelineData, /zeitreisen-berlin\.de\/specials\/Zeitachse/);
+  assert.match(timelineData, /de\.wikipedia\.org\/wiki\/Geschichte_Berlins/);
+  assert.match(gameUi, /Vom Handelsort zur Hauptstadt/);
+  assert.match(gameUi, /Zeitraum filtern/);
+  assert.match(gameUi, />Zeit</);
+});
