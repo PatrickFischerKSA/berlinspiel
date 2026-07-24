@@ -679,7 +679,6 @@ function SourcesView({
   const [category, setCategory] = useState("Sichtbare Beobachtung");
   const [watched, setWatched] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [answer, setAnswer] = useState("");
   useEffect(() => {
     setSelected(mission.resources[0]);
   }, [mission]);
@@ -687,7 +686,6 @@ function SourcesView({
     setLocator("");
     setNote("");
     setFeedback(null);
-    setAnswer("");
   }, [selected.id]);
   const timecodeOk = /\b\d{1,2}:\d{2}\b/.test(locator);
   const detailOk = note.trim().length >= 40;
@@ -695,7 +693,6 @@ function SourcesView({
   const normalizedNote = normalize(note);
   const matchedSignal = selected.signalWords.find((word) => normalizedNote.includes(normalize(word)));
   const signalOk = Boolean(matchedSignal);
-  const answerIsCorrect = answer === selected.correctAnswer;
   const missionEvidenceCount = room.evidence.filter((item) => mission.resources.some((resource) => resource.id === item.resourceId)).length;
   return (
     <div className="source-view">
@@ -721,26 +718,13 @@ function SourcesView({
             </div>
           )}
           <div className="viewing-focus"><span>KLARE AUSSAGE</span><p><b>Diese Aussage prüfst du</b>{selected.clearStatement}</p></div>
+          <div className="guided-task"><b>Dein enger Arbeitsauftrag</b><p>Finde genau eine Filmstelle, die den Satz oben belegt. Notiere nur: <strong>Was ist konkret zu sehen oder zu hören?</strong> und <strong>Was beweist dieses Detail?</strong></p></div>
           <label className="watched-check"><input type="checkbox" checked={Boolean(watched[selected.id])} onChange={(event) => setWatched((current) => ({ ...current, [selected.id]: event.target.checked }))} /><span><b>Filmstelle angesehen</b>Ich kann im Film einen Timecode nennen und meine Antwort auf Bild oder Ton beziehen.</span></label>
-          <fieldset className="claim-check" disabled={!watched[selected.id]}>
-            <legend>Welche Aussage bestätigt der Film?</legend>
-            {selected.answerOptions.map((option) => (
-              <label key={option} className={answer === option ? (answerIsCorrect ? "correct" : "wrong") : ""}>
-                <input type="radio" name={`claim-${selected.id}`} checked={answer === option} onChange={() => { setAnswer(option); setFeedback(null); }} />
-                <span>{option}</span>
-              </label>
-            ))}
-            {answer && <p className={answerIsCorrect ? "claim-result correct" : "claim-result wrong"} role="status">{answerIsCorrect ? "Richtig. Sichere jetzt genau einen Filmbeleg für diesen Satz." : `Nicht richtig. Prüfe die klare Aussage noch einmal: ${selected.clearStatement}`}</p>}
-          </fieldset>
         </article>
         <form className="evidence-form" onSubmit={(event) => {
           event.preventDefault();
           if (!watched[selected.id]) {
             setFeedback({ type: "error", text: "Bestätige zuerst, dass du die Filmstelle angesehen hast." });
-            return;
-          }
-          if (!answerIsCorrect) {
-            setFeedback({ type: "error", text: "Entscheide zuerst, welche klare Aussage der Film bestätigt." });
             return;
           }
           if (!timecodeOk) {
@@ -759,21 +743,21 @@ function SourcesView({
           setFeedback({ type: "success", text: selected.successFeedback });
         }}>
           <p className="eyebrow">FILMBELEG SICHERN</p>
-          <label>Art<select disabled={!answerIsCorrect} value={category} onChange={(e) => setCategory(e.target.value)}><option>Sichtbare Beobachtung</option><option>Aussage im Ton</option><option>Deutung des Films</option><option>Auslassung</option></select></label>
-          <label>Timecode im Film<input disabled={!answerIsCorrect} value={locator} onChange={(e) => { setLocator(e.target.value); setFeedback(null); }} placeholder="z. B. 04:32" /></label>
-          <label>Vervollständige den Belegsatz<textarea disabled={!answerIsCorrect} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder={selected.evidencePrompt} /></label>
+          <label>Art<select disabled={!watched[selected.id]} value={category} onChange={(e) => setCategory(e.target.value)}><option>Sichtbare Beobachtung</option><option>Aussage im Ton</option><option>Deutung des Films</option><option>Auslassung</option></select></label>
+          <label>Timecode im Film<input disabled={!watched[selected.id]} value={locator} onChange={(e) => { setLocator(e.target.value); setFeedback(null); }} placeholder="z. B. 04:32" /></label>
+          <label>Vervollständige den Belegsatz<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder={selected.evidencePrompt} /></label>
           <ul className="live-checks" aria-label="Sofortfeedback zum Filmbeleg">
             <li className={timecodeOk ? "passed" : ""}><span>{timecodeOk ? "✓" : "○"}</span> Timecode erkannt</li>
             <li className={detailOk ? "passed" : ""}><span>{detailOk ? "✓" : "○"}</span> Konkrete Beobachtung ausführlich beschrieben</li>
             <li className={signalOk ? "passed" : ""}><span>{signalOk ? "✓" : "○"}</span> Filmsignal genannt{matchedSignal ? `: ${matchedSignal}` : ""}</li>
           </ul>
-          <button className="primary" type="submit" disabled={!answerIsCorrect || feedback?.type === "success"}>{feedback?.type === "success" ? "Filmbeleg gesichert ✓" : "Filmbeleg an Belegwand übergeben"}</button>
+          <button className="primary" type="submit" disabled={!watched[selected.id] || feedback?.type === "success"}>{feedback?.type === "success" ? "Filmbeleg gesichert ✓" : "Filmbeleg an Belegwand übergeben"}</button>
           {feedback && <div className={`instant-feedback ${feedback.type}`} role="status"><b>{feedback.type === "success" ? "Beleg gesichert" : "Noch nicht gesichert"}</b><p>{feedback.text}</p></div>}
           {!watched[selected.id] && <p className="form-lock">Sieh zuerst den Film beziehungsweise die benötigte Filmstelle an.</p>}
           <small>{room.evidence.length} Belege im Team gesichert</small>
         </form>
       </div>
-      <div className="next-bar"><span>Eine klare Aussage entscheiden und mit genau einer Filmstelle belegen.</span><button onClick={onAdvance} disabled={missionEvidenceCount < 1}>Kartenraum öffnen →</button></div>
+      <div className="next-bar"><span>Die klare Aussage mit genau einer Filmstelle belegen.</span><button onClick={onAdvance} disabled={missionEvidenceCount < 1}>Kartenraum öffnen →</button></div>
     </div>
   );
 }

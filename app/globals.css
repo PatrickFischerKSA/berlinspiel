@@ -188,15 +188,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .watched-check input { margin-top: 3px; accent-color: var(--red); }
 .watched-check span { font-size: 11px; line-height: 1.5; }
 .watched-check b { display: block; font-size: 12px; }
-.claim-check { display: grid; gap: 8px; margin: 18px 0 0; padding: 18px; border: 1px solid #aaa18d; }
-.claim-check legend { padding: 0 8px; font: 700 11px var(--mono); letter-spacing: .08em; }
-.claim-check > label { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; padding: 12px; border: 1px solid #b8ae9b; background: #e8e0ce; cursor: pointer; font-size: 11px; line-height: 1.45; }
-.claim-check > label.correct { border-color: #4f8f5d; background: #d8ead9; }
-.claim-check > label.wrong { border-color: #a85a4d; background: #f0d8d2; }
-.claim-check input { margin-top: 3px; accent-color: var(--red); }
-.claim-result { margin: 4px 0 0; padding: 11px; font-size: 10px; line-height: 1.45; }
-.claim-result.correct { background: #d8ead9; color: #315d39; }
-.claim-result.wrong { background: #f0d8d2; color: #7d342a; }
+.guided-task { margin: 18px 0; padding: 16px 18px; border-left: 3px solid #b64f3d; background: #ebe3d1; }
+.guided-task > b { font: 700 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.guided-task p { margin: 8px 0 0; font-size: 11px; line-height: 1.55; }
 .source-warning { margin-top: 34px; color: #7d7467; font-size: 10px; }
 .evidence-form { padding: 26px; display: flex; flex-direction: column; gap: 16px; border-left: 1px solid var(--line); }
 .evidence-form textarea { min-height: 150px; resize: vertical; }
