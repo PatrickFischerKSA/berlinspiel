@@ -6,7 +6,8 @@ Ein kooperatives historisches Ermittlungs- und Kartenspiel für 2–3 Lernende a
 
 - fünf Missionen von Kaiserreich bis Wiedervereinigung
 - Rollen **Quelle**, **Raum** und bei drei Personen **Kritik**
-- Einzelgerät-, Demo- und Mehrgeräte-Modus
+- Einzelspieler-, Einzelgerät-, Demo- und Mehrgeräte-Modus
+- Einzelspieler-Fortschritt wird automatisch im Browser gespeichert
 - gemeinsame Räume mit kurzem Raumcode
 - Beweisboard, Urteile, Punkte und Rollenrotation
 - Lehrpersonenansicht mit Beitrags- und Prozessübersicht

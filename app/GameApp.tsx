@@ -20,7 +20,7 @@ type Pin = { id: string; actor: string; placeId: string; note: string; at: numbe
 type Room = {
   code: string;
   teamSize: 2 | 3;
-  mode: "multi" | "desktop" | "demo";
+  mode: "multi" | "desktop" | "demo" | "solo";
   missionIndex: number;
   phase: number;
   members: Member[];
@@ -75,6 +75,25 @@ function makeDemoRoom(teamSize: 2 | 3 = 3): Room {
   };
 }
 
+function makeSoloRoom(): Room {
+  const soloMember = { id: "solo-player", name: "Ermittler/in", role: "source" as Role };
+  return {
+    ...makeDemoRoom(3),
+    code: "SOLO40",
+    mode: "solo",
+    missionIndex: 0,
+    members: [soloMember],
+    viewer: soloMember,
+    events: [{
+      id: "solo-event",
+      at: Date.now(),
+      actor: "Archivsystem",
+      type: "solo-created",
+      detail: "Einzelermittlung begonnen",
+    }],
+  };
+}
+
 function roleForTeam(role: Role, teamSize: 2 | 3) {
   if (teamSize === 2) {
     return role === "source" ? "Spurenleser/in" : "Kartograf/in";
@@ -123,7 +142,7 @@ export function GameApp() {
   const [busy, setBusy] = useState(false);
 
   const syncRoom = useCallback(async () => {
-    if (!session || room?.mode === "demo" || room?.mode === "desktop") return;
+    if (!session || room?.mode === "demo" || room?.mode === "desktop" || room?.mode === "solo") return;
     try {
       const data = await api({ code: session.code, token: session.token }, "GET");
       if (data.room) setRoom(data.room);
@@ -138,10 +157,16 @@ export function GameApp() {
     return () => window.clearInterval(timer);
   }, [screen, session, syncRoom]);
 
+  useEffect(() => {
+    if (room?.mode === "solo") {
+      localStorage.setItem("berlin-akte-solo", JSON.stringify(room));
+    }
+  }, [room]);
+
   const remoteAction = useCallback(
     async (action: string, payload: Record<string, unknown> = {}) => {
       if (!room) return;
-      if (room.mode === "demo" || room.mode === "desktop") {
+      if (room.mode === "demo" || room.mode === "desktop" || room.mode === "solo") {
         setRoom((current) => (current ? reduceLocal(current, action, payload) : current));
         return;
       }
@@ -239,6 +264,15 @@ export function GameApp() {
         onResume={resume}
         onCreate={() => setScreen("create")}
         onJoin={() => setScreen("join")}
+        onSolo={() => {
+          try {
+            const saved = localStorage.getItem("berlin-akte-solo");
+            setRoom(saved ? JSON.parse(saved) : makeSoloRoom());
+          } catch {
+            setRoom(makeSoloRoom());
+          }
+          setScreen("game");
+        }}
         onDemo={(teamSize) => {
           setRoom(makeDemoRoom(teamSize));
           setScreen("game");
@@ -309,7 +343,7 @@ function reduceLocal(room: Room, action: string, payload: Record<string, unknown
     next.evidence.push({
       id: crypto.randomUUID(),
       actor,
-      role: next.viewer?.role || "source",
+      role: (payload.role as Role) || next.viewer?.role || "source",
       resourceId: String(payload.resourceId),
       locator: String(payload.locator),
       note: String(payload.note),
@@ -365,6 +399,7 @@ function Welcome({
   onResume,
   onCreate,
   onJoin,
+  onSolo,
   onDemo,
 }: {
   hasSession: boolean;
@@ -373,6 +408,7 @@ function Welcome({
   onResume(): void;
   onCreate(): void;
   onJoin(): void;
+  onSolo(): void;
   onDemo(size: 2 | 3): void;
 }) {
   return (
@@ -391,6 +427,7 @@ function Welcome({
           <div className="hero-actions">
             <button className="primary" onClick={onCreate}>Raum eröffnen <span>→</span></button>
             <button className="secondary" onClick={onJoin}>Mit Raumcode beitreten</button>
+            <button className="secondary solo-button" onClick={onSolo}>Allein ermitteln</button>
           </div>
           {hasSession && <button className="resume-link" disabled={busy} onClick={onResume}>↻ Letzte Sitzung wiederaufnehmen</button>}
           {message && <p className="alert">{message}</p>}
@@ -411,7 +448,7 @@ function Welcome({
         <div><span>02</span><b>Quellen als Beweise</b><small>Ohne Materialprüfung keine Lösung.</small></div>
         <div><span>03</span><b>Zoombare Zeitkarten</b><small>Räume werden Teil des Arguments.</small></div>
         <div className="demo-choices">
-          <b>Einzel-Demo</b>
+          <b>Team-Demo</b>
           <button onClick={() => onDemo(2)}>2 Rollen</button>
           <button onClick={() => onDemo(3)}>3 Rollen</button>
         </div>
@@ -504,7 +541,7 @@ function GameShell({
   const mission = missions[room.missionIndex];
   const [tab, setTab] = useState<"case" | "sources" | "map" | "evidence" | "verdict" | "final">("case");
   const [role, setRole] = useState<Role>(room.viewer?.role || "source");
-  const effectiveRole = room.mode === "desktop" || room.mode === "demo" ? role : room.viewer?.role || "source";
+  const effectiveRole = room.mode === "desktop" || room.mode === "demo" || room.mode === "solo" ? role : room.viewer?.role || "source";
   useEffect(() => {
     const phaseTabs = ["case", "case", "sources", "map", "verdict"] as const;
     setTab(phaseTabs[room.phase]);
@@ -515,9 +552,9 @@ function GameShell({
     <main className="game" style={{ "--mission": mission.accent } as React.CSSProperties}>
       <header className="game-header">
         <Brand />
-        <div className="room-code"><span>RAUM</span><b>{room.code}</b><small>{room.members.length}/{room.teamSize} verbunden</small></div>
+        <div className="room-code"><span>{room.mode === "solo" ? "EINZELSPIEL" : "RAUM"}</span><b>{room.code}</b><small>{room.mode === "solo" ? "Fortschritt lokal gespeichert" : `${room.members.length}/${room.teamSize} verbunden`}</small></div>
         <div className="header-actions">
-          <button onClick={onTeacher} title="Spielleitungsansicht">▦</button>
+          {room.mode !== "solo" && <button onClick={onTeacher} title="Spielleitungsansicht">▦</button>}
           <button onClick={onExit} title="Spiel verlassen">↗</button>
         </div>
       </header>
@@ -550,16 +587,16 @@ function GameShell({
       </nav>
       <section className="workspace">
         {message && <div className="connection-note">{message}</div>}
-        {(room.mode === "desktop" || room.mode === "demo") && (
+        {(room.mode === "desktop" || room.mode === "demo" || room.mode === "solo") && (
           <div className="role-switcher">
-            <span>Ansicht simulieren:</span>
+            <span>{room.mode === "solo" ? "Perspektive übernehmen:" : "Ansicht simulieren:"}</span>
             {(room.teamSize === 2 ? (["source", "space"] as Role[]) : (["source", "space", "critic"] as Role[])).map((item) => (
               <button key={item} className={role === item ? "active" : ""} onClick={() => setRole(item)}>{roleForTeam(item, room.teamSize)}</button>
             ))}
           </div>
         )}
         {tab === "case" && <CaseView mission={mission} room={room} role={effectiveRole} onAdvance={() => onAction("advance")} busy={busy} />}
-        {tab === "sources" && <SourcesView mission={mission} room={room} role={effectiveRole} onEvidence={(payload) => onAction("evidence", payload)} onAdvance={() => onAction("advance")} />}
+        {tab === "sources" && <SourcesView mission={mission} room={room} role={effectiveRole} onEvidence={(payload) => onAction("evidence", { ...payload, role: effectiveRole })} onAdvance={() => onAction("advance")} />}
         {tab === "map" && <MapView mission={mission} room={room} onPin={(payload) => onAction("pin", payload)} onAdvance={() => onAction("advance")} />}
         {tab === "evidence" && <EvidenceBoard mission={mission} room={room} />}
         {tab === "verdict" && <VerdictView mission={mission} room={room} onSave={(verdict, submit) => onAction("verdict", { verdict, submit })} />}
@@ -604,6 +641,14 @@ function CaseView({ mission, room, role, onAdvance, busy }: { mission: Mission; 
 }
 
 function TeamStrip({ room }: { room: Room }) {
+  if (room.mode === "solo") {
+    return (
+      <div className="team-strip solo-strip">
+        <span>EINZELERMITTLUNG</span>
+        <div><i>1</i><p><b>Du übernimmst alle Perspektiven</b><small>Quelle · Raum · Gegenprüfung</small></p><em /></div>
+      </div>
+    );
+  }
   return (
     <div className="team-strip">
       <span>REKONSTRUKTIONSTEAM</span>

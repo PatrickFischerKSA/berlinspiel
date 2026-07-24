@@ -62,3 +62,10 @@ test("enthält fünf Akten und alle Qualitätsdimensionen", async () => {
   }
 });
 
+test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", async () => {
+  const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
+  assert.match(gameUi, /Allein ermitteln/);
+  assert.match(gameUi, /mode: "solo"/);
+  assert.match(gameUi, /berlin-akte-solo/);
+  assert.match(gameUi, /Quelle · Raum · Gegenprüfung/);
+});

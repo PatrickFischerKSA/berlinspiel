@@ -53,6 +53,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-copy h1 em { color: var(--red); font-weight: 400; }
 .lead { max-width: 590px; margin: 32px 0; color: #b8b4ac; font: 17px/1.7 var(--serif); }
 .hero-actions { display: flex; gap: 12px; }
+.solo-button { border-color: #8b6f48; color: #e4c58f; }
 .resume-link { margin-top: 18px; border: 0; background: transparent; padding: 0; color: #8f928e; font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
 .case-stack { position: relative; height: 580px; perspective: 1100px; }
 .case-card { --angle: calc((var(--i) - 2) * 3deg); position: absolute; left: calc(8% + var(--i) * 7%); top: calc(40px + var(--i) * 25px); width: 58%; min-width: 330px; aspect-ratio: .76; padding: 26px; background: linear-gradient(150deg, #e2d8c3, #b8aa91); border: 1px solid #f4ebd8; color: #26231e; transform: rotate(var(--angle)) translateZ(calc(var(--i) * 12px)); box-shadow: -18px 18px 35px #0008; transform-origin: 50% 100%; }
