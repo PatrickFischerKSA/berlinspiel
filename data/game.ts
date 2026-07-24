@@ -32,6 +32,13 @@ export type Mission = {
     src: string;
     source: string;
     sourceHref?: string;
+    alternatives?: {
+      label: string;
+      title: string;
+      src: string;
+      source: string;
+      sourceHref: string;
+    }[];
     places: { id: string; label: string; x: number; y: number; clue: string }[];
     task: string;
   };
@@ -410,6 +417,36 @@ export const missions: Mission[] = [
       src: "https://umap.openstreetmap.fr/en/map/berlin-2026_1394963#14/52.496551/13.377571",
       source: "uMap / OpenStreetMap · Berlin 2026",
       sourceHref: "https://umap.openstreetmap.fr/en/map/berlin-2026_1394963#14/52.496551/13.377571",
+      alternatives: [
+        {
+          label: "1990",
+          title: "Berlin mit Umgebungskarte 1990",
+          src: "https://www.berliner-stadtplansammlung.de/index.php/karten/1990-berlin-mit-umgebungskarte",
+          source: "Berliner Stadtplansammlung · 1990",
+          sourceHref: "https://www.berliner-stadtplansammlung.de/index.php/karten/1990-berlin-mit-umgebungskarte",
+        },
+        {
+          label: "1992",
+          title: "Grosser Stadtplan Berlin 1992",
+          src: "https://www.berliner-stadtplansammlung.de/index.php/karten/1992-grosser-stadtplan-berlin",
+          source: "Berliner Stadtplansammlung · 1992",
+          sourceHref: "https://www.berliner-stadtplansammlung.de/index.php/karten/1992-grosser-stadtplan-berlin",
+        },
+        {
+          label: "1995",
+          title: "Übersichtskarte Berlin 1995",
+          src: "https://www.berliner-stadtplansammlung.de/index.php/karten/1995-uebersichtskarte-berlin",
+          source: "Berliner Stadtplansammlung · 1995",
+          sourceHref: "https://www.berliner-stadtplansammlung.de/index.php/karten/1995-uebersichtskarte-berlin",
+        },
+        {
+          label: "2026",
+          title: "Berlin 2026",
+          src: "https://umap.openstreetmap.fr/en/map/berlin-2026_1394963#14/52.496551/13.377571",
+          source: "uMap / OpenStreetMap · 2026",
+          sourceHref: "https://umap.openstreetmap.fr/en/map/berlin-2026_1394963#14/52.496551/13.377571",
+        },
+      ],
       places: [
         { id: "bornholmer", label: "Bornholmer Strasse", x: 51, y: 36, clue: "Ereignisort" },
         { id: "bernauer", label: "Bernauer Strasse", x: 46, y: 45, clue: "Erinnerungs- und Alltagsort" },

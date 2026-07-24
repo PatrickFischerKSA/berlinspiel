@@ -680,12 +680,30 @@ function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: 
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [activePlace, setActivePlace] = useState(mission.map.places[0]);
   const [note, setNote] = useState("");
+  const [mapIndex, setMapIndex] = useState(mission.map.alternatives ? mission.map.alternatives.length - 1 : 0);
   const drag = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
+  const selectedMap = mission.map.alternatives?.[mapIndex];
+  const mapSrc = selectedMap?.src || mission.map.src;
+  const mapTitle = selectedMap?.title || mission.map.title;
+  const mapSource = selectedMap?.source || mission.map.source;
+  const mapSourceHref = selectedMap?.sourceHref || mission.map.sourceHref;
   const reset = () => { setZoom(1); setOffset({ x: 0, y: 0 }); };
-  useEffect(reset, [mission]);
+  useEffect(() => {
+    reset();
+    setMapIndex(mission.map.alternatives ? mission.map.alternatives.length - 1 : 0);
+  }, [mission]);
   return (
     <div className="map-view">
-      <div className="section-title"><div><p className="eyebrow">KARTENEINGRIFF</p><h1>{mission.map.title}</h1></div><p>{mission.map.source}</p></div>
+      <div className="section-title"><div><p className="eyebrow">KARTENEINGRIFF</p><h1>{mapTitle}</h1></div><p>{mapSource}</p></div>
+      {mission.map.alternatives && (
+        <nav className="map-switcher" aria-label="Kartenjahr wählen">
+          <span>Zeitschnitt</span>
+          {mission.map.alternatives.map((map, index) => (
+            <button key={map.label} className={index === mapIndex ? "active" : ""} onClick={() => setMapIndex(index)}>{map.label}</button>
+          ))}
+          <small>Direkt eingebettet und zoombar</small>
+        </nav>
+      )}
       <div className="map-layout">
         <div
           className="map-canvas"
@@ -713,14 +731,14 @@ function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: 
             if (e.key === "ArrowUp") setOffset((v) => ({ ...v, y: v.y + 30 }));
             if (e.key === "ArrowDown") setOffset((v) => ({ ...v, y: v.y - 30 }));
           }}
-          aria-label={`Zoombare Karte: ${mission.map.title}`}
+          aria-label={`Zoombare Karte: ${mapTitle}`}
         >
           {mission.map.type === "embed" ? (
-            <iframe src={mission.map.src} title={mission.map.title} loading="lazy" />
+            <iframe key={mapSrc} src={mapSrc} title={mapTitle} loading="lazy" />
           ) : (
             <div className="image-stage" style={{ transform: `translate(${offset.x}px, ${offset.y}px) scale(${zoom})` }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={mission.map.src} alt={`${mission.map.title}, historische Karte`} draggable={false} />
+              <img src={mapSrc} alt={`${mapTitle}, historische Karte`} draggable={false} />
               {mission.map.places.map((place) => (
                 <button key={place.id} className={`map-marker ${activePlace.id === place.id ? "active" : ""}`} style={{ left: `${place.x}%`, top: `${place.y}%` }} onClick={(e) => { e.stopPropagation(); setActivePlace(place); }} title={place.label}><span>{mission.map.places.indexOf(place) + 1}</span></button>
               ))}
@@ -743,7 +761,7 @@ function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: 
           </div>
           <label>Begründung<textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={`Warum ist ${activePlace.label} für die Akte wichtig?`} /></label>
           <button className="primary wide" disabled={!note.trim()} onClick={() => { onPin({ placeId: activePlace.id, note }); setNote(""); }}>Ort mit Beleg verknüpfen</button>
-          {mission.map.sourceHref && <a className="source-link" href={mission.map.sourceHref} target="_blank" rel="noreferrer">Originalquelle öffnen ↗</a>}
+          {mapSourceHref && <a className="source-link" href={mapSourceHref} target="_blank" rel="noreferrer">Originalquelle öffnen ↗</a>}
         </aside>
       </div>
       <div className="next-bar"><span>{room.mapPins.length}/{Math.min(3, mission.map.places.length)} Orte verknüpft</span><button onClick={onAdvance} disabled={room.mapPins.length < Math.min(2, mission.map.places.length)}>Urteil formulieren →</button></div>

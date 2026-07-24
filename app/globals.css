@@ -186,6 +186,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .next-bar button:disabled { color: #4d5050; cursor: not-allowed; }
 
 /* Map */
+.map-switcher { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 12px 14px; border: 1px solid var(--line); border-bottom: 0; background: #151819; }
+.map-switcher span, .map-switcher small { color: var(--faint); font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.map-switcher button { min-width: 58px; padding: 8px 12px; border: 1px solid #3b3e3d; background: #101313; color: var(--muted); cursor: pointer; font: 700 10px var(--mono); }
+.map-switcher button.active { border-color: var(--mission); background: var(--mission); color: #111; }
+.map-switcher small { margin-left: auto; text-transform: none; letter-spacing: 0; }
 .map-layout { display: grid; grid-template-columns: minmax(480px, 1fr) 330px; min-height: 640px; border: 1px solid var(--line); background: #101313; }
 .map-canvas { position: relative; min-height: 640px; overflow: hidden; background: #1d211f; touch-action: none; cursor: grab; }
 .map-canvas:active { cursor: grabbing; }
