@@ -88,11 +88,10 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m02",
-        title: "Berlin zur Kaiserzeit – Glanz und Schatten",
-        kind: "Dokumentarfilm · Berlin Channel",
-        href: "https://www.youtube.com/watch?v=QhPR6fa68EY",
-        embedUrl: "https://www.youtube-nocookie.com/embed/QhPR6fa68EY",
-        duration: "83 Min. · im Spiel genau eine Aussage prüfen",
+        title: "Berliner Arbeiter",
+        kind: "Lokale Filmsequenz",
+        href: "/clips/01-kaiserreich.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Suche im Film eine Szene mit technischem oder städtischem Fortschritt und eine zweite Szene mit Armut oder harter Arbeit.",
         taskSteps: [
           "Stoppe bei einer Szene mit Verkehr, neuen Bauten, Maschinen oder einer belebten Geschäftsstrasse.",
@@ -160,11 +159,10 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m05",
-        title: "Waren die 20er wirklich golden?",
-        kind: "Terra X · Film",
-        href: "https://www.youtube.com/watch?v=04dyomiLGQ0",
-        embedUrl: "https://www.youtube-nocookie.com/embed/04dyomiLGQ0",
-        duration: "ca. 20 Min. · Kapitelmarken im Film",
+        title: "Goldene Zwanziger",
+        kind: "Lokale Filmsequenz",
+        href: "/clips/02-weimar-aufbruch.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Vergleiche eine Szene des Aufbruchs mit einer Szene, in der Armut, Krise oder Ausgrenzung sichtbar beziehungsweise genannt wird.",
         taskSteps: [
           "Wähle im Film das Kapitel „Strahlende Aufbruchsstimmung“ oder „Goldene Freiheiten“.",
@@ -183,9 +181,8 @@ export const missions: Mission[] = [
         id: "m03",
         title: "Kriminelle Clans im Berlin der 20er",
         kind: "Terra X History · Film",
-        href: "https://www.youtube.com/watch?v=BcXI3nXqSmY",
-        embedUrl: "https://www.youtube-nocookie.com/embed/BcXI3nXqSmY",
-        duration: "ca. 14 Min.",
+        href: "/clips/02-weimar-aufbruch.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Suche die Filmstelle, an der erklärt wird, warum ehemalige Gefangene ohne Arbeit und Wohnung blieben.",
         taskSteps: [
           "Stoppe dort, wo der Kreislauf aus Gefängnis, fehlender Arbeit und fehlender Wohnung erklärt wird.",
@@ -288,15 +285,15 @@ export const missions: Mission[] = [
     title: "Unter der Oberfläche",
     subtitle: "Nationalsozialismus und Krieg",
     backgroundVideo: "/clips/04-ns-verfolgung-krieg.mp4",
-    problem: "Finde heraus: Wie konnte Cioma Schönhaus trotz Verfolgung in Berlin überleben?",
+    problem: "Finde heraus: Wie nutzte das NS-Regime die Olympischen Spiele 1936, um Berlin als friedliche und moderne Weltstadt zu inszenieren?",
     damagedClaim:
-      "Die NS-Herrschaft veränderte Berlin vor allem durch monumentale Bauten und die Zerstörung im Bombenkrieg.",
+      "Die Olympischen Spiele 1936 waren ein unpolitisches Sportfest und bewiesen, dass Berlin eine offene, friedliche Weltstadt war.",
     disturbance:
-      "Menschen, Zwang und Verfolgungswege wurden aus der Architekturakte entfernt; Propagandabilder erscheinen als neutrale Dokumentation.",
+      "Die Archiv-KI behandelt inszenierte Propagandabilder als neutrale Wirklichkeit und löscht Ausgrenzung und Verfolgung aus dem Bild.",
     accent: "#ae7de8",
     roles: {
       source:
-        "Finde im Film ein konkretes Mittel, mit dem Cioma eine Kontrolle oder Verhaftung vermeiden konnte.",
+        "Finde im Film zwei sichtbare Mittel, mit denen Berlin modern, geordnet und friedlich präsentiert wurde.",
       space:
         "Verknüpfe Herrschaftsarchitektur mit mindestens einem Alltags- oder Verfolgungsraum. Suche auch ein nie verwirklichtes Projekt.",
       critic:
@@ -305,23 +302,23 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m08",
-        title: "Ein Tag in Berlin 1943 – Der Passfälscher",
-        kind: "Terra X History · ZDF-Film",
-        href: "https://www.zdf.de/play/dokus/ein-tag-in-alle-folgen-100/ein-tag-in-berlin-1943-der-passfaelscher-cioma-schoenhaus-doku-100",
-        duration: "45 Min. · Untertitel verfügbar",
-        viewingFocus: "Verfolge einen konkreten Weg Cioma Schönhaus' durch Berlin: Unterkunft, Kontrolle, Werkstatt oder Treffen mit Helfenden.",
+        title: "Olympia 1936",
+        kind: "Lokale Filmsequenz",
+        href: "/clips/04-ns-verfolgung-krieg.mp4",
+        duration: "lokale Filmsequenz",
+        viewingFocus: "Vergleiche die sichtbare Festinszenierung mit einem Hinweis auf Ausgrenzung, Verfolgung oder die politische Funktion der Spiele.",
         taskSteps: [
-          "Stoppe bei einer Szene, in der Cioma eine Kontrolle vermeiden, seine Identität verbergen oder die Unterkunft wechseln muss.",
-          "Notiere Timecode, Ort und die konkrete Gefahr in dieser Szene.",
-          "Suche eine zweite Szene mit Werkstatt, gefälschten Papieren oder Helfern und beschreibe, wie dieser Ort Schutz ermöglicht.",
+          "Stoppe bei einer Szene, die Berlin modern, geordnet oder weltoffen erscheinen lässt.",
+          "Notiere den Timecode und zwei sichtbare Einzelheiten der Inszenierung.",
+          "Suche einen Hinweis darauf, welche Ausgrenzung oder politische Absicht dieses Festbild verdeckte.",
         ],
-        signalWords: ["kontrolle", "polizei", "gestapo", "ausweis", "kennkarte", "wohnung", "unterkunft", "werkstatt", "waldstrasse", "helfer", "flucht", "versteck"],
-        successFeedback: "Du hast Verfolgung als räumlichen Alltag belegt: Kontrolle und Hilfe entstehen an konkreten Orten, obwohl ein gewöhnlicher Stadtplan sie nicht markiert.",
-        researchQuestion: "Welches konkrete Mittel half Cioma Schönhaus, eine Kontrolle oder Verhaftung zu vermeiden?",
-        evidencePrompt: "Cioma nutzt … Bei 12:40 sieht oder hört man … Das schützt ihn, weil …",
+        signalWords: ["stadion", "sport", "fahne", "publikum", "ordnung", "modern", "propaganda", "ausgrenzung", "verfolgung", "regime"],
+        successFeedback: "Du hast Festbild und politische Funktion anhand der lokalen Filmsequenz voneinander getrennt.",
+        researchQuestion: "Welche sichtbaren Mittel nutzte das Regime für die Selbstdarstellung – und welche Wirklichkeit wurde dadurch verdeckt?",
+        evidencePrompt: "Bei 00:… sieht man … Das vermittelt den Eindruck …; verdeckt wird dabei …",
         excerpt:
-          "Cioma Schönhaus bewegt sich mit falschen Papieren durch ein Netz aus Kontrolle, Verstecken, Hilfe und Widerstand.",
-        prompt: "Welche zwei Filmstellen zeigen, dass Verfolgung ein Netz aus Kontrolle, Verstecken und Hilfe erzeugt, das auf einem normalen Stadtplan unsichtbar bleibt?",
+          "Sport, Architektur, Fahnen und Menschenmengen erzeugen ein internationales Festbild, das die Diktatur zur Selbstdarstellung nutzt.",
+        prompt: "Welche Filmstelle zeigt die Inszenierung – und welche Information macht ihre politische Funktion sichtbar?",
       },
     ],
     map: {
@@ -426,8 +423,8 @@ export const missions: Mission[] = [
         id: "m10",
         title: "Berlin-Blockade und Luftbrücke",
         kind: "Historischer Film · LeMO",
-        href: "https://www.hdg.de/lemo/bestand/medien/video-berlin-blockade-und-luftbruecke.html",
-        duration: "Wochenschauausschnitte 1948/49",
+        href: "/clips/06-berlinkrise-17-juni.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Suche eine Einstellung, die zeigt, wie Waren nach West-Berlin gelangen, und achte auf die Sprache der Wochenschau.",
         taskSteps: ["Stoppe bei Flugzeug, Flugplatz oder Ladung.", "Notiere, was transportiert wird.", "Sichere den Timecode."],
         signalWords: ["flugzeug", "flugplatz", "ladung", "kohle", "lebensmittel", "versorgung", "blockade", "luftbrücke", "west"],
@@ -501,9 +498,8 @@ export const missions: Mission[] = [
         id: "m12",
         title: "Die Berliner Mauer",
         kind: "Terra X OER · Film",
-        href: "https://schule.zdf.de/video/die-berliner-mauer-creative-commons-100",
-        embedUrl: "https://ngp.zdf.de/miniplayer/embed/?mediaID=SCMS_d17fd36e-df06-4928-bb31-fa5ff180f3e9",
-        duration: "2 Min. · CC BY 4.0",
+        href: "/clips/07-mauer-geteilte-stadt.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Zähle im kurzen Film mindestens drei verschiedene Teile der Grenzanlage.",
         taskSteps: [
           "Pausiere die Animation der Grenzanlage.",
@@ -571,10 +567,10 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m14",
-        title: "Der 9. November 1989: Die Maueröffner",
-        kind: "SPIEGEL-TV-Drehmaterial · bpb",
-        href: "https://www.bpb.de/mediathek/video/297768/der-9-november-1989-die-maueroeffner/",
-        duration: "29 Min. · unkommentiertes Drehmaterial",
+        title: "Mauerfall",
+        kind: "Lokale Filmsequenz",
+        href: "/clips/08-mauerfall-wiedervereinigung.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Beobachte genau, was Menschenmenge und Grenzer an der Bornholmer Strasse tatsächlich tun.",
         taskSteps: [
           "Stoppe bei einer Szene, in der die Menge ruft, wartet, diskutiert oder Druck aufbaut.",
@@ -639,8 +635,8 @@ export const missions: Mission[] = [
         id: "m15",
         title: "Wir bleiben hier",
         kind: "Dokumentarfilm · bpb",
-        href: "https://www.bpb.de/mediathek/video/310871/wir-bleiben-hier/",
-        duration: "32 Min. · Nachwendezeit",
+        href: "/clips/09-hauptstadt-gentrifizierung.mp4",
+        duration: "lokale Filmsequenz",
         viewingFocus: "Achte auf Erfahrungen vietnamesischer Vertragsarbeiterinnen und Vertragsarbeiter nach 1989.",
         taskSteps: ["Film ansehen.", "Eine konkrete Unsicherheit benennen.", "Timecode sichern."],
         signalWords: ["hoffnung", "einheit", "unsicherheit", "angst", "rassismus", "ausgrenzung", "vietnames", "bleiben", "arbeit", "alltag"],

@@ -948,7 +948,9 @@ function SourcesView({
         <article className="source-reader">
           <header><span>AUFGABE {taskIndex + 1}/3 · FILM {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Film separat öffnen ↗</a></header>
           <h2>{selected.title}</h2><p className="source-kind">{selected.kind} · {selected.duration}</p>
-          {selected.embedUrl ? (
+          {selected.href.startsWith("/clips/") ? (
+            <div className="film-frame local-film"><video src={selected.href} controls playsInline preload="metadata" /></div>
+          ) : selected.embedUrl ? (
             <div className="film-frame"><iframe src={selected.embedUrl} title={`Film: ${selected.title}`} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
           ) : (
             <div className="film-launch">

@@ -116,8 +116,13 @@ test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
     readFile(new URL("../data/tasks.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(gameData, /youtube-nocookie\.com\/embed/);
-  assert.match(gameData, /ngp\.zdf\.de\/miniplayer\/embed/);
+  assert.doesNotMatch(gameData, /youtube(?:-nocookie)?\.com|youtu\.be|ngp\.zdf\.de|bpb\.de\/mediathek|hdg\.de\/lemo/);
+  const filmResources = [...gameData.matchAll(/href: "(\/clips\/[^"]+\.mp4)"/g)].map((match) => match[1]);
+  assert.ok(filmResources.length >= 9);
+  assert.match(gameUi, /selected\.href\.startsWith\("\/clips\/"\)/);
+  assert.match(gameUi, /<video src=\{selected\.href\} controls/);
+  assert.doesNotMatch(tasks, /resourceId: "(?:m03|m10|m15)"/);
+  assert.doesNotMatch(tasks, /Cioma|Ringvereine|vietnamesische Vertragsarbeiter/);
   assert.match(gameUi, /Benötigte Filmstelle angesehen/);
   assert.match(tasks, /locatorLabel: "Timecode/);
   assert.doesNotMatch(gameUi, /PDF S\. 2–3|Transkriptbeleg/);
