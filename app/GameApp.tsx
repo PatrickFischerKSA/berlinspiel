@@ -477,6 +477,17 @@ function Welcome({
         <div className="case-stack" aria-label="Neun beschädigte Berlin-Akten">
           {missions.map((mission, index) => (
             <article key={mission.id} className="case-card" style={{ "--i": index, "--accent": mission.accent } as React.CSSProperties}>
+              <video
+                className="case-card-film"
+                src={mission.backgroundVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
+                onError={(event) => { event.currentTarget.style.display = "none"; }}
+              />
               <span>{mission.number}</span>
               <strong>{mission.title}</strong>
               <small>{mission.period}</small>

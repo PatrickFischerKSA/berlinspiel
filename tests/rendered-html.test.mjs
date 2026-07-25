@@ -75,6 +75,17 @@ test("bereitet neun eindeutige Blur-Hintergrundfilme vor", async () => {
   assert.ok(clips.every((clip) => clip.startsWith("/clips/") && clip.endsWith(".mp4")));
 });
 
+test("zeigt die neun Stationsfilme auch in den Akten des Startstapels", async () => {
+  const [gameUi, styles] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(gameUi, /className="case-card-film"/);
+  assert.match(gameUi, /src=\{mission\.backgroundVideo\}/);
+  assert.match(styles, /\.case-card-film/);
+  assert.match(styles, /\.case-card:hover \.case-card-film/);
+});
+
 test("zeigt das offizielle Berliner Livebild geblurrt auf der Startseite", async () => {
   const [gameUi, styles] = await Promise.all([
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
