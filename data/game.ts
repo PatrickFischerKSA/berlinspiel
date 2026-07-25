@@ -63,6 +63,63 @@ export const roleLabels = {
   critic: "Gegenprüfer/in",
 };
 
+function localFilmResource(id: string, title: string, href: string, viewingFocus: string): Mission["resources"][number] {
+  return {
+    id,
+    title,
+    kind: "Lokale MP4-Filmressource",
+    href,
+    duration: "vollständige lokale Filmdatei",
+    viewingFocus,
+    taskSteps: ["Film im eingebauten Player öffnen.", "Gesuchte Stelle pausieren.", "Timecode und sicht- oder hörbares Detail sichern."],
+    signalWords: [],
+    successFeedback: "Die Filmstelle ist lokal gesichert und kann unabhängig von externen Plattformen geprüft werden.",
+    researchQuestion: viewingFocus,
+    evidencePrompt: "Bei 00:… sieht oder hört man … Daraus folgt …",
+    excerpt: "Lokale Archivkopie aus dem bereitgestellten Materialbestand.",
+    prompt: viewingFocus,
+  };
+}
+
+export const supplementalFilms: Record<string, Mission["resources"]> = {
+  grossstadt: [
+    localFilmResource("m02b", "Arbeiter in der Kaiserzeit", "/films/01b-arbeiter-kaiserzeit.mp4", "Welche Arbeits- und Lebensbedingungen zeigt diese ergänzende Filmsequenz?"),
+    localFilmResource("m02c", "Berliner Arbeiter – Kurzsequenz", "/clips/01-kaiserreich.mp4", "Welches Detail beschreibt den Alltag Berliner Arbeiterinnen und Arbeiter?"),
+  ],
+  goldlack: [
+    localFilmResource("m04", "5 Fakten: Sündenpfuhl Berlin 1926", "/films/02b-suendenpfuhl-berlin.mp4", "Welche Information korrigiert ein Klischee über Berlin 1926?"),
+    localFilmResource("m05b", "Goldene Zwanziger – ergänzende Sequenz", "/films/02d-goldene-zwanziger.mp4", "Welcher sichtbare Gegensatz prägt die Goldenen Zwanziger?"),
+    localFilmResource("m05c", "Goldene Zwanziger – Kurzsequenz", "/clips/02-weimar-aufbruch.mp4", "Welche Information zeigt Aufbruch oder soziale Begrenzung?"),
+  ],
+  "ende-weimar": [
+    localFilmResource("m06b", "Bevor Hitler kam – Teil 2", "/films/03b-bevor-hitler-kam-teil-2.m4v", "Welche weiteren Schritte führten von der Krise der Republik in die Diktatur?"),
+    localFilmResource("m06c", "Machtergreifung der NSDAP", "/films/03c-machtergreifung-nsdap.mp4", "Welcher Schritt festigte die nationalsozialistische Herrschaft?"),
+    localFilmResource("m06d", "Machtübernahme – Kurzsequenz", "/clips/03-ende-weimar-machtergreifung.mp4", "Welche Handlung zeigt den Übergang von Demokratie zu Diktatur?"),
+  ],
+  "unter-der-oberflaeche": [
+    localFilmResource("m07", "Nazibauten gestern und heute", "/films/04a-nazibauten.m4v", "Welche bauliche Inszenierung von Herrschaft zeigt der Film?"),
+    localFilmResource("m13", "Olympic Sports in Berlin 1936", "/films/04c-olympia-sportfilm.mp4", "Welche Mittel inszenieren die Spiele als modernes internationales Fest?"),
+    localFilmResource("m13b", "Olympia 1936 – Kurzsequenz", "/clips/04-ns-verfolgung-krieg.mp4", "Welches Bild Berlins erzeugt die olympische Inszenierung?"),
+  ],
+  "kriegsende-besatzung": [
+    localFilmResource("m09a2", "Frontstadt, Kapitulation, Neubeginn – Teil 2", "/films/05a-frontstadt-kapitulation-teil-2.m4v", "Welche weiteren Spuren von Kapitulation, Besatzung oder Neubeginn zeigt der zweite Filmteil?"),
+    localFilmResource("m09b", "Berlin im Juli 1945", "/films/05b-berlin-july-1945.mp4", "Welche Spuren von Zerstörung und Neubeginn zeigt das Farbmaterial?"),
+    localFilmResource("m09c", "Berlin bei Kriegsende – Kurzsequenz", "/clips/05-kriegsende-besatzung.mp4", "Welche Alltagssituation zeigt das Kriegsende?"),
+  ],
+  "berlinkrise-17-juni": [
+    localFilmResource("m11b", "17. Juni – Kurzsequenz", "/clips/06-berlinkrise-17-juni.mp4", "Welche Forderung und welche Reaktion der Staatsmacht zeigt die Sequenz?"),
+  ],
+  frontstadt: [
+    localFilmResource("m12b", "Mauerbau – Kurzsequenz", "/clips/07-mauer-geteilte-stadt.mp4", "Welche Veränderung des Stadtraums zeigt der Mauerbau?"),
+  ],
+  "nach-der-linie": [
+    localFilmResource("m14b", "Mauerfall – Kurzsequenz", "/clips/08-mauerfall-wiedervereinigung.mp4", "Welche Handlung trägt zur Öffnung der Grenze bei?"),
+  ],
+  "hauptstadt-gentrifizierung": [
+    localFilmResource("m16b", "Berlin wird Hauptstadt – Kurzsequenz", "/clips/09-hauptstadt-gentrifizierung.mp4", "Welche Veränderung verbindet Hauptstadtfunktion und Aufwertung?"),
+  ],
+};
+
 export const missions: Mission[] = [
   {
     id: "grossstadt",
@@ -90,7 +147,7 @@ export const missions: Mission[] = [
         id: "m02",
         title: "Berliner Arbeiter",
         kind: "Lokale Filmsequenz",
-        href: "/clips/01-kaiserreich.mp4",
+        href: "/films/01a-berlin-kaiserzeit.m4v",
         duration: "lokale Filmsequenz",
         viewingFocus: "Suche im Film eine Szene mit technischem oder städtischem Fortschritt und eine zweite Szene mit Armut oder harter Arbeit.",
         taskSteps: [
@@ -161,7 +218,7 @@ export const missions: Mission[] = [
         id: "m05",
         title: "Goldene Zwanziger",
         kind: "Lokale Filmsequenz",
-        href: "/clips/02-weimar-aufbruch.mp4",
+        href: "/films/02c-waren-die-zwanziger-golden.m4v",
         duration: "lokale Filmsequenz",
         viewingFocus: "Vergleiche eine Szene des Aufbruchs mit einer Szene, in der Armut, Krise oder Ausgrenzung sichtbar beziehungsweise genannt wird.",
         taskSteps: [
@@ -181,7 +238,7 @@ export const missions: Mission[] = [
         id: "m03",
         title: "Kriminelle Clans im Berlin der 20er",
         kind: "Terra X History · Film",
-        href: "/clips/02-weimar-aufbruch.mp4",
+        href: "/films/02a-kriminelle-clans.mp4",
         duration: "lokale Filmsequenz",
         viewingFocus: "Suche die Filmstelle, an der erklärt wird, warum ehemalige Gefangene ohne Arbeit und Wohnung blieben.",
         taskSteps: [
@@ -245,7 +302,7 @@ export const missions: Mission[] = [
       id: "m06",
       title: "Berlin 1929–1933: Demokratie unter Druck",
       kind: "Eigene Filmsequenz · wird ergänzt",
-      href: "/clips/03-ende-weimar-machtergreifung.mp4",
+      href: "/films/03a-bevor-hitler-kam-teil-1.m4v",
       duration: "kurze Filmsequenz",
       viewingFocus: "Achte auf Wirtschaftskrise, politische Gewalt und den Abbau demokratischer Rechte.",
       taskSteps: ["Film ansehen.", "Einen Schritt des Demokratieabbaus benennen.", "Timecode sichern."],
@@ -302,23 +359,23 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m08",
-        title: "Olympia 1936",
-        kind: "Lokale Filmsequenz",
-        href: "/clips/04-ns-verfolgung-krieg.mp4",
-        duration: "lokale Filmsequenz",
-        viewingFocus: "Vergleiche die sichtbare Festinszenierung mit einem Hinweis auf Ausgrenzung, Verfolgung oder die politische Funktion der Spiele.",
+        title: "Ein Tag in Berlin 1943 – Der Passfälscher",
+        kind: "Lokale MP4-Filmressource",
+        href: "/films/04b-passfaelscher.m4v",
+        duration: "vollständige lokale Webkopie",
+        viewingFocus: "Verfolge einen konkreten Weg Cioma Schönhaus' durch Berlin: Unterkunft, Kontrolle, Werkstatt oder Treffen mit Helfenden.",
         taskSteps: [
-          "Stoppe bei einer Szene, die Berlin modern, geordnet oder weltoffen erscheinen lässt.",
-          "Notiere den Timecode und zwei sichtbare Einzelheiten der Inszenierung.",
-          "Suche einen Hinweis darauf, welche Ausgrenzung oder politische Absicht dieses Festbild verdeckte.",
+          "Stoppe bei einer Szene, in der Cioma eine Kontrolle vermeiden, seine Identität verbergen oder die Unterkunft wechseln muss.",
+          "Notiere Timecode, Ort und die konkrete Gefahr in dieser Szene.",
+          "Suche eine zweite Szene mit Werkstatt, gefälschten Papieren oder Helfern und beschreibe, wie dieser Ort Schutz ermöglicht.",
         ],
-        signalWords: ["stadion", "sport", "fahne", "publikum", "ordnung", "modern", "propaganda", "ausgrenzung", "verfolgung", "regime"],
-        successFeedback: "Du hast Festbild und politische Funktion anhand der lokalen Filmsequenz voneinander getrennt.",
-        researchQuestion: "Welche sichtbaren Mittel nutzte das Regime für die Selbstdarstellung – und welche Wirklichkeit wurde dadurch verdeckt?",
-        evidencePrompt: "Bei 00:… sieht man … Das vermittelt den Eindruck …; verdeckt wird dabei …",
+        signalWords: ["kontrolle", "polizei", "gestapo", "ausweis", "kennkarte", "wohnung", "unterkunft", "werkstatt", "helfer", "flucht", "versteck"],
+        successFeedback: "Du hast Verfolgung als räumlichen Alltag belegt: Kontrolle und Hilfe entstehen an konkreten Orten.",
+        researchQuestion: "Welches konkrete Mittel half Cioma Schönhaus, eine Kontrolle oder Verhaftung zu vermeiden?",
+        evidencePrompt: "Cioma nutzt … Bei 12:40 sieht oder hört man … Das schützt ihn, weil …",
         excerpt:
-          "Sport, Architektur, Fahnen und Menschenmengen erzeugen ein internationales Festbild, das die Diktatur zur Selbstdarstellung nutzt.",
-        prompt: "Welche Filmstelle zeigt die Inszenierung – und welche Information macht ihre politische Funktion sichtbar?",
+          "Cioma Schönhaus bewegt sich mit falschen Papieren durch ein Netz aus Kontrolle, Verstecken, Hilfe und Widerstand.",
+        prompt: "Welche zwei Filmstellen zeigen das Netz aus Kontrolle, Verstecken und Hilfe?",
       },
     ],
     map: {
@@ -369,7 +426,7 @@ export const missions: Mission[] = [
       id: "m09",
       title: "Berlin 1945: Kriegsende und Besatzung",
       kind: "Eigene Filmsequenz · wird ergänzt",
-      href: "/clips/05-kriegsende-besatzung.mp4",
+      href: "/films/05a-frontstadt-kapitulation-teil-1.m4v",
       duration: "kurze Filmsequenz",
       viewingFocus: "Achte auf Zerstörung, Versorgung und die Anwesenheit der vier Besatzungsmächte.",
       taskSteps: ["Film ansehen.", "Eine Alltagsfolge benennen.", "Timecode sichern."],
@@ -423,7 +480,7 @@ export const missions: Mission[] = [
         id: "m10",
         title: "Berlin-Blockade und Luftbrücke",
         kind: "Historischer Film · LeMO",
-        href: "/clips/06-berlinkrise-17-juni.mp4",
+        href: "/films/06a-steine-gegen-panzer.mp4",
         duration: "lokale Filmsequenz",
         viewingFocus: "Suche eine Einstellung, die zeigt, wie Waren nach West-Berlin gelangen, und achte auf die Sprache der Wochenschau.",
         taskSteps: ["Stoppe bei Flugzeug, Flugplatz oder Ladung.", "Notiere, was transportiert wird.", "Sichere den Timecode."],
@@ -438,7 +495,7 @@ export const missions: Mission[] = [
         id: "m11",
         title: "Berlin 1953: Der 17. Juni",
         kind: "Eigene Filmsequenz · wird ergänzt",
-        href: "/clips/06-berlinkrise-17-juni.mp4",
+        href: "/films/06a-steine-gegen-panzer.mp4",
         duration: "kurze Filmsequenz",
         viewingFocus: "Achte auf den Ausgangspunkt der Proteste und die Forderungen der Demonstrierenden.",
         taskSteps: ["Film ansehen.", "Eine Forderung benennen.", "Timecode sichern."],
@@ -498,7 +555,7 @@ export const missions: Mission[] = [
         id: "m12",
         title: "Die Berliner Mauer",
         kind: "Terra X OER · Film",
-        href: "/clips/07-mauer-geteilte-stadt.mp4",
+        href: "/films/07a-bau-der-mauer.mp4",
         duration: "lokale Filmsequenz",
         viewingFocus: "Zähle im kurzen Film mindestens drei verschiedene Teile der Grenzanlage.",
         taskSteps: [
@@ -569,7 +626,7 @@ export const missions: Mission[] = [
         id: "m14",
         title: "Mauerfall",
         kind: "Lokale Filmsequenz",
-        href: "/clips/08-mauerfall-wiedervereinigung.mp4",
+        href: "/films/08a-deutsche-wiedervereinigung.mp4",
         duration: "lokale Filmsequenz",
         viewingFocus: "Beobachte genau, was Menschenmenge und Grenzer an der Bornholmer Strasse tatsächlich tun.",
         taskSteps: [
@@ -635,7 +692,7 @@ export const missions: Mission[] = [
         id: "m15",
         title: "Wir bleiben hier",
         kind: "Dokumentarfilm · bpb",
-        href: "/clips/09-hauptstadt-gentrifizierung.mp4",
+        href: "/films/09a-berlin-wird-hauptstadt.mp4",
         duration: "lokale Filmsequenz",
         viewingFocus: "Achte auf Erfahrungen vietnamesischer Vertragsarbeiterinnen und Vertragsarbeiter nach 1989.",
         taskSteps: ["Film ansehen.", "Eine konkrete Unsicherheit benennen.", "Timecode sichern."],
@@ -650,7 +707,7 @@ export const missions: Mission[] = [
         id: "m16",
         title: "Berlin wird Hauptstadt – und teurer",
         kind: "Eigene Filmsequenz · wird ergänzt",
-        href: "/clips/09-hauptstadt-gentrifizierung.mp4",
+        href: "/films/09a-berlin-wird-hauptstadt.mp4",
         duration: "kurze Filmsequenz",
         viewingFocus: "Achte auf Regierungsumzug, Investitionen, Sanierung, Mietsteigerung und Verdrängung.",
         taskSteps: ["Film ansehen.", "Eine Ursache und eine Folge der Gentrifizierung benennen.", "Timecode sichern."],

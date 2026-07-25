@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/set-state-in-effect, react-hooks/purity */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { finalPrompt, missions, roleLabels, type Mission } from "../data/game";
+import { finalPrompt, missions, roleLabels, supplementalFilms, type Mission } from "../data/game";
 import { missionNarratives } from "../data/narrative";
 import { stationTasks, type InvestigationTask } from "../data/tasks";
 import { timelineEras, timelineEvents, timelineSources, type TimelineEra } from "../data/timeline";
@@ -906,7 +906,8 @@ function SourcesView({
   const tasks = stationTasks[mission.id];
   const [taskIndex, setTaskIndex] = useState(0);
   const task = tasks[taskIndex];
-  const selected = mission.resources.find((resource) => resource.id === task.resourceId) || mission.resources[0];
+  const availableFilms = [...mission.resources, ...(supplementalFilms[mission.id] || [])];
+  const selected = availableFilms.find((resource) => resource.id === task.resourceId) || mission.resources[0];
   const [locator, setLocator] = useState("");
   const [note, setNote] = useState("");
   const [category, setCategory] = useState("Sichtbare Beobachtung");
@@ -934,11 +935,11 @@ function SourcesView({
   const categoryOptions = taskCategoryOptions(task);
   return (
     <div className="source-view">
-      <div className="section-title"><div><p className="eyebrow">QUELLENUNTERSUCHUNG · DREI ERMITTLUNGSSCHRITTE</p><h1>Material als Beweis</h1></div><p>Rolle: <b>{roleForTeam(role, room.teamSize)}</b></p></div>
+      <div className="section-title"><div><p className="eyebrow">QUELLENUNTERSUCHUNG · MINDESTENS DREI ERMITTLUNGSSCHRITTE</p><h1>Material als Beweis</h1></div><p>Rolle: <b>{roleForTeam(role, room.teamSize)}</b></p></div>
       <div className="story-bridge"><span>ÜBERGANG · FILMARCHIV</span><p>{narrative.transitions.sources}</p><small>{narrative.perspective.name} wartet auf eine Antwort, die mehr trägt als eine Vermutung.</small></div>
       <div className="source-layout">
         <aside className="resource-list">
-          <div className="task-progress"><span>{missionTaskCount}/3</span><p><b>Aufgaben gesichert</b><small>Spur → Zusammenhang → Prüfung</small></p></div>
+          <div className="task-progress"><span>{missionTaskCount}/{tasks.length}</span><p><b>Aufgaben gesichert</b><small>3 nötig · weitere optional</small></p></div>
           {tasks.map((item, index) => (
             <button key={item.id} className={`${task.id === item.id ? "active" : ""} ${completedTaskIds.has(item.id) ? "completed" : ""}`} onClick={() => setTaskIndex(index)}>
               <span>{completedTaskIds.has(item.id) ? "✓" : String(index + 1).padStart(2, "0")}</span><p><b>{item.title}</b><small>{item.type}</small></p>
@@ -946,9 +947,9 @@ function SourcesView({
           ))}
         </aside>
         <article className="source-reader">
-          <header><span>AUFGABE {taskIndex + 1}/3 · FILM {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Film separat öffnen ↗</a></header>
+          <header><span>AUFGABE {taskIndex + 1}/{tasks.length} · FILM {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Film separat öffnen ↗</a></header>
           <h2>{selected.title}</h2><p className="source-kind">{selected.kind} · {selected.duration}</p>
-          {selected.href.startsWith("/clips/") ? (
+          {selected.href.startsWith("/clips/") || selected.href.startsWith("/films/") ? (
             <div className="film-frame local-film"><video src={selected.href} controls playsInline preload="metadata" /></div>
           ) : selected.embedUrl ? (
             <div className="film-frame"><iframe src={selected.embedUrl} title={`Film: ${selected.title}`} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
@@ -959,6 +960,19 @@ function SourcesView({
               <a href={selected.href} target="_blank" rel="noreferrer">Film starten ↗</a>
             </div>
           )}
+          {supplementalFilms[mission.id]?.length ? (
+            <details className="local-film-archive">
+              <summary>Weitere lokale Filme dieser Akte <span>{supplementalFilms[mission.id].length}</span></summary>
+              <div>
+                {supplementalFilms[mission.id].map((film) => (
+                  <article key={film.id}>
+                    <header><b>{film.title}</b><a href={film.href} target="_blank" rel="noreferrer">separat öffnen ↗</a></header>
+                    <video src={film.href} controls playsInline preload="none" />
+                  </article>
+                ))}
+              </div>
+            </details>
+          ) : null}
           <div className="task-act"><span>{task.act}</span><b>{task.type}</b></div>
           <div className="viewing-focus"><span>FINDE HERAUS</span><p><b>{task.title}</b>{task.question}</p></div>
           <div className="guided-task"><b>Deine Methode</b><p>{task.method} Der Timecode zeigt, <strong>woher deine Antwort stammt.</strong></p></div>
@@ -998,7 +1012,7 @@ function SourcesView({
           {feedback && <div className={`instant-feedback ${feedback.type}`} role="status"><b>{feedback.type === "success" ? "Antwort gesichert" : "Noch nicht gesichert"}</b><p>{feedback.text}</p></div>}
           {(feedback?.type === "success" || taskCompleted) && taskIndex < 2 && <button className="secondary wide" type="button" onClick={() => setTaskIndex((current) => current + 1)}>Nächster Ermittlungsschritt →</button>}
           {!watched[task.id] && <p className="form-lock">Sieh zuerst die für diese Aufgabe benötigte Filmstelle an.</p>}
-          <small>{missionTaskCount}/3 Aufgaben dieser Akte gesichert</small>
+          <small>{missionTaskCount}/{tasks.length} Aufgaben dieser Akte gesichert · 3 erforderlich</small>
         </form>
       </div>
       <div className="next-bar"><span>Erst Spur, Zusammenhang und Archivfehler sichern – dann öffnet sich der Kartenraum.</span><button onClick={onAdvance} disabled={missionTaskCount < 3}>Kartenraum öffnen →</button></div>

@@ -117,12 +117,15 @@ test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
   assert.doesNotMatch(gameData, /youtube(?:-nocookie)?\.com|youtu\.be|ngp\.zdf\.de|bpb\.de\/mediathek|hdg\.de\/lemo/);
-  const filmResources = [...gameData.matchAll(/href: "(\/clips\/[^"]+\.mp4)"/g)].map((match) => match[1]);
+  const filmResources = [...gameData.matchAll(/href: "(\/(?:films|clips)\/[^"]+\.(?:mp4|m4v))"/g)].map((match) => match[1]);
   assert.ok(filmResources.length >= 9);
   assert.match(gameUi, /selected\.href\.startsWith\("\/clips\/"\)/);
   assert.match(gameUi, /<video src=\{selected\.href\} controls/);
-  assert.doesNotMatch(tasks, /resourceId: "(?:m03|m10|m15)"/);
-  assert.doesNotMatch(tasks, /Cioma|Ringvereine|vietnamesische Vertragsarbeiter/);
+  assert.match(tasks, /resourceId: "m03"/);
+  assert.match(tasks, /Cioma|Ringvereine/);
+  assert.match(gameData, /supplementalFilms/);
+  const localAssets = [...gameData.matchAll(/"(\/(?:films|clips)\/[^"]+\.(?:mp4|m4v))"/g)].map((match) => match[1]);
+  await Promise.all([...new Set(localAssets)].map((asset) => access(new URL(`../public${asset}`, import.meta.url))));
   assert.match(gameUi, /Benötigte Filmstelle angesehen/);
   assert.match(tasks, /locatorLabel: "Timecode/);
   assert.doesNotMatch(gameUi, /PDF S\. 2–3|Transkriptbeleg/);
@@ -145,20 +148,20 @@ test("führt ohne Ratespiel über konkrete Filmfragen und Sofortfeedback", async
   assert.doesNotMatch(gameUi, /Welche sichtbare Beobachtung belegt Modernität/);
 });
 
-test("enthält pro Station drei eigenständige Aufgaben mit konsistenter Dramaturgie", async () => {
+test("enthält pro Station mindestens drei eigenständige Aufgaben und zusätzliche Vertiefungen", async () => {
   const [tasks, gameUi] = await Promise.all([
     readFile(new URL("../data/tasks.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
-  assert.equal((tasks.match(/\n      act: "SPUR SICHERN"/g) ?? []).length, 9);
-  assert.equal((tasks.match(/\n      act: "ZUSAMMENHANG REKONSTRUIEREN"/g) ?? []).length, 9);
-  assert.equal((tasks.match(/\n      act: "ARCHIVFEHLER PRÜFEN"/g) ?? []).length, 9);
-  assert.equal((tasks.match(/\n      id: "/g) ?? []).length, 27);
+  assert.ok((tasks.match(/\n      act: "SPUR SICHERN"/g) ?? []).length >= 9);
+  assert.ok((tasks.match(/\n      act: "ZUSAMMENHANG REKONSTRUIEREN"/g) ?? []).length >= 9);
+  assert.ok((tasks.match(/\n      act: "ARCHIVFEHLER PRÜFEN"/g) ?? []).length >= 9);
+  assert.ok((tasks.match(/\n      id: "/g) ?? []).length > 27);
   for (const type of ["Bilddetektiv", "Ablaufprotokoll", "Ursache–Folge", "Kontrastpaar", "Begriffsprüfung", "Quellenkritik", "Perspektivwechsel", "Netzwerkrekonstruktion", "Behauptungscheck"]) {
     assert.match(tasks, new RegExp(`type: "${type}"`));
   }
   assert.match(gameUi, /missionTaskCount < 3/);
-  assert.match(gameUi, /Spur → Zusammenhang → Prüfung/);
+  assert.match(gameUi, /weitere optional/);
   assert.match(gameUi, /Nächster Ermittlungsschritt/);
 });
 
