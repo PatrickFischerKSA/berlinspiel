@@ -204,6 +204,9 @@ test("erzählt jede Akte mit eigener Perspektivfigur und vollständigem Spannung
     assert.match(gameUi, new RegExp(marker));
   }
   assert.match(gameUi, /Steckbrief und Lebenslauf öffnen/);
+  assert.match(gameUi, /Porträt von \$\{figure\.name\} vergrößern/);
+  assert.match(gameUi, /portrait-lightbox/);
+  assert.match(gameUi, /event\.key === "Escape"/);
   assert.equal((portraitPrompts.match(/^## \d{2} ·/gm) ?? []).length, 9);
   assert.ok(narrative.length > 14000, "Der narrative Textkorpus ist noch zu knapp.");
 });

@@ -815,12 +815,26 @@ function CaseView({
 
 function PerspectiveCard({ mission }: { mission: Mission }) {
   const figure = missionNarratives[mission.id].perspective;
+  const [portraitOpen, setPortraitOpen] = useState(false);
+
+  useEffect(() => {
+    if (!portraitOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPortraitOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [portraitOpen]);
+
   return (
     <article className="perspective-card">
       <header><span>PERSPEKTIVFIGUR</span><small>fiktiv · quellenbasiert</small></header>
       <div className="perspective-identity">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={figure.portrait} alt={`Porträt der fiktiven Perspektivfigur ${figure.name}`} />
+        <button className="portrait-trigger" type="button" onClick={() => setPortraitOpen(true)} aria-label={`Porträt von ${figure.name} vergrößern`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={figure.portrait} alt={`Porträt der fiktiven Perspektivfigur ${figure.name}`} />
+          <span aria-hidden="true">⌕</span>
+        </button>
         <p><b>{figure.name}, {figure.age}</b><small>{figure.role}<br />{figure.location}</small></p>
       </div>
       <p>{figure.situation}</p>
@@ -839,6 +853,18 @@ function PerspectiveCard({ mission }: { mission: Mission }) {
       </details>
       <div><span>IHR KONFLIKT</span><p>{figure.dilemma}</p></div>
       <blockquote>„{figure.question}“</blockquote>
+      {portraitOpen && (
+        <section className="portrait-lightbox" role="dialog" aria-modal="true" aria-label={`Großansicht: ${figure.name}`} onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setPortraitOpen(false);
+        }}>
+          <figure>
+            <button type="button" autoFocus onClick={() => setPortraitOpen(false)} aria-label="Großansicht schließen">×</button>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={figure.portrait} alt={`Großansicht der fiktiven Perspektivfigur ${figure.name}`} />
+            <figcaption><b>{figure.name}</b><span>{figure.role} · {figure.location}</span></figcaption>
+          </figure>
+        </section>
+      )}
     </article>
   );
 }
