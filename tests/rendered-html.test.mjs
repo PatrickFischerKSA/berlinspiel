@@ -77,9 +77,12 @@ test("bereitet neun eindeutige Blur-Hintergrundfilme vor", async () => {
 
 test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", async () => {
   const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
-  assert.match(gameUi, /Allein ermitteln/);
+  assert.match(gameUi, /Einzelspiel neu starten/);
+  assert.match(gameUi, /Einzelspiel bei Akte/);
+  assert.match(gameUi, /Einzelspiel zurücksetzen/);
   assert.match(gameUi, /mode: "solo"/);
   assert.match(gameUi, /berlin-akte-solo/);
+  assert.match(gameUi, /const freshRoom = makeSoloRoom\(\)/);
   assert.match(gameUi, /Quelle · Raum · Gegenprüfung/);
 });
 

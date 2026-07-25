@@ -144,6 +144,16 @@ export function GameApp() {
   const [screen, setScreen] = useState<"welcome" | "join" | "create" | "game" | "teacher">("welcome");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [soloProgress, setSoloProgress] = useState<number | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("berlin-akte-solo");
+      if (saved) setSoloProgress(Math.max(0, Math.min(8, Number(JSON.parse(saved).missionIndex) || 0)));
+    } catch {
+      localStorage.removeItem("berlin-akte-solo");
+    }
+  }, []);
 
   const syncRoom = useCallback(async () => {
     if (!session || room?.mode === "demo" || room?.mode === "desktop" || room?.mode === "solo") return;
@@ -164,6 +174,7 @@ export function GameApp() {
   useEffect(() => {
     if (room?.mode === "solo") {
       localStorage.setItem("berlin-akte-solo", JSON.stringify(room));
+      setSoloProgress(room.missionIndex);
     }
   }, [room]);
 
@@ -263,12 +274,20 @@ export function GameApp() {
     return (
       <Welcome
         hasSession={Boolean(session)}
+        soloProgress={soloProgress}
         busy={busy}
         message={message}
         onResume={resume}
         onCreate={() => setScreen("create")}
         onJoin={() => setScreen("join")}
         onSolo={() => {
+          const freshRoom = makeSoloRoom();
+          localStorage.setItem("berlin-akte-solo", JSON.stringify(freshRoom));
+          setSoloProgress(0);
+          setRoom(freshRoom);
+          setScreen("game");
+        }}
+        onResumeSolo={() => {
           try {
             const saved = localStorage.getItem("berlin-akte-solo");
             setRoom(saved ? JSON.parse(saved) : makeSoloRoom());
@@ -313,6 +332,13 @@ export function GameApp() {
       message={message}
       onAction={remoteAction}
       onTeacher={() => setScreen("teacher")}
+      onReset={() => {
+        if (!window.confirm("Einzelspiel wirklich zurücksetzen? Alle lokalen Antworten und Fortschritte werden gelöscht.")) return;
+        const freshRoom = makeSoloRoom();
+        localStorage.setItem("berlin-akte-solo", JSON.stringify(freshRoom));
+        setSoloProgress(0);
+        setRoom(freshRoom);
+      }}
       onExit={() => {
         setScreen("welcome");
         setRoom(null);
@@ -399,21 +425,25 @@ function Brand() {
 
 function Welcome({
   hasSession,
+  soloProgress,
   busy,
   message,
   onResume,
   onCreate,
   onJoin,
   onSolo,
+  onResumeSolo,
   onDemo,
 }: {
   hasSession: boolean;
+  soloProgress: number | null;
   busy: boolean;
   message: string;
   onResume(): void;
   onCreate(): void;
   onJoin(): void;
   onSolo(): void;
+  onResumeSolo(): void;
   onDemo(size: 2 | 3): void;
 }) {
   return (
@@ -432,8 +462,9 @@ function Welcome({
           <div className="hero-actions">
             <button className="primary" onClick={onCreate}>Raum eröffnen <span>→</span></button>
             <button className="secondary" onClick={onJoin}>Mit Raumcode beitreten</button>
-            <button className="secondary solo-button" onClick={onSolo}>Allein ermitteln</button>
+            <button className="secondary solo-button" onClick={onSolo}>Einzelspiel neu starten</button>
           </div>
+          {soloProgress !== null && <button className="resume-link solo-resume" onClick={onResumeSolo}>↻ Einzelspiel bei Akte {String(soloProgress + 1).padStart(2, "0")} fortsetzen</button>}
           {hasSession && <button className="resume-link" disabled={busy} onClick={onResume}>↻ Letzte Sitzung wiederaufnehmen</button>}
           {message && <p className="alert">{message}</p>}
         </div>
@@ -534,6 +565,7 @@ function GameShell({
   message,
   onAction,
   onTeacher,
+  onReset,
   onExit,
 }: {
   room: Room;
@@ -541,6 +573,7 @@ function GameShell({
   message: string;
   onAction(action: string, payload?: Record<string, unknown>): void;
   onTeacher(): void;
+  onReset(): void;
   onExit(): void;
 }) {
   const mission = missions[room.missionIndex];
@@ -560,6 +593,7 @@ function GameShell({
         <div className="room-code"><span>{room.mode === "solo" ? "EINZELSPIEL" : "RAUM"}</span><b>{room.code}</b><small>{room.mode === "solo" ? "Fortschritt lokal gespeichert" : `${room.members.length}/${room.teamSize} verbunden`}</small></div>
         <div className="header-actions">
           {room.mode !== "solo" && <button onClick={onTeacher} title="Spielleitungsansicht">▦</button>}
+          {room.mode === "solo" && <button className="reset-action" onClick={onReset} title="Einzelspiel zurücksetzen"><span>RESET</span>↺</button>}
           <button onClick={onExit} title="Spiel verlassen">↗</button>
         </div>
       </header>

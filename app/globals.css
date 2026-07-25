@@ -55,6 +55,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-actions { display: flex; gap: 12px; }
 .solo-button { border-color: #8b6f48; color: #e4c58f; }
 .resume-link { margin-top: 18px; border: 0; background: transparent; padding: 0; color: #8f928e; font-size: 12px; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.solo-resume { display: block; color: #d4b47c; }
 .case-stack { position: relative; height: 580px; perspective: 1100px; }
 .case-card { --angle: calc((var(--i) - 4) * 1.6deg); position: absolute; left: calc(3% + var(--i) * 4%); top: calc(24px + var(--i) * 14px); width: 54%; min-width: 320px; aspect-ratio: .76; padding: 26px; background: linear-gradient(150deg, #e2d8c3, #b8aa91); border: 1px solid #f4ebd8; color: #26231e; transform: rotate(var(--angle)) translateZ(calc(var(--i) * 8px)); box-shadow: -18px 18px 35px #0008; transform-origin: 50% 100%; }
 .case-card::before { content: ""; position: absolute; inset: 58px 22px 22px; border-top: 1px solid #817866; background: repeating-linear-gradient(180deg, transparent 0 28px, #8f857322 29px 30px); }
@@ -99,6 +100,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .room-code small { grid-column: 1/-1; text-align: center; margin-top: 3px; }
 .header-actions { justify-self: end; display: flex; gap: 8px; }
 .header-actions button { width: 36px; height: 36px; border: 1px solid #303434; background: #151718; cursor: pointer; }
+.header-actions .reset-action { width: auto; padding: 0 10px; color: #d6b377; font: 700 11px var(--mono); }
+.reset-action span { margin-right: 7px; font-size: 7px; letter-spacing: .12em; }
 .mission-rail { grid-column: 1; grid-row: 2/4; position: sticky; top: 70px; height: calc(100vh - 70px); border-right: 1px solid var(--line); background: #0a0c0d; display: flex; flex-direction: column; align-items: center; padding-top: 22px; z-index: 30; }
 .mission-rail > p { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0 0 24px; color: var(--faint); font: 8px var(--mono); letter-spacing: .18em; }
 .mission-rail button { position: relative; width: 50px; height: 49px; border: 0; border-left: 2px solid transparent; background: transparent; cursor: pointer; color: #5b5e5c; font: 10px var(--mono); z-index: 2; }
