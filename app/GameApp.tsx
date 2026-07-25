@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { finalPrompt, missions, roleLabels, type Mission } from "../data/game";
+import { missionNarratives } from "../data/narrative";
 import { stationTasks, type InvestigationTask } from "../data/tasks";
 import { timelineEras, timelineEvents, timelineSources, type TimelineEra } from "../data/timeline";
 
@@ -738,6 +739,7 @@ function CaseView({
   onAdvance(): void;
   busy: boolean;
 }) {
+  const narrative = missionNarratives[mission.id];
   const [hypothesis, setHypothesis] = useState(room.investigation?.hypothesis || "");
   const [manipulation, setManipulation] = useState(room.investigation?.manipulation || "");
   useEffect(() => {
@@ -757,6 +759,11 @@ function CaseView({
           <span className="film-running"><i /> FILMARCHIV LÄUFT</span>
         </div>
       </div>
+      <section className="narrative-prologue">
+        <div><span>{mission.number} · KAPITEL</span><h2>{narrative.chapter}</h2></div>
+        <div>{narrative.opening.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div>
+        <aside><span>WAS AUF DEM SPIEL STEHT</span><p>{narrative.stakes}</p></aside>
+      </section>
       <div className="case-grid">
         <article className="damaged-document">
           <span className="doc-label">FEHLERHAFTE ARCHIVFASSUNG</span>
@@ -766,6 +773,7 @@ function CaseView({
         </article>
         <div className="briefing">
           <p className="eyebrow">STÖRUNG</p><h2>{mission.problem}</h2><p>{mission.disturbance}</p>
+          <PerspectiveCard mission={mission} />
           <div className="role-card">
             <span>DEIN AUFTRAG</span><b>{roleForTeam(role, room.teamSize)}</b><p>{mission.roles[role]}</p>
           </div>
@@ -805,6 +813,22 @@ function CaseView({
   );
 }
 
+function PerspectiveCard({ mission }: { mission: Mission }) {
+  const figure = missionNarratives[mission.id].perspective;
+  return (
+    <article className="perspective-card">
+      <header><span>PERSPEKTIVFIGUR</span><small>fiktiv · quellenbasiert</small></header>
+      <div className="perspective-identity">
+        <i>{figure.name.split(" ").map((part) => part[0]).join("")}</i>
+        <p><b>{figure.name}, {figure.age}</b><small>{figure.role}<br />{figure.location}</small></p>
+      </div>
+      <p>{figure.situation}</p>
+      <div><span>IHR KONFLIKT</span><p>{figure.dilemma}</p></div>
+      <blockquote>„{figure.question}“</blockquote>
+    </article>
+  );
+}
+
 function TeamStrip({ room }: { room: Room }) {
   if (room.mode === "solo") {
     return (
@@ -838,6 +862,7 @@ function SourcesView({
   onEvidence(payload: Record<string, unknown>): void;
   onAdvance(): void;
 }) {
+  const narrative = missionNarratives[mission.id];
   const tasks = stationTasks[mission.id];
   const [taskIndex, setTaskIndex] = useState(0);
   const task = tasks[taskIndex];
@@ -870,6 +895,7 @@ function SourcesView({
   return (
     <div className="source-view">
       <div className="section-title"><div><p className="eyebrow">QUELLENUNTERSUCHUNG · DREI ERMITTLUNGSSCHRITTE</p><h1>Material als Beweis</h1></div><p>Rolle: <b>{roleForTeam(role, room.teamSize)}</b></p></div>
+      <div className="story-bridge"><span>ÜBERGANG · FILMARCHIV</span><p>{narrative.transitions.sources}</p><small>{narrative.perspective.name} wartet auf eine Antwort, die mehr trägt als eine Vermutung.</small></div>
       <div className="source-layout">
         <aside className="resource-list">
           <div className="task-progress"><span>{missionTaskCount}/3</span><p><b>Aufgaben gesichert</b><small>Spur → Zusammenhang → Prüfung</small></p></div>
@@ -986,6 +1012,7 @@ function TimelineView({ mission }: { mission: Mission }) {
 }
 
 function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: Room; onPin(payload: Record<string, unknown>): void; onAdvance(): void }) {
+  const narrative = missionNarratives[mission.id];
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [activePlace, setActivePlace] = useState(mission.map.places[0]);
@@ -1006,6 +1033,7 @@ function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: 
   return (
     <div className="map-view">
       <div className="section-title"><div><p className="eyebrow">KARTENEINGRIFF</p><h1>{mapTitle}</h1></div><p>{mapSource}</p></div>
+      <div className="story-bridge map-bridge"><span>ÜBERGANG · STADTRAUM</span><p>{narrative.transitions.map}</p><small>Perspektivfrage: {narrative.perspective.question}</small></div>
       {mission.map.alternatives && (
         <nav className="map-switcher" aria-label="Kartenjahr wählen">
           <span>Zeitschnitt</span>
@@ -1106,6 +1134,7 @@ function EvidenceBoard({ mission, room }: { mission: Mission; room: Room }) {
 }
 
 function VerdictView({ mission, room, onSave }: { mission: Mission; room: Room; onSave(verdict: string, submit: boolean, theoryStatus: Investigation["status"]): void }) {
+  const narrative = missionNarratives[mission.id];
   const [verdict, setVerdict] = useState(room.verdict);
   const [theoryStatus, setTheoryStatus] = useState<Investigation["status"]>(room.investigation?.status || "offen");
   useEffect(() => setVerdict(room.verdict), [room.verdict, mission]);
@@ -1114,6 +1143,7 @@ function VerdictView({ mission, room, onSave }: { mission: Mission; room: Room; 
   return (
     <div className="verdict-view">
       <div className="section-title"><div><p className="eyebrow">HISTORISCHES URTEIL</p><h1>Akte reparieren</h1></div><span className={ready ? "ready-badge" : "pending-badge"}>{ready ? "PRÜFBEREIT" : "BELEGE FEHLEN"}</span></div>
+      <div className="story-bridge verdict-bridge"><span>LETZTE ARCHIVMELDUNG</span><p>{narrative.transitions.verdict}</p><small>Ihr entscheidet jetzt, welche Geschichte im digitalen Museum bleibt.</small></div>
       <div className="verdict-layout">
         <article className="verdict-editor">
           <p className="guiding-question">{mission.problem}</p>
@@ -1141,7 +1171,7 @@ function VerdictView({ mission, room, onSave }: { mission: Mission; room: Room; 
           <blockquote>„{mission.reflection}“</blockquote>
         </aside>
       </div>
-      {room.verdictSubmitted && <ScorePanel room={room} />}
+      {room.verdictSubmitted && <><div className="narrative-resolution"><span>AKTE REKONSTRUIERT</span><p>{narrative.closing}</p><small>{narrative.perspective.name} ist nicht «die Stimme» der Epoche. Die Figur erinnert daran, dass historische Urteile immer konkrete Leben berühren.</small></div><ScorePanel room={room} /></>}
     </div>
   );
 }

@@ -180,6 +180,24 @@ test("führt eine Prüfhypothese durch Film, Karte und Urteil", async () => {
   assert.match(worker, /mapPins\.filter/);
 });
 
+test("erzählt jede Akte mit eigener Perspektivfigur und vollständigem Spannungsbogen", async () => {
+  const [gameUi, narrative] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../data/narrative.ts", import.meta.url), "utf8"),
+  ]);
+  const missionIds = ["grossstadt", "goldlack", "ende-weimar", "unter-der-oberflaeche", "kriegsende-besatzung", "berlinkrise-17-juni", "frontstadt", "nach-der-linie", "hauptstadt-gentrifizierung"];
+  for (const id of missionIds) {
+    assert.match(narrative, new RegExp(`(?:^|\\n)  ${id.includes("-") ? `"${id}"` : id}: \\{`));
+  }
+  for (const field of ["chapter", "opening", "perspective", "stakes", "transitions", "closing"]) {
+    assert.equal((narrative.match(new RegExp(`${field}:`, "g")) ?? []).length >= 9, true, `${field} fehlt in mindestens einer Akte`);
+  }
+  for (const marker of ["PERSPEKTIVFIGUR", "fiktiv · quellenbasiert", "WAS AUF DEM SPIEL STEHT", "ÜBERGANG · FILMARCHIV", "AKTE REKONSTRUIERT"]) {
+    assert.match(gameUi, new RegExp(marker));
+  }
+  assert.ok(narrative.length > 14000, "Der narrative Textkorpus ist noch zu knapp.");
+});
+
 test("erklärt gesperrte Phasen dezent und benennt den nächsten Schritt", async () => {
   const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
   assert.match(gameUi, /nach Spurensuche/);
