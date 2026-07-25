@@ -63,7 +63,7 @@ export const roleLabels = {
   critic: "Gegenprüfer/in",
 };
 
-const FILM_ARCHIVE_BASE = "https://raw.githubusercontent.com/PatrickFischerKSA/berlinspiel/66e1cbc41d66ff52b5e162ed09fdd044d87ec0f2/public";
+const FILM_ARCHIVE_BASE = "https://raw.githubusercontent.com/PatrickFischerKSA/berlinspiel/f880c00ebaa8f691d31e1827330113021341531a/public";
 const archiveFilm = (path: string) => `${FILM_ARCHIVE_BASE}${path}`;
 
 function localFilmResource(id: string, title: string, href: string, viewingFocus: string): Mission["resources"][number] {
@@ -483,7 +483,7 @@ export const missions: Mission[] = [
         id: "m10",
         title: "Berlin-Blockade und Luftbrücke",
         kind: "Lokale MP4-Filmressource",
-        href: "/films/06b-berlin-blockade-rosinenbomber.mp4",
+        href: archiveFilm("/films/06b-berlin-blockade-rosinenbomber.mp4"),
         duration: "vollständige lokale Filmdatei",
         viewingFocus: "Suche eine Einstellung, die zeigt, wie Waren nach West-Berlin gelangen, und achte auf die Sprache der Wochenschau.",
         taskSteps: ["Stoppe bei Flugzeug, Flugplatz oder Ladung.", "Notiere, was transportiert wird.", "Sichere den Timecode."],
@@ -695,7 +695,7 @@ export const missions: Mission[] = [
         id: "m15",
         title: "Die Wendezeit aus Sicht vietnamesischer Gastarbeiter",
         kind: "Panorama 3 · NDR · lokale Webkopie",
-        href: "/films/09b-wendezeit-vietnamesische-gastarbeiter.m4v",
+        href: archiveFilm("/films/09b-wendezeit-vietnamesische-gastarbeiter.m4v"),
         duration: "vollständige lokale Webkopie",
         viewingFocus: "Achte auf Erfahrungen vietnamesischer Vertragsarbeiterinnen und Vertragsarbeiter nach 1989.",
         taskSteps: ["Film ansehen.", "Eine konkrete Unsicherheit benennen.", "Timecode sichern."],
