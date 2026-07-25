@@ -117,9 +117,9 @@ test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
   assert.doesNotMatch(gameData, /youtube(?:-nocookie)?\.com|youtu\.be|ngp\.zdf\.de|bpb\.de\/mediathek|hdg\.de\/lemo/);
-  const filmResources = [...gameData.matchAll(/href: "(\/(?:films|clips)\/[^"]+\.(?:mp4|m4v))"/g)].map((match) => match[1]);
+  const filmResources = [...gameData.matchAll(/"(\/(?:films|clips)\/[^"]+\.(?:mp4|m4v))"/g)].map((match) => match[1]);
   assert.ok(filmResources.length >= 9);
-  assert.match(gameUi, /selected\.href\.startsWith\("\/clips\/"\)/);
+  assert.match(gameUi, /selected\.href\.startsWith\("\/clips\/"\).*selected\.href\.includes\("\/public\/films\/"\)/s);
   assert.match(gameUi, /<video src=\{selected\.href\} controls/);
   assert.match(tasks, /resourceId: "m03"/);
   assert.match(tasks, /Cioma|Ringvereine/);

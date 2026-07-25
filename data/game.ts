@@ -63,12 +63,15 @@ export const roleLabels = {
   critic: "Gegenprüfer/in",
 };
 
+const FILM_ARCHIVE_BASE = "https://raw.githubusercontent.com/PatrickFischerKSA/berlinspiel/66e1cbc41d66ff52b5e162ed09fdd044d87ec0f2/public";
+const archiveFilm = (path: string) => `${FILM_ARCHIVE_BASE}${path}`;
+
 function localFilmResource(id: string, title: string, href: string, viewingFocus: string): Mission["resources"][number] {
   return {
     id,
     title,
     kind: "Lokale MP4-Filmressource",
-    href,
+    href: href.startsWith("/films/") ? archiveFilm(href) : href,
     duration: "vollständige lokale Filmdatei",
     viewingFocus,
     taskSteps: ["Film im eingebauten Player öffnen.", "Gesuchte Stelle pausieren.", "Timecode und sicht- oder hörbares Detail sichern."],
@@ -147,7 +150,7 @@ export const missions: Mission[] = [
         id: "m02",
         title: "Berliner Arbeiter",
         kind: "Lokale Filmsequenz",
-        href: "/films/01a-berlin-kaiserzeit.m4v",
+        href: archiveFilm("/films/01a-berlin-kaiserzeit.m4v"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Suche im Film eine Szene mit technischem oder städtischem Fortschritt und eine zweite Szene mit Armut oder harter Arbeit.",
         taskSteps: [
@@ -218,7 +221,7 @@ export const missions: Mission[] = [
         id: "m05",
         title: "Goldene Zwanziger",
         kind: "Lokale Filmsequenz",
-        href: "/films/02c-waren-die-zwanziger-golden.m4v",
+        href: archiveFilm("/films/02c-waren-die-zwanziger-golden.m4v"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Vergleiche eine Szene des Aufbruchs mit einer Szene, in der Armut, Krise oder Ausgrenzung sichtbar beziehungsweise genannt wird.",
         taskSteps: [
@@ -238,7 +241,7 @@ export const missions: Mission[] = [
         id: "m03",
         title: "Kriminelle Clans im Berlin der 20er",
         kind: "Terra X History · Film",
-        href: "/films/02a-kriminelle-clans.mp4",
+        href: archiveFilm("/films/02a-kriminelle-clans.mp4"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Suche die Filmstelle, an der erklärt wird, warum ehemalige Gefangene ohne Arbeit und Wohnung blieben.",
         taskSteps: [
@@ -302,7 +305,7 @@ export const missions: Mission[] = [
       id: "m06",
       title: "Berlin 1929–1933: Demokratie unter Druck",
       kind: "Eigene Filmsequenz · wird ergänzt",
-      href: "/films/03a-bevor-hitler-kam-teil-1.m4v",
+      href: archiveFilm("/films/03a-bevor-hitler-kam-teil-1.m4v"),
       duration: "kurze Filmsequenz",
       viewingFocus: "Achte auf Wirtschaftskrise, politische Gewalt und den Abbau demokratischer Rechte.",
       taskSteps: ["Film ansehen.", "Einen Schritt des Demokratieabbaus benennen.", "Timecode sichern."],
@@ -361,7 +364,7 @@ export const missions: Mission[] = [
         id: "m08",
         title: "Ein Tag in Berlin 1943 – Der Passfälscher",
         kind: "Lokale MP4-Filmressource",
-        href: "/films/04b-passfaelscher.m4v",
+        href: archiveFilm("/films/04b-passfaelscher.m4v"),
         duration: "vollständige lokale Webkopie",
         viewingFocus: "Verfolge einen konkreten Weg Cioma Schönhaus' durch Berlin: Unterkunft, Kontrolle, Werkstatt oder Treffen mit Helfenden.",
         taskSteps: [
@@ -426,7 +429,7 @@ export const missions: Mission[] = [
       id: "m09",
       title: "Berlin 1945: Kriegsende und Besatzung",
       kind: "Eigene Filmsequenz · wird ergänzt",
-      href: "/films/05a-frontstadt-kapitulation-teil-1.m4v",
+      href: archiveFilm("/films/05a-frontstadt-kapitulation-teil-1.m4v"),
       duration: "kurze Filmsequenz",
       viewingFocus: "Achte auf Zerstörung, Versorgung und die Anwesenheit der vier Besatzungsmächte.",
       taskSteps: ["Film ansehen.", "Eine Alltagsfolge benennen.", "Timecode sichern."],
@@ -480,7 +483,7 @@ export const missions: Mission[] = [
         id: "m10",
         title: "Berlin-Blockade und Luftbrücke",
         kind: "Historischer Film · LeMO",
-        href: "/films/06a-steine-gegen-panzer.mp4",
+        href: archiveFilm("/films/06a-steine-gegen-panzer.mp4"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Suche eine Einstellung, die zeigt, wie Waren nach West-Berlin gelangen, und achte auf die Sprache der Wochenschau.",
         taskSteps: ["Stoppe bei Flugzeug, Flugplatz oder Ladung.", "Notiere, was transportiert wird.", "Sichere den Timecode."],
@@ -495,7 +498,7 @@ export const missions: Mission[] = [
         id: "m11",
         title: "Berlin 1953: Der 17. Juni",
         kind: "Eigene Filmsequenz · wird ergänzt",
-        href: "/films/06a-steine-gegen-panzer.mp4",
+        href: archiveFilm("/films/06a-steine-gegen-panzer.mp4"),
         duration: "kurze Filmsequenz",
         viewingFocus: "Achte auf den Ausgangspunkt der Proteste und die Forderungen der Demonstrierenden.",
         taskSteps: ["Film ansehen.", "Eine Forderung benennen.", "Timecode sichern."],
@@ -555,7 +558,7 @@ export const missions: Mission[] = [
         id: "m12",
         title: "Die Berliner Mauer",
         kind: "Terra X OER · Film",
-        href: "/films/07a-bau-der-mauer.mp4",
+        href: archiveFilm("/films/07a-bau-der-mauer.mp4"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Zähle im kurzen Film mindestens drei verschiedene Teile der Grenzanlage.",
         taskSteps: [
@@ -626,7 +629,7 @@ export const missions: Mission[] = [
         id: "m14",
         title: "Mauerfall",
         kind: "Lokale Filmsequenz",
-        href: "/films/08a-deutsche-wiedervereinigung.mp4",
+        href: archiveFilm("/films/08a-deutsche-wiedervereinigung.mp4"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Beobachte genau, was Menschenmenge und Grenzer an der Bornholmer Strasse tatsächlich tun.",
         taskSteps: [
@@ -692,7 +695,7 @@ export const missions: Mission[] = [
         id: "m15",
         title: "Wir bleiben hier",
         kind: "Dokumentarfilm · bpb",
-        href: "/films/09a-berlin-wird-hauptstadt.mp4",
+        href: archiveFilm("/films/09a-berlin-wird-hauptstadt.mp4"),
         duration: "lokale Filmsequenz",
         viewingFocus: "Achte auf Erfahrungen vietnamesischer Vertragsarbeiterinnen und Vertragsarbeiter nach 1989.",
         taskSteps: ["Film ansehen.", "Eine konkrete Unsicherheit benennen.", "Timecode sichern."],
@@ -707,7 +710,7 @@ export const missions: Mission[] = [
         id: "m16",
         title: "Berlin wird Hauptstadt – und teurer",
         kind: "Eigene Filmsequenz · wird ergänzt",
-        href: "/films/09a-berlin-wird-hauptstadt.mp4",
+        href: archiveFilm("/films/09a-berlin-wird-hauptstadt.mp4"),
         duration: "kurze Filmsequenz",
         viewingFocus: "Achte auf Regierungsumzug, Investitionen, Sanierung, Mietsteigerung und Verdrängung.",
         taskSteps: ["Film ansehen.", "Eine Ursache und eine Folge der Gentrifizierung benennen.", "Timecode sichern."],
