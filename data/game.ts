@@ -482,9 +482,9 @@ export const missions: Mission[] = [
       {
         id: "m10",
         title: "Berlin-Blockade und Luftbrücke",
-        kind: "Historischer Film · LeMO",
-        href: archiveFilm("/films/06a-steine-gegen-panzer.mp4"),
-        duration: "lokale Filmsequenz",
+        kind: "Lokale MP4-Filmressource",
+        href: "/films/06b-berlin-blockade-rosinenbomber.mp4",
+        duration: "vollständige lokale Filmdatei",
         viewingFocus: "Suche eine Einstellung, die zeigt, wie Waren nach West-Berlin gelangen, und achte auf die Sprache der Wochenschau.",
         taskSteps: ["Stoppe bei Flugzeug, Flugplatz oder Ladung.", "Notiere, was transportiert wird.", "Sichere den Timecode."],
         signalWords: ["flugzeug", "flugplatz", "ladung", "kohle", "lebensmittel", "versorgung", "blockade", "luftbrücke", "west"],
@@ -693,10 +693,10 @@ export const missions: Mission[] = [
     resources: [
       {
         id: "m15",
-        title: "Wir bleiben hier",
-        kind: "Dokumentarfilm · bpb",
-        href: archiveFilm("/films/09a-berlin-wird-hauptstadt.mp4"),
-        duration: "lokale Filmsequenz",
+        title: "Die Wendezeit aus Sicht vietnamesischer Gastarbeiter",
+        kind: "Panorama 3 · NDR · lokale Webkopie",
+        href: "/films/09b-wendezeit-vietnamesische-gastarbeiter.m4v",
+        duration: "vollständige lokale Webkopie",
         viewingFocus: "Achte auf Erfahrungen vietnamesischer Vertragsarbeiterinnen und Vertragsarbeiter nach 1989.",
         taskSteps: ["Film ansehen.", "Eine konkrete Unsicherheit benennen.", "Timecode sichern."],
         signalWords: ["hoffnung", "einheit", "unsicherheit", "angst", "rassismus", "ausgrenzung", "vietnames", "bleiben", "arbeit", "alltag"],

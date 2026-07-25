@@ -122,6 +122,8 @@ test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
   assert.match(gameUi, /selected\.href\.startsWith\("\/clips\/"\).*selected\.href\.includes\("\/public\/films\/"\)/s);
   assert.match(gameUi, /<video src=\{selected\.href\} controls/);
   assert.match(tasks, /resourceId: "m03"/);
+  assert.match(tasks, /resourceId: "m10"/);
+  assert.match(tasks, /resourceId: "m15"/);
   assert.match(tasks, /Cioma|Ringvereine/);
   assert.match(gameData, /supplementalFilms/);
   const localAssets = [...gameData.matchAll(/"(\/(?:films|clips)\/[^"]+\.(?:mp4|m4v))"/g)].map((match) => match[1]);
