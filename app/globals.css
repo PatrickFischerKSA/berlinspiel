@@ -174,6 +174,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .role-card span { color: var(--faint); font: 9px var(--mono); letter-spacing: .15em; }
 .role-card b { display: block; margin: 8px 0; font: 500 21px var(--serif); }
 .role-card p { margin: 0; color: #aaa7a0; font-size: 13px; line-height: 1.6; }
+.theory-lab { margin-top: 24px; padding: 22px; border: 1px solid #454948; background: #0b0d0ed9; display: grid; gap: 15px; }
+.theory-lab h3 { margin: -4px 0 2px; font: 500 23px/1.15 var(--serif); }
+.theory-lab label { display: grid; gap: 7px; color: var(--muted); font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.theory-lab select { width: 100%; min-height: 48px; border: 1px solid #404544; background: #090b0c; color: var(--ink); padding: 10px 12px; text-transform: none; letter-spacing: 0; }
+.theory-rule { margin: 0; padding: 12px; border-left: 2px solid var(--mission); background: #ffffff08; color: #aaa7a0; font-size: 11px; line-height: 1.55; }
+.theory-rule b { color: var(--ink); }
+.theory-sealed { display: flex; align-items: center; gap: 11px; padding: 11px; border: 1px solid #55725d; background: #142019; }
+.theory-sealed > span { color: #70bf80; font-size: 18px; }
+.theory-sealed p { margin: 0; }
+.theory-sealed b, .theory-sealed small { display: block; }
+.theory-sealed small { margin-top: 3px; color: #7e9283; font-size: 9px; }
+.investigation-thread { margin: -18px 0 24px; padding: 12px 15px; border: 1px solid #3b403f; border-left: 3px solid var(--mission); background: #111414e8; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; }
+.investigation-thread > span { color: var(--faint); font: 8px var(--mono); letter-spacing: .13em; }
+.investigation-thread p { margin: 0; color: #c7c3bb; font: 13px/1.4 var(--serif); }
+.investigation-thread b { padding: 5px 8px; border: 1px solid #585d5b; color: #a8aaa5; font: 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.investigation-thread b[data-status="eingeschränkt"], .investigation-thread b[data-status="verworfen"] { border-color: var(--mission); color: var(--mission); }
 .team-strip { display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--line); padding-top: 20px; }
 .team-strip > span { color: var(--faint); font: 8px var(--mono); writing-mode: vertical-rl; }
 .team-strip > div { min-width: 190px; display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid #2b2f2f; background: #111414; position: relative; }
@@ -284,6 +300,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .map-task { padding: 27px; border-left: 1px solid var(--line); }
 .map-task h2 { margin: 0; font: 500 28px var(--serif); }
 .map-task > p:not(.eyebrow) { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.map-hypothesis { margin: 15px 0; padding: 12px; border-left: 2px solid var(--mission); background: #ffffff08; color: #c8c4bb; font: 14px/1.45 var(--serif); }
 .place-list { margin: 22px 0; display: grid; }
 .place-list button { display: flex; align-items: center; gap: 10px; text-align: left; padding: 13px 8px; border: 0; border-bottom: 1px solid #292d2c; background: transparent; cursor: pointer; color: #969994; }
 .place-list button.active { color: #fff; background: #191d1d; }
@@ -294,6 +311,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .place-list small { color: var(--faint); margin-top: 3px; font-size: 9px; }
 .place-list i { color: #70c282; }
 .map-task textarea { min-height: 100px; resize: vertical; }
+.stance-picker { margin: 12px 0 8px; display: grid; grid-template-columns: auto repeat(3, 1fr); align-items: center; gap: 5px; }
+.stance-picker > span { color: var(--faint); font: 8px var(--mono); text-transform: uppercase; }
+.stance-picker button { border: 1px solid #3f4442; background: #111414; color: #8f938f; padding: 8px 5px; cursor: pointer; font-size: 9px; }
+.stance-picker button.active { border-color: var(--mission); background: color-mix(in srgb, var(--mission) 14%, #111); color: #fff; }
+.map-depth-check { display: block; margin: 0 0 12px; color: var(--faint); font: 8px var(--mono); }
 .source-link { display: block; text-align: center; margin-top: 15px; color: var(--muted); font-size: 10px; }
 
 /* Evidence */
@@ -317,6 +339,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .pending-badge { color: #b3976e; border-color: #b3976e; }
 .verdict-layout { display: grid; grid-template-columns: 1fr 330px; border: 1px solid var(--line); min-height: 520px; }
 .verdict-editor { padding: clamp(25px, 4vw, 50px); background: #d7cfbd; color: #27251f; }
+.hypothesis-decision { margin-bottom: 20px; padding: 18px; border: 1px solid #9c9383; background: #c9c0ae; }
+.hypothesis-decision > span { color: #6f685d; font: 8px var(--mono); letter-spacing: .14em; }
+.hypothesis-decision blockquote { margin: 12px 0; color: #353129; font: 17px/1.45 var(--serif); }
+.hypothesis-decision > div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.hypothesis-decision button { border: 1px solid #8b8375; background: transparent; color: #575147; padding: 10px; cursor: pointer; text-transform: capitalize; }
+.hypothesis-decision button.active { border-color: #443f37; background: #443f37; color: #fff; }
+.hypothesis-decision small { display: block; margin-top: 10px; color: #716a5f; font-size: 9px; }
 .guiding-question { margin: 0 0 25px; font: 500 25px/1.3 var(--serif); }
 .verdict-editor textarea { width: 100%; min-height: 330px; border: 0; border-block: 1px solid #a29886; padding: 25px 0; background: transparent; color: #26241f; resize: vertical; font: 18px/1.65 var(--serif); outline: none; }
 .editor-footer { display: flex; align-items: center; gap: 10px; margin-top: 18px; }

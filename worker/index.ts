@@ -32,6 +32,11 @@ type StoredRoom = {
   members: StoredMember[];
   evidence: unknown[];
   mapPins: unknown[];
+  investigation?: {
+    hypothesis: string;
+    manipulation: string;
+    status: "offen" | "bestätigt" | "eingeschränkt" | "verworfen";
+  };
   verdict: string;
   verdictSubmitted: boolean;
   scores: Record<string, number>;
@@ -150,6 +155,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
       members: [host],
       evidence: [],
       mapPins: [],
+      investigation: undefined,
       verdict: "",
       verdictSubmitted: false,
       scores: { source: 0, space: 0, perspective: 0, reconstruction: 0 },
@@ -212,6 +218,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
     loaded.state.phase = 0;
     loaded.state.evidence = [];
     loaded.state.mapPins = [];
+    loaded.state.investigation = undefined;
     loaded.state.verdict = "";
     loaded.state.verdictSubmitted = false;
     loaded.state.members = loaded.state.members.map((item, index) => ({
@@ -233,16 +240,32 @@ async function roomApi(request: Request, env: Env, url: URL) {
     });
     pushEvent(loaded.state, actor, "evidence", "Beleg an die gemeinsame Wand übergeben");
   } else if (action === "pin") {
-    loaded.state.mapPins.push({
+    const pin = {
       id: crypto.randomUUID(),
       actor,
       placeId: String(body.placeId ?? ""),
+      stance: String(body.stance ?? "").slice(0, 20),
       note: String(body.note ?? "").slice(0, 300),
       at: Date.now(),
-    });
+    };
+    loaded.state.mapPins = [
+      ...loaded.state.mapPins.filter((item) => (item as { placeId?: string }).placeId !== pin.placeId),
+      pin,
+    ];
     pushEvent(loaded.state, actor, "map", `Ort ${String(body.placeId ?? "")} verknüpft`);
+  } else if (action === "theory") {
+    loaded.state.investigation = {
+      hypothesis: String(body.hypothesis ?? "").slice(0, 500),
+      manipulation: String(body.manipulation ?? "").slice(0, 500),
+      status: "offen",
+    };
+    pushEvent(loaded.state, actor, "theory", "Prüfhypothese festgelegt");
   } else if (action === "verdict") {
     loaded.state.verdict = String(body.verdict ?? "").slice(0, 3000);
+    const theoryStatus = String(body.theoryStatus ?? "");
+    if (loaded.state.investigation && ["offen", "bestätigt", "eingeschränkt", "verworfen"].includes(theoryStatus)) {
+      loaded.state.investigation.status = theoryStatus as NonNullable<StoredRoom["investigation"]>["status"];
+    }
     loaded.state.verdictSubmitted = Boolean(body.submit);
     if (body.submit) {
       if (!loaded.state.completedMissions.includes(String(loaded.state.missionIndex))) {
@@ -253,7 +276,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
       loaded.state.scores = {
         source: Math.min(3, sourceCount),
         space: Math.min(3, mapCount),
-        perspective: Math.min(3, sourceCount >= 2 ? 2 : sourceCount),
+        perspective: Math.min(3, loaded.state.investigation?.status === "eingeschränkt" || loaded.state.investigation?.status === "verworfen" ? 3 : sourceCount >= 2 ? 2 : sourceCount),
         reconstruction: Math.min(3, loaded.state.verdict.length > 300 ? 3 : loaded.state.verdict.length > 120 ? 2 : 1),
       };
       pushEvent(loaded.state, actor, "verdict", "Historisches Urteil eingereicht");

@@ -19,7 +19,12 @@ type Evidence = {
   category: string;
   at: number;
 };
-type Pin = { id: string; actor: string; placeId: string; note: string; at: number };
+type Pin = { id: string; actor: string; placeId: string; stance?: "stützt" | "begrenzt" | "widerlegt"; note: string; at: number };
+type Investigation = {
+  hypothesis: string;
+  manipulation: string;
+  status: "offen" | "bestätigt" | "eingeschränkt" | "verworfen";
+};
 type Room = {
   code: string;
   teamSize: 2 | 3;
@@ -30,6 +35,7 @@ type Room = {
   viewer?: Member | null;
   evidence: Evidence[];
   mapPins: Pin[];
+  investigation?: Investigation;
   verdict: string;
   verdictSubmitted: boolean;
   scores: Record<string, number>;
@@ -63,6 +69,7 @@ function makeDemoRoom(teamSize: 2 | 3 = 3): Room {
     viewer: { id: "demo-0", name: names[0], role: "source" },
     evidence: [],
     mapPins: [],
+    investigation: undefined,
     verdict: "",
     verdictSubmitted: false,
     scores: { source: 0, space: 0, perspective: 0, reconstruction: 0 },
@@ -361,6 +368,7 @@ function reduceLocal(room: Room, action: string, payload: Record<string, unknown
     next.phase = 0;
     next.evidence = [];
     next.mapPins = [];
+    next.investigation = undefined;
     next.verdict = "";
     next.verdictSubmitted = false;
     next.members = next.members.map((member, index) => ({
@@ -384,24 +392,37 @@ function reduceLocal(room: Room, action: string, payload: Record<string, unknown
     event("evidence", "Beleg gesichert");
   }
   if (action === "pin") {
-    next.mapPins.push({
+    const pin: Pin = {
       id: crypto.randomUUID(),
       actor,
       placeId: String(payload.placeId),
+      stance: payload.stance as Pin["stance"],
       note: String(payload.note),
       at: Date.now(),
-    });
+    };
+    next.mapPins = [...next.mapPins.filter((item) => item.placeId !== pin.placeId), pin];
     event("map", `Ort ${String(payload.placeId)} verknüpft`);
+  }
+  if (action === "theory") {
+    next.investigation = {
+      hypothesis: String(payload.hypothesis),
+      manipulation: String(payload.manipulation),
+      status: "offen",
+    };
+    event("theory", "Prüfhypothese festgelegt");
   }
   if (action === "verdict") {
     next.verdict = String(payload.verdict);
+    if (next.investigation && payload.theoryStatus) {
+      next.investigation.status = payload.theoryStatus as Investigation["status"];
+    }
     next.verdictSubmitted = Boolean(payload.submit);
     if (payload.submit) {
       if (!next.completedMissions.includes(String(next.missionIndex))) next.completedMissions.push(String(next.missionIndex));
       next.scores = {
         source: Math.min(3, next.evidence.length),
         space: Math.min(3, next.mapPins.length),
-        perspective: Math.min(3, next.evidence.length >= 2 ? 2 : next.evidence.length),
+        perspective: Math.min(3, next.investigation?.status === "eingeschränkt" || next.investigation?.status === "verworfen" ? 3 : next.evidence.length >= 2 ? 2 : next.evidence.length),
         reconstruction: Math.min(3, next.verdict.length > 300 ? 3 : next.verdict.length > 120 ? 2 : 1),
       };
       event("verdict", "Urteil eingereicht");
@@ -675,12 +696,19 @@ function GameShell({
             ))}
           </div>
         )}
-        {tab === "case" && <CaseView mission={mission} room={room} role={effectiveRole} onAdvance={() => onAction("advance")} busy={busy} />}
+        {room.investigation && tab !== "case" && (
+          <div className="investigation-thread">
+            <span>AKTUELLE PRÜFHYPOTHESE</span>
+            <p>{room.investigation.hypothesis}</p>
+            <b data-status={room.investigation.status}>{room.investigation.status}</b>
+          </div>
+        )}
+        {tab === "case" && <CaseView mission={mission} room={room} role={effectiveRole} onTheory={(payload) => onAction("theory", payload)} onAdvance={() => onAction("advance")} busy={busy} />}
         {tab === "sources" && <SourcesView mission={mission} room={room} role={effectiveRole} onEvidence={(payload) => onAction("evidence", { ...payload, role: effectiveRole })} onAdvance={() => onAction("advance")} />}
         {tab === "map" && <MapView mission={mission} room={room} onPin={(payload) => onAction("pin", payload)} onAdvance={() => onAction("advance")} />}
         {tab === "timeline" && <TimelineView mission={mission} />}
         {tab === "evidence" && <EvidenceBoard mission={mission} room={room} />}
-        {tab === "verdict" && <VerdictView mission={mission} room={room} onSave={(verdict, submit) => onAction("verdict", { verdict, submit })} />}
+        {tab === "verdict" && <VerdictView mission={mission} room={room} onSave={(verdict, submit, theoryStatus) => onAction("verdict", { verdict, submit, theoryStatus })} />}
         {tab === "final" && <Finale room={room} onSave={(finalMuseum) => onAction("final-museum", { finalMuseum })} />}
       </section>
       <nav className="utility-nav">
@@ -695,7 +723,28 @@ function GameShell({
   );
 }
 
-function CaseView({ mission, room, role, onAdvance, busy }: { mission: Mission; room: Room; role: Role; onAdvance(): void; busy: boolean }) {
+function CaseView({
+  mission,
+  room,
+  role,
+  onTheory,
+  onAdvance,
+  busy,
+}: {
+  mission: Mission;
+  room: Room;
+  role: Role;
+  onTheory(payload: Record<string, unknown>): void;
+  onAdvance(): void;
+  busy: boolean;
+}) {
+  const [hypothesis, setHypothesis] = useState(room.investigation?.hypothesis || "");
+  const [manipulation, setManipulation] = useState(room.investigation?.manipulation || "");
+  useEffect(() => {
+    setHypothesis(room.investigation?.hypothesis || "");
+    setManipulation(room.investigation?.manipulation || "");
+  }, [mission, room.investigation?.hypothesis, room.investigation?.manipulation]);
+  const theoryReady = Boolean(hypothesis && manipulation);
   return (
     <div className="case-view">
       <div className="case-film-bg" aria-hidden="true">
@@ -720,8 +769,35 @@ function CaseView({ mission, room, role, onAdvance, busy }: { mission: Mission; 
           <div className="role-card">
             <span>DEIN AUFTRAG</span><b>{roleForTeam(role, room.teamSize)}</b><p>{mission.roles[role]}</p>
           </div>
-          <button className="primary" disabled={busy} onClick={onAdvance}>{room.phase === 0 ? "Spurensuche starten →" : "Quellen öffnen →"}</button>
-          <small className="advance-hint">{room.phase === 0 ? "Schaltet den nächsten Arbeitsschritt frei." : "Öffnet die konkrete Filmfrage."}</small>
+          {room.phase === 0 ? (
+            <>
+              <button className="primary" disabled={busy} onClick={onAdvance}>Spurensuche starten →</button>
+              <small className="advance-hint">Schaltet den nächsten Arbeitsschritt frei: die Schadensdiagnose dieser Akte.</small>
+            </>
+          ) : (
+            <div className="theory-lab">
+              <p className="eyebrow">SCHADENSDIAGNOSE</p>
+              <h3>Lege fest, was du überprüfen willst</h3>
+              <label>
+                Verdächtige Verkürzung
+                <select value={manipulation} onChange={(event) => setManipulation(event.target.value)}>
+                  <option value="">Manipulation auswählen …</option>
+                  {mission.redHerrings.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <label>
+                Vorläufige Prüfhypothese
+                <select value={hypothesis} onChange={(event) => setHypothesis(event.target.value)}>
+                  <option value="">Hypothese auswählen …</option>
+                  {mission.claims.map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <p className="theory-rule"><b>Spielregel:</b> Film und Karte müssen diese Hypothese nun stützen, einschränken oder widerlegen. Ein Kurswechsel im Urteil bringt mehr Qualität als blindes Festhalten.</p>
+              {!room.investigation && <button className="secondary wide" disabled={!theoryReady} onClick={() => onTheory({ hypothesis, manipulation })}>Prüfhypothese versiegeln</button>}
+              {room.investigation && <div className="theory-sealed"><span>✓</span><p><b>Hypothese versiegelt</b><small>Jetzt beginnt die Beweisprüfung.</small></p></div>}
+              <button className="primary wide" disabled={busy || !room.investigation} onClick={onAdvance}>Quellen öffnen →</button>
+            </div>
+          )}
         </div>
       </div>
       <TeamStrip room={room} />
@@ -914,6 +990,7 @@ function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: 
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [activePlace, setActivePlace] = useState(mission.map.places[0]);
   const [note, setNote] = useState("");
+  const [stance, setStance] = useState<Pin["stance"]>();
   const [mapIndex, setMapIndex] = useState(mission.map.alternatives ? mission.map.alternatives.length - 1 : 0);
   const drag = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
   const selectedMap = mission.map.alternatives?.[mapIndex];
@@ -986,15 +1063,21 @@ function MapView({ mission, room, onPin, onAdvance }: { mission: Mission; room: 
           <span className="zoom-readout">{Math.round(zoom * 100)}%</span>
         </div>
         <aside className="map-task">
-          <p className="eyebrow">RAUMAUFTRAG</p><h2>Orte als Argument</h2><p>{mission.map.task}</p>
+          <p className="eyebrow">RAUMAUFTRAG · HYPOTHESE PRÜFEN</p><h2>Orte als Argument</h2><p>{mission.map.task}</p>
+          {room.investigation && <blockquote className="map-hypothesis">„{room.investigation.hypothesis}“</blockquote>}
           <div className="place-list">
             {mission.map.places.map((place, index) => {
               const pinned = room.mapPins.some((pin) => pin.placeId === place.id);
               return <button key={place.id} className={activePlace.id === place.id ? "active" : ""} onClick={() => setActivePlace(place)}><span>{index + 1}</span><p><b>{place.label}</b><small>{place.clue}</small></p>{pinned && <i>✓</i>}</button>;
             })}
           </div>
-          <label>Begründung<textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={`Warum ist ${activePlace.label} für die Akte wichtig?`} /></label>
-          <button className="primary wide" disabled={!note.trim()} onClick={() => { onPin({ placeId: activePlace.id, note }); setNote(""); }}>Ort mit Beleg verknüpfen</button>
+          <label>Räumliche Gegenprüfung<textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={`Wie stützt, begrenzt oder widerlegt ${activePlace.label} eure Hypothese?`} /></label>
+          <div className="stance-picker" aria-label="Wirkung des Ortes auf die Hypothese">
+            <span>Der Ort …</span>
+            {(["stützt", "begrenzt", "widerlegt"] as const).map((item) => <button key={item} className={stance === item ? "active" : ""} onClick={() => setStance(item)}>{item}</button>)}
+          </div>
+          <small className="map-depth-check">{note.trim().length}/35 Zeichen · {stance ? `Einordnung: ${stance}` : "Einordnung fehlt"}</small>
+          <button className="primary wide" disabled={note.trim().length < 35 || !stance} onClick={() => { onPin({ placeId: activePlace.id, stance, note }); setNote(""); setStance(undefined); }}>Ort mit Hypothese verknüpfen</button>
           {mapSourceHref && <a className="source-link" href={mapSourceHref} target="_blank" rel="noreferrer">Originalquelle öffnen ↗</a>}
         </aside>
       </div>
@@ -1022,23 +1105,37 @@ function EvidenceBoard({ mission, room }: { mission: Mission; room: Room }) {
   );
 }
 
-function VerdictView({ mission, room, onSave }: { mission: Mission; room: Room; onSave(verdict: string, submit: boolean): void }) {
+function VerdictView({ mission, room, onSave }: { mission: Mission; room: Room; onSave(verdict: string, submit: boolean, theoryStatus: Investigation["status"]): void }) {
   const [verdict, setVerdict] = useState(room.verdict);
+  const [theoryStatus, setTheoryStatus] = useState<Investigation["status"]>(room.investigation?.status || "offen");
   useEffect(() => setVerdict(room.verdict), [room.verdict, mission]);
-  const ready = room.evidence.length >= 2 && room.mapPins.length >= 2 && verdict.trim().length >= 120;
+  useEffect(() => setTheoryStatus(room.investigation?.status || "offen"), [room.investigation?.status, mission]);
+  const ready = room.evidence.length >= 3 && room.mapPins.length >= 2 && verdict.trim().length >= 180 && theoryStatus !== "offen";
   return (
     <div className="verdict-view">
       <div className="section-title"><div><p className="eyebrow">HISTORISCHES URTEIL</p><h1>Akte reparieren</h1></div><span className={ready ? "ready-badge" : "pending-badge"}>{ready ? "PRÜFBEREIT" : "BELEGE FEHLEN"}</span></div>
       <div className="verdict-layout">
         <article className="verdict-editor">
           <p className="guiding-question">{mission.problem}</p>
-          <textarea value={verdict} onChange={(e) => setVerdict(e.target.value)} placeholder="Formuliert eine neue Archivfassung. Nennt konkrete Belege, räumliche Zuordnungen, Perspektivgrenzen und ein nachvollziehbares Urteil." />
-          <div className="editor-footer"><span>{verdict.length} Zeichen</span><button onClick={() => onSave(verdict, false)}>Entwurf sichern</button><button className="primary" disabled={!ready} onClick={() => onSave(verdict, true)}>Akte abschliessen ✓</button></div>
+          {room.investigation && (
+            <div className="hypothesis-decision">
+              <span>ENTSCHEIDUNG ZUR PRÜFHYPOTHESE</span>
+              <blockquote>„{room.investigation.hypothesis}“</blockquote>
+              <div>
+                {(["bestätigt", "eingeschränkt", "verworfen"] as const).map((status) => (
+                  <button key={status} className={theoryStatus === status ? "active" : ""} onClick={() => setTheoryStatus(status)}>{status}</button>
+                ))}
+              </div>
+              <small>Wähle nach der Beweislage – nicht nach der Ausgangsvermutung.</small>
+            </div>
+          )}
+          <textarea value={verdict} onChange={(e) => setVerdict(e.target.value)} placeholder="Repariert die Archivfassung: Entscheidung zur Hypothese, drei konkrete Filmbelege, mindestens zwei räumliche Zuordnungen und die Grenze eurer Aussage." />
+          <div className="editor-footer"><span>{verdict.length}/180 Zeichen</span><button onClick={() => onSave(verdict, false, theoryStatus)}>Entwurf sichern</button><button className="primary" disabled={!ready} onClick={() => onSave(verdict, true, theoryStatus)}>Akte abschliessen ✓</button></div>
         </article>
         <aside className="verdict-check">
           <p className="eyebrow">QUALITÄTSPRÜFUNG</p>
           {mission.requirements.map((item, index) => {
-            const values = [room.evidence.length >= 2, room.mapPins.length >= 2, room.evidence.some((e) => e.category === "Gegenbeleg" || e.category === "Auslassung"), verdict.length >= 120];
+            const values = [room.evidence.length >= 3, room.mapPins.length >= 2, theoryStatus !== "offen", verdict.length >= 180];
             return <div key={item.label} className={values[index] ? "passed" : ""}><span>{values[index] ? "✓" : index + 1}</span><p><b>{item.label}</b><small>{item.type}</small></p></div>;
           })}
           <blockquote>„{mission.reflection}“</blockquote>

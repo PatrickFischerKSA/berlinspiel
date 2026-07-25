@@ -157,6 +157,29 @@ test("enthält pro Station drei eigenständige Aufgaben mit konsistenter Dramatu
   assert.match(gameUi, /Nächster Ermittlungsschritt/);
 });
 
+test("führt eine Prüfhypothese durch Film, Karte und Urteil", async () => {
+  const [gameUi, worker] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
+  ]);
+  for (const marker of [
+    "SCHADENSDIAGNOSE",
+    "Prüfhypothese versiegeln",
+    "AKTUELLE PRÜFHYPOTHESE",
+    "HYPOTHESE PRÜFEN",
+    "bestätigt",
+    "eingeschränkt",
+    "verworfen",
+  ]) {
+    assert.match(gameUi, new RegExp(marker));
+  }
+  assert.match(worker, /action === "theory"/);
+  assert.match(worker, /investigation\.status/);
+  assert.match(gameUi, /Der Ort …/);
+  assert.match(gameUi, /stützt", "begrenzt", "widerlegt/);
+  assert.match(worker, /mapPins\.filter/);
+});
+
 test("erklärt gesperrte Phasen dezent und benennt den nächsten Schritt", async () => {
   const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
   assert.match(gameUi, /nach Spurensuche/);
