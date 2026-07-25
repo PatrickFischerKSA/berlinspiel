@@ -282,9 +282,11 @@ export function GameApp() {
     return (
       <Welcome
         hasSession={Boolean(session)}
+        activeGame={room ? (room.mode === "solo" ? `Einzelspiel · Akte ${String(room.missionIndex + 1).padStart(2, "0")}` : `Raum ${room.code}`) : null}
         soloProgress={soloProgress}
         busy={busy}
         message={message}
+        onResumeActive={() => setScreen("game")}
         onResume={resume}
         onCreate={() => setScreen("create")}
         onJoin={() => setScreen("join")}
@@ -349,7 +351,6 @@ export function GameApp() {
       }}
       onExit={() => {
         setScreen("welcome");
-        setRoom(null);
       }}
     />
   );
@@ -447,9 +448,11 @@ function Brand() {
 
 function Welcome({
   hasSession,
+  activeGame,
   soloProgress,
   busy,
   message,
+  onResumeActive,
   onResume,
   onCreate,
   onJoin,
@@ -458,9 +461,11 @@ function Welcome({
   onDemo,
 }: {
   hasSession: boolean;
+  activeGame: string | null;
   soloProgress: number | null;
   busy: boolean;
   message: string;
+  onResumeActive(): void;
   onResume(): void;
   onCreate(): void;
   onJoin(): void;
@@ -492,8 +497,14 @@ function Welcome({
             <button className="secondary" onClick={onJoin}>Mit Raumcode beitreten</button>
             <button className="secondary solo-button" onClick={onSolo}>Einzelspiel neu starten</button>
           </div>
-          {soloProgress !== null && <button className="resume-link solo-resume" onClick={onResumeSolo}>↻ Einzelspiel bei Akte {String(soloProgress + 1).padStart(2, "0")} fortsetzen</button>}
-          {hasSession && <button className="resume-link" disabled={busy} onClick={onResume}>↻ Letzte Sitzung wiederaufnehmen</button>}
+          {activeGame ? (
+            <button className="resume-link active-game-resume" onClick={onResumeActive}>→ Laufendes Spiel fortsetzen <small>{activeGame}</small></button>
+          ) : (
+            <>
+              {soloProgress !== null && <button className="resume-link solo-resume" onClick={onResumeSolo}>↻ Einzelspiel bei Akte {String(soloProgress + 1).padStart(2, "0")} fortsetzen</button>}
+              {hasSession && <button className="resume-link" disabled={busy} onClick={onResume}>↻ Letzte Sitzung wiederaufnehmen</button>}
+            </>
+          )}
           {message && <p className="alert">{message}</p>}
         </div>
         <div className="case-stack" aria-label="Neun beschädigte Berlin-Akten">
@@ -651,7 +662,7 @@ function GameShell({
         <div className="header-actions">
           {room.mode !== "solo" && <button onClick={onTeacher} title="Spielleitungsansicht">▦</button>}
           {room.mode === "solo" && <button className="reset-action" onClick={onReset} title="Einzelspiel zurücksetzen"><span>RESET</span>↺</button>}
-          <button onClick={onExit} title="Spiel verlassen">↗</button>
+          <button className="home-action" onClick={onExit} title="Zur Titelseite mit Livebild" aria-label="Zur Titelseite mit Livebild"><span>TITELSEITE</span>⌂</button>
         </div>
       </header>
       <aside className="mission-rail">
@@ -1263,7 +1274,7 @@ function TeacherView({ room, onBack, onOpenGame, onAction }: { room: Room; onBac
   const mission = missions[room.missionIndex];
   return (
     <main className="teacher">
-      <header><Brand /><div><span>SPIELLEITUNG</span><b>Raum {room.code}</b></div><button onClick={onOpenGame}>Spielansicht</button><button onClick={onBack}>Schliessen</button></header>
+      <header><Brand /><div><span>SPIELLEITUNG</span><b>Raum {room.code}</b></div><button onClick={onOpenGame}>Spielansicht</button><button onClick={onBack}>⌂ Titelseite</button></header>
       <section className="teacher-hero"><div><p className="eyebrow">LIVE-PROZESS</p><h1>{mission.number}: {mission.title}</h1><p>{phases[room.phase]} · zuletzt aktualisiert {new Date(room.updatedAt || Date.now()).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}</p></div><div className="teacher-actions"><button onClick={() => onAction("advance")}>Nächste Phase freigeben</button>{room.missionIndex < 4 && <button className="primary" onClick={() => onAction("set-mission", { missionIndex: room.missionIndex + 1 })}>Nächste Akte →</button>}</div></section>
       <div className="teacher-grid">
         <section><h2>Teambeiträge</h2>{room.members.map((member) => { const count = room.evidence.filter((e) => e.actor === member.name).length + room.mapPins.filter((p) => p.actor === member.name).length; return <div className="member-row" key={member.id}><i>{member.name[0]}</i><p><b>{member.name}</b><small>{roleForTeam(member.role, room.teamSize)}</small></p><span>{count} Beiträge</span><em className="online">im Raum</em></div>; })}</section>

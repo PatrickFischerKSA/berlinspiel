@@ -244,3 +244,16 @@ test("enthält eine filterbare Zeitleiste mit Quellen und Schlüsselereignissen"
   assert.match(gameUi, /Zeitraum filtern/);
   assert.match(gameUi, />Zeit</);
 });
+
+test("führt von jeder Spielansicht eindeutig zur Titelseite und zurück", async () => {
+  const [gameUi, styles] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(gameUi, /Zur Titelseite mit Livebild/);
+  assert.match(gameUi, /Laufendes Spiel fortsetzen/);
+  assert.match(gameUi, /activeGame=/);
+  assert.match(gameUi, /onResumeActive=\{\(\) => setScreen\("game"\)\}/);
+  assert.doesNotMatch(gameUi, /setScreen\("welcome"\);\s*setRoom\(null\);/);
+  assert.match(styles, /\.home-action/);
+});
