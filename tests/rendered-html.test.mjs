@@ -84,7 +84,7 @@ test("zeigt das offizielle Berliner Livebild geblurrt auf der Startseite", async
   assert.match(gameUi, /window\.setInterval\(refresh, 30_000\)/);
   assert.match(gameUi, /Livebild Rotes Rathaus · Berlin\.de/);
   assert.match(styles, /\.welcome-live-image/);
-  assert.match(styles, /filter: blur\(5px\)/);
+  assert.match(styles, /filter: blur\(4px\)/);
   assert.match(styles, /pointer-events: none/);
 });
 
