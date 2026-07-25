@@ -44,9 +44,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 /* Welcome */
 .welcome { min-height: 100vh; overflow: hidden; position: relative; background: radial-gradient(circle at 76% 42%, #262522 0, #131515 26%, #0b0d0e 60%); }
+.welcome > :not(.welcome-live-bg):not(.noise) { position: relative; z-index: 2; }
+.welcome-live-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #0b0d0e; }
+.welcome-live-bg::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 70% 42%, #0b0d0e26 0%, #0b0d0e9c 67%, #0b0d0ee8 100%), linear-gradient(90deg, #0b0d0ef0 0%, #0b0d0e73 58%, #0b0d0e9e 100%); }
+.welcome-live-image { position: absolute; inset: -18px; background-position: center; background-size: cover; filter: blur(9px) saturate(.72) brightness(.78); transform: scale(1.035); transition: background-image .8s ease; }
 .noise { position: fixed; inset: 0; pointer-events: none; opacity: .16; z-index: 20; background-image: repeating-linear-gradient(0deg, transparent 0 3px, #ffffff07 4px), repeating-linear-gradient(90deg, transparent 0 11px, #ffffff04 12px); }
 .welcome-nav { height: 82px; padding: 0 clamp(24px, 6vw, 90px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #262929; }
 .status-pill { color: #8d928d; font: 10px var(--mono); letter-spacing: .1em; }
+.live-source-link { text-decoration: none; transition: color .2s; }
+.live-source-link:hover { color: #d9d4c9; }
 .status-pill i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #64bd79; margin-right: 8px; box-shadow: 0 0 12px #64bd79; }
 .hero { min-height: calc(100vh - 180px); display: grid; grid-template-columns: minmax(380px, .9fr) minmax(440px, 1.1fr); align-items: center; gap: 6vw; padding: 58px clamp(24px, 6vw, 90px) 72px; }
 .hero-copy h1 { margin: 0; font: 500 clamp(58px, 7vw, 108px)/.87 var(--serif); letter-spacing: -.065em; }

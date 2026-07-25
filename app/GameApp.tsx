@@ -448,8 +448,14 @@ function Welcome({
 }) {
   return (
     <main className="welcome">
+      <WelcomeLiveBackground />
       <div className="noise" />
-      <header className="welcome-nav"><Brand /><span className="status-pill"><i /> Archivnetz online</span></header>
+      <header className="welcome-nav">
+        <Brand />
+        <a className="status-pill live-source-link" href="https://www.berlin.de/webcams/4350944-4350835-webcam-am-rotes-rathaus.html" target="_blank" rel="noreferrer">
+          <i /> Livebild Rotes Rathaus · Berlin.de ↗
+        </a>
+      </header>
       <section className="hero">
         <div className="hero-copy">
           <p className="eyebrow">BERLIN · JAHR 2040</p>
@@ -490,6 +496,24 @@ function Welcome({
         </div>
       </section>
     </main>
+  );
+}
+
+function WelcomeLiveBackground() {
+  const [cacheKey, setCacheKey] = useState(0);
+  useEffect(() => {
+    const refresh = () => setCacheKey(Date.now());
+    refresh();
+    const timer = window.setInterval(refresh, 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  return (
+    <div className="welcome-live-bg" aria-hidden="true">
+      <div
+        className="welcome-live-image"
+        style={{ backgroundImage: `url("https://www.berlin.de/webcams/rathaus/webcam.jpg?v=${cacheKey}")` }}
+      />
+    </div>
   );
 }
 

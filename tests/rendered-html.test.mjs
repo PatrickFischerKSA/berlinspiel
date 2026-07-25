@@ -75,6 +75,19 @@ test("bereitet neun eindeutige Blur-Hintergrundfilme vor", async () => {
   assert.ok(clips.every((clip) => clip.startsWith("/clips/") && clip.endsWith(".mp4")));
 });
 
+test("zeigt das offizielle Berliner Livebild geblurrt auf der Startseite", async () => {
+  const [gameUi, styles] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(gameUi, /berlin\.de\/webcams\/rathaus\/webcam\.jpg/);
+  assert.match(gameUi, /window\.setInterval\(refresh, 30_000\)/);
+  assert.match(gameUi, /Livebild Rotes Rathaus · Berlin\.de/);
+  assert.match(styles, /\.welcome-live-image/);
+  assert.match(styles, /filter: blur\(9px\)/);
+  assert.match(styles, /pointer-events: none/);
+});
+
 test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", async () => {
   const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
   assert.match(gameUi, /Einzelspiel neu starten/);
