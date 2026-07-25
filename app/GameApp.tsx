@@ -529,14 +529,23 @@ function Welcome({
           <div className="scan-line" />
         </div>
       </section>
-      <section className="mode-strip">
-        <div><span>01</span><b>Asymmetrische Rollen</b><small>Niemand besitzt alle Informationen.</small></div>
-        <div><span>02</span><b>Quellen als Beweise</b><small>Ohne Materialprüfung keine Lösung.</small></div>
-        <div><span>03</span><b>Zoombare Zeitkarten</b><small>Räume werden Teil des Arguments.</small></div>
+      <section className="mode-strip" aria-label="So funktioniert das Spiel">
+        <details>
+          <summary><span>01</span><b>Asymmetrische Rollen</b><small>Niemand besitzt alle Informationen.</small><i>Mehr erfahren</i></summary>
+          <p>Quellenprüfung, Kartografie und Gegenprüfung sehen unterschiedliche Ausschnitte. Erst der Austausch im Team ergibt eine belastbare Rekonstruktion.</p>
+        </details>
+        <details>
+          <summary><span>02</span><b>Quellen als Beweise</b><small>Ohne Materialprüfung keine Lösung.</small><i>Mehr erfahren</i></summary>
+          <p>Filmstellen, historische Dokumente und konkrete Beobachtungen werden als Belege gesichert. Das Urteil muss sich sichtbar auf diese Spuren stützen.</p>
+        </details>
+        <details>
+          <summary><span>03</span><b>Zoombare Zeitkarten</b><small>Räume werden Teil des Arguments.</small><i>Mehr erfahren</i></summary>
+          <p>Historische und heutige Karten lassen sich vergrößern. Markierte Orte können eine Hypothese stützen, begrenzen oder widerlegen.</p>
+        </details>
         <div className="demo-choices">
-          <b>Team-Demo</b>
-          <button onClick={() => onDemo(2)}>2 Rollen</button>
-          <button onClick={() => onDemo(3)}>3 Rollen</button>
+          <span><b>Team-Demo starten</b><small>Direkt und ohne Raumcode testen</small></span>
+          <button onClick={() => onDemo(2)}>2 Rollen →</button>
+          <button onClick={() => onDemo(3)}>3 Rollen →</button>
         </div>
       </section>
     </main>

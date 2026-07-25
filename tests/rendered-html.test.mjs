@@ -257,3 +257,11 @@ test("führt von jeder Spielansicht eindeutig zur Titelseite und zurück", async
   assert.doesNotMatch(gameUi, /setScreen\("welcome"\);\s*setRoom\(null\);/);
   assert.match(styles, /\.home-action/);
 });
+
+test("macht die Erklärkacheln auf der Titelseite wirklich interaktiv", async () => {
+  const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
+  assert.equal((gameUi.match(/<details>/g) ?? []).length >= 3, true);
+  assert.equal((gameUi.match(/Mehr erfahren/g) ?? []).length, 3);
+  assert.match(gameUi, /Team-Demo starten/);
+  assert.match(gameUi, /Direkt und ohne Raumcode testen/);
+});
