@@ -1,10 +1,10 @@
 # Berlin-Akte 2040
 
-Ein kooperatives historisches Ermittlungs- und Kartenspiel für 2–3 Lernende ab der Sekundarstufe II. Die Gruppe untersucht Berlin in fünf Zeitschnitten, prüft widersprüchliche Quellen und baut ein gemeinsames digitales Museum.
+Ein kooperatives historisches Ermittlungs- und Kartenspiel für 2–3 Lernende ab der Sekundarstufe II. Die Gruppe untersucht Berlin in neun Stationen, prüft widersprüchliche Quellen und baut ein gemeinsames digitales Museum.
 
 ## Was spielbar ist
 
-- fünf Missionen von Kaiserreich bis Wiedervereinigung
+- neun Missionen vom Kaiserreich bis zu Hauptstadtwerdung und Gentrifizierung
 - Rollen **Quelle**, **Raum** und bei drei Personen **Kritik**
 - Einzelspieler-, Einzelgerät-, Demo- und Mehrgeräte-Modus
 - Einzelspieler-Fortschritt wird automatisch im Browser gespeichert

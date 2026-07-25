@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Schematische Karte der vier Berliner Besatzungssektoren</title>
+  <desc id="desc">Französischer Sektor im Nordwesten, britischer Sektor im Westen, amerikanischer Sektor im Südwesten und sowjetischer Sektor im Osten.</desc>
+  <rect width="1200" height="800" fill="#e8e0ce"/>
+  <path d="M120 160 310 85 520 125 580 270 510 390 265 375 110 290Z" fill="#8eb4c9" stroke="#262925" stroke-width="8"/>
+  <path d="M105 300 270 380 510 395 565 530 430 690 175 635 70 455Z" fill="#c9a76e" stroke="#262925" stroke-width="8"/>
+  <path d="M440 690 570 530 650 495 765 590 735 735 565 770Z" fill="#a7b984" stroke="#262925" stroke-width="8"/>
+  <path d="M525 125 870 90 1090 220 1125 510 940 690 750 735 770 590 655 490 570 530 515 395 585 270Z" fill="#c78178" stroke="#262925" stroke-width="8"/>
+  <path d="M515 395 585 270 705 300 745 420 655 490 570 530Z" fill="#d7cfbd" stroke="#262925" stroke-width="6"/>
+  <g font-family="Arial, sans-serif" fill="#20231f" text-anchor="middle">
+    <text x="320" y="235" font-size="34" font-weight="700">FRANZÖSISCH</text>
+    <text x="300" y="520" font-size="34" font-weight="700">BRITISCH</text>
+    <text x="610" y="675" font-size="34" font-weight="700">AMERIKANISCH</text>
+    <text x="890" y="390" font-size="42" font-weight="700">SOWJETISCH</text>
+    <text x="625" y="410" font-size="26" font-weight="700">MITTE</text>
+  </g>
+  <text x="60" y="755" font-family="Arial, sans-serif" font-size="22" fill="#5e625c">Schematische Lernkarte · Grenzen nicht maßstabsgetreu</text>
+</svg>

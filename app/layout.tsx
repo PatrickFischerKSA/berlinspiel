@@ -13,18 +13,18 @@ export async function generateMetadata(): Promise<Metadata> {
       template: "%s · Berlin-Akte 2040",
     },
     description:
-      "Kollaborativer historischer Ermittlungsparcours durch fünf Epochen Berlins.",
+      "Kollaborativer historischer Ermittlungsparcours durch neun Stationen der Berliner Geschichte.",
     applicationName: "Berlin-Akte 2040",
     openGraph: {
       title: "Berlin-Akte 2040",
-      description: "Die Geschichte ist beschädigt. Repariert fünf Berlin-Akten mit Quellen und Karten.",
+      description: "Die Geschichte ist beschädigt. Repariert neun Berlin-Akten mit Quellen und Karten.",
       type: "website",
       images: [{ url: image, width: 1200, height: 630, alt: "Berlin-Akte 2040 – Die Geschichte ist beschädigt." }],
     },
     twitter: {
       card: "summary_large_image",
       title: "Berlin-Akte 2040",
-      description: "Kollaborativer historischer Ermittlungsparcours durch fünf Epochen.",
+      description: "Kollaborativer historischer Ermittlungsparcours durch neun Stationen.",
       images: [image],
     },
   };

@@ -49,17 +49,30 @@ test("liefert ohne konfigurierte D1-Bindung eine klare API-Antwort", async () =>
   assert.match(await response.text(), /Raumdatenbank/);
 });
 
-test("enthält fünf Akten und alle Qualitätsdimensionen", async () => {
+test("enthält neun überschneidungsfreie Akten und alle Qualitätsdimensionen", async () => {
   const [gameData, gameUi] = await Promise.all([
     readFile(new URL("../data/game.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
-  for (const id of ["grossstadt", "goldlack", "unter-der-oberflaeche", "frontstadt", "nach-der-linie"]) {
+  const missionIds = ["grossstadt", "goldlack", "ende-weimar", "unter-der-oberflaeche", "kriegsende-besatzung", "berlinkrise-17-juni", "frontstadt", "nach-der-linie", "hauptstadt-gentrifizierung"];
+  for (const id of missionIds) {
     assert.match(gameData, new RegExp(`id: "${id}"`));
+  }
+  assert.equal(missionIds.length, 9);
+  for (const resourceId of ["m02", "m03", "m05", "m06", "m08", "m09", "m10", "m11", "m12", "m14", "m15", "m16"]) {
+    assert.equal((gameData.match(new RegExp(`id: "${resourceId}"`, "g")) ?? []).length, 1, `${resourceId} darf nicht doppelt vorkommen`);
   }
   for (const label of ["Quellensicherheit", "Raumverständnis", "Perspektivenvielfalt", "Rekonstruktionsqualität"]) {
     assert.match(gameUi, new RegExp(label));
   }
+});
+
+test("bereitet neun eindeutige Blur-Hintergrundfilme vor", async () => {
+  const gameData = await readFile(new URL("../data/game.ts", import.meta.url), "utf8");
+  const clips = [...gameData.matchAll(/backgroundVideo: "([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(clips.length, 9);
+  assert.equal(new Set(clips).size, 9);
+  assert.ok(clips.every((clip) => clip.startsWith("/clips/") && clip.endsWith(".mp4")));
 });
 
 test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", async () => {

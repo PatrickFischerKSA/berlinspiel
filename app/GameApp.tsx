@@ -422,7 +422,7 @@ function Welcome({
           <p className="eyebrow">BERLIN · JAHR 2040</p>
           <h1>Die Geschichte<br />ist <em>beschädigt.</em></h1>
           <p className="lead">
-            Fünf Berlin-Akten wurden falsch datiert, verkürzt und manipuliert.
+            Neun Berlin-Akten wurden falsch datiert, verkürzt und manipuliert.
             Bildet ein Rekonstruktionsteam. Untersucht Quellen, verfolgt Orte und
             repariert das digitale Museum.
           </p>
@@ -434,7 +434,7 @@ function Welcome({
           {hasSession && <button className="resume-link" disabled={busy} onClick={onResume}>↻ Letzte Sitzung wiederaufnehmen</button>}
           {message && <p className="alert">{message}</p>}
         </div>
-        <div className="case-stack" aria-label="Fünf beschädigte Berlin-Akten">
+        <div className="case-stack" aria-label="Neun beschädigte Berlin-Akten">
           {missions.map((mission, index) => (
             <article key={mission.id} className="case-card" style={{ "--i": index, "--accent": mission.accent } as React.CSSProperties}>
               <span>{mission.number}</span>
@@ -549,7 +549,7 @@ function GameShell({
     setTab(phaseTabs[room.phase]);
   }, [room.phase, room.missionIndex]);
 
-  const canFinal = room.completedMissions.length >= 5 || room.mode === "demo";
+  const canFinal = room.completedMissions.length >= 9 || room.mode === "demo";
   return (
     <main className="game" style={{ "--mission": mission.accent } as React.CSSProperties}>
       <header className="game-header">
@@ -626,6 +626,9 @@ function GameShell({
 function CaseView({ mission, room, role, onAdvance, busy }: { mission: Mission; room: Room; role: Role; onAdvance(): void; busy: boolean }) {
   return (
     <div className="case-view">
+      <div className="case-film-bg" aria-hidden="true">
+        <video key={mission.backgroundVideo} src={mission.backgroundVideo} autoPlay muted loop playsInline onError={(event) => { event.currentTarget.style.display = "none"; }} />
+      </div>
       <div className="case-heading">
         <div><p className="eyebrow">{mission.number} · {mission.period}</p><h1>{mission.title}</h1><p>{mission.subtitle}</p></div>
         <span className="classification">BESCHÄDIGT</span>
@@ -783,7 +786,7 @@ function TimelineView({ mission }: { mission: Mission }) {
         <p>{timelineEvents[0].year}–{timelineEvents[timelineEvents.length - 1].year}</p>
       </div>
       <div className="timeline-intro">
-        <p>Die Zeitleiste ordnet die fünf Akten in die längere Stadtgeschichte ein. Farbig markierte Ereignisse gehören zur aktuellen Akte <b>{mission.number}</b>.</p>
+        <p>Die Zeitleiste ordnet die neun Akten in die längere Stadtgeschichte ein. Farbig markierte Ereignisse gehören zur aktuellen Akte <b>{mission.number}</b>.</p>
         <div>
           <a href={timelineSources["Zeitreisen Berlin"]} target="_blank" rel="noreferrer">Zeitreisen Berlin ↗</a>
           <a href={timelineSources.Wikipedia} target="_blank" rel="noreferrer">Geschichte Berlins ↗</a>
@@ -965,7 +968,7 @@ function Finale({ room, onSave }: { room: Room; onSave(value: NonNullable<Room["
   const [omission, setOmission] = useState(room.finalMuseum?.omission || "");
   return (
     <div className="finale">
-      <p className="eyebrow">SCHLUSSAKTE · DIGITALER MUSEUMSRAUM</p><h1>Drei Orte. Fünf Epochen.<br />Eine unvermeidliche Lücke.</h1><p className="final-prompt">{finalPrompt}</p>
+      <p className="eyebrow">SCHLUSSAKTE · DIGITALER MUSEUMSRAUM</p><h1>Drei Orte. Neun Stationen.<br />Eine unvermeidliche Lücke.</h1><p className="final-prompt">{finalPrompt}</p>
       <div className="museum-grid">
         {[0, 1, 2].map((index) => <label key={index}><span>ORT {index + 1}</span><select value={places[index] || ""} onChange={(e) => { const next = [...places]; next[index] = e.target.value; setPlaces(next); }}><option value="">Ort auswählen …</option>{allPlaces.map((place) => <option key={`${index}-${place}`}>{place}</option>)}</select><div className="museum-plinth">{places[index] ? <><b>{places[index]}</b><small>Quelle und Kartenansicht aus der Belegsammlung</small></> : <span>+</span>}</div></label>)}
       </div>
@@ -983,7 +986,7 @@ function TeacherView({ room, onBack, onOpenGame, onAction }: { room: Room; onBac
       <section className="teacher-hero"><div><p className="eyebrow">LIVE-PROZESS</p><h1>{mission.number}: {mission.title}</h1><p>{phases[room.phase]} · zuletzt aktualisiert {new Date(room.updatedAt || Date.now()).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}</p></div><div className="teacher-actions"><button onClick={() => onAction("advance")}>Nächste Phase freigeben</button>{room.missionIndex < 4 && <button className="primary" onClick={() => onAction("set-mission", { missionIndex: room.missionIndex + 1 })}>Nächste Akte →</button>}</div></section>
       <div className="teacher-grid">
         <section><h2>Teambeiträge</h2>{room.members.map((member) => { const count = room.evidence.filter((e) => e.actor === member.name).length + room.mapPins.filter((p) => p.actor === member.name).length; return <div className="member-row" key={member.id}><i>{member.name[0]}</i><p><b>{member.name}</b><small>{roleForTeam(member.role, room.teamSize)}</small></p><span>{count} Beiträge</span><em className="online">im Raum</em></div>; })}</section>
-        <section><h2>Prozessindikatoren</h2><div className="metrics"><div><span>{room.evidence.length}</span><b>Belege</b></div><div><span>{room.mapPins.length}</span><b>Kartenbezüge</b></div><div><span>{room.completedMissions.length}/5</span><b>Akten</b></div><div><span>{room.verdict.length}</span><b>Urteilszeichen</b></div></div><ScorePanel room={room} /></section>
+        <section><h2>Prozessindikatoren</h2><div className="metrics"><div><span>{room.evidence.length}</span><b>Belege</b></div><div><span>{room.mapPins.length}</span><b>Kartenbezüge</b></div><div><span>{room.completedMissions.length}/9</span><b>Akten</b></div><div><span>{room.verdict.length}</span><b>Urteilszeichen</b></div></div><ScorePanel room={room} /></section>
         <section className="event-log"><h2>Aktivitätsverlauf</h2>{[...room.events].reverse().slice(0, 12).map((event) => <div key={event.id}><time>{new Date(event.at).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}</time><p><b>{event.actor}</b>{event.detail}</p><span>{event.type}</span></div>)}</section>
         <section className="teacher-evidence"><h2>Letzte Belege</h2>{room.evidence.slice(-6).reverse().map((item) => <article key={item.id}><span>{item.category} · {item.resourceId.toUpperCase()}</span><p>{item.note}</p><small>{item.actor} · {item.locator}</small></article>)}{room.evidence.length === 0 && <p className="empty">Noch keine Belege eingereicht.</p>}</section>
       </div>

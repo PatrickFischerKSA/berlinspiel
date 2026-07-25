@@ -4,7 +4,7 @@ import { GameApp } from "./GameApp";
 export const metadata: Metadata = {
   title: "Berlin-Akte 2040",
   description:
-    "Ein kollaborativer historischer Ermittlungsparcours durch fünf Epochen Berlins.",
+    "Ein kollaborativer historischer Ermittlungsparcours durch neun Stationen der Berliner Geschichte.",
 };
 
 export default function Home() {
