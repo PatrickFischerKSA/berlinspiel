@@ -823,6 +823,19 @@ function PerspectiveCard({ mission }: { mission: Mission }) {
         <p><b>{figure.name}, {figure.age}</b><small>{figure.role}<br />{figure.location}</small></p>
       </div>
       <p>{figure.situation}</p>
+      <details className="perspective-dossier">
+        <summary>Steckbrief und Lebenslauf öffnen <span>＋</span></summary>
+        <dl>
+          <div><dt>Geboren und Herkunft</dt><dd>{figure.born}</dd></div>
+          <div><dt>Familie</dt><dd>{figure.family}</dd></div>
+          <div><dt>Bildung</dt><dd>{figure.education}</dd></div>
+          <div><dt>Arbeit</dt><dd>{figure.work}</dd></div>
+          <div><dt>Wohnen</dt><dd>{figure.housing}</dd></div>
+          <div><dt>Prägende Erfahrung</dt><dd>{figure.formativeExperience}</dd></div>
+          <div><dt>Hoffnungen</dt><dd>{figure.hopes}</dd></div>
+          <div><dt>Charakterzüge</dt><dd className="trait-list">{figure.traits.map((trait) => <span key={trait}>{trait}</span>)}</dd></div>
+        </dl>
+      </details>
       <div><span>IHR KONFLIKT</span><p>{figure.dilemma}</p></div>
       <blockquote>„{figure.question}“</blockquote>
     </article>

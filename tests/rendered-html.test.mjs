@@ -181,9 +181,10 @@ test("führt eine Prüfhypothese durch Film, Karte und Urteil", async () => {
 });
 
 test("erzählt jede Akte mit eigener Perspektivfigur und vollständigem Spannungsbogen", async () => {
-  const [gameUi, narrative] = await Promise.all([
+  const [gameUi, narrative, portraitPrompts] = await Promise.all([
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
     readFile(new URL("../data/narrative.ts", import.meta.url), "utf8"),
+    readFile(new URL("../docs/05-canva-portraetprompts.md", import.meta.url), "utf8"),
   ]);
   const missionIds = ["grossstadt", "goldlack", "ende-weimar", "unter-der-oberflaeche", "kriegsende-besatzung", "berlinkrise-17-juni", "frontstadt", "nach-der-linie", "hauptstadt-gentrifizierung"];
   for (const id of missionIds) {
@@ -192,9 +193,14 @@ test("erzählt jede Akte mit eigener Perspektivfigur und vollständigem Spannung
   for (const field of ["chapter", "opening", "perspective", "stakes", "transitions", "closing"]) {
     assert.equal((narrative.match(new RegExp(`${field}:`, "g")) ?? []).length >= 9, true, `${field} fehlt in mindestens einer Akte`);
   }
+  for (const field of ["born", "family", "education", "work", "housing", "formativeExperience", "hopes", "traits", "portraitPrompt"]) {
+    assert.equal((narrative.match(new RegExp(`${field}:`, "g")) ?? []).length, 10, `${field} fehlt in einem Steckbrief`);
+  }
   for (const marker of ["PERSPEKTIVFIGUR", "fiktiv · quellenbasiert", "WAS AUF DEM SPIEL STEHT", "ÜBERGANG · FILMARCHIV", "AKTE REKONSTRUIERT"]) {
     assert.match(gameUi, new RegExp(marker));
   }
+  assert.match(gameUi, /Steckbrief und Lebenslauf öffnen/);
+  assert.equal((portraitPrompts.match(/^## \d{2} ·/gm) ?? []).length, 9);
   assert.ok(narrative.length > 14000, "Der narrative Textkorpus ist noch zu knapp.");
 });
 
