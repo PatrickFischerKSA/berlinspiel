@@ -185,7 +185,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .perspective-card > header span { color: var(--mission); font: 8px var(--mono); letter-spacing: .14em; }
 .perspective-card > header small { color: var(--faint); font: 8px var(--mono); }
 .perspective-identity { display: flex; align-items: center; gap: 13px; padding: 16px 16px 8px; }
-.perspective-identity i { display: grid; place-items: center; width: 43px; height: 43px; flex: 0 0 43px; border-radius: 50%; background: var(--mission); color: #141514; font: 800 12px var(--mono); font-style: normal; }
+.perspective-identity img { width: 82px; height: 102px; flex: 0 0 82px; border: 1px solid #ffffff42; border-radius: 2px; object-fit: cover; object-position: center 24%; box-shadow: 0 8px 24px #0008; filter: saturate(.86) contrast(1.04); }
 .perspective-identity p { margin: 0; }
 .perspective-identity b, .perspective-identity small { display: block; }
 .perspective-identity b { font: 500 18px var(--serif); }

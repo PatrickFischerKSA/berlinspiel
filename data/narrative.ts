@@ -14,6 +14,7 @@ export type MissionNarrative = {
     formativeExperience: string;
     hopes: string;
     traits: string[];
+    portrait: string;
     portraitPrompt: string;
     situation: string;
     dilemma: string;
@@ -38,6 +39,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Marta Lehmann",
       age: "16 Jahre",
+      portrait: "/portraits/01-marta-lehmann.jpg",
       role: "Botin einer Konfektionswerkstatt",
       location: "Luisenstadt, 1908",
       born: "1892 in einem Dorf bei Frankfurt an der Oder; seit 1899 in Berlin",
@@ -70,6 +72,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Ruth Cohn",
       age: "23 Jahre",
+      portrait: "/portraits/02-ruth-cohn.jpg",
       role: "Schreibkraft und Amateurfotografin",
       location: "Schöneberg, 1928",
       born: "1905 in Berlin als Tochter einer jüdischen Kaufmannsfamilie",
@@ -102,6 +105,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Ernst Nowak",
       age: "19 Jahre",
+      portrait: "/portraits/03-ernst-nowak.jpg",
       role: "arbeitsloser Setzerlehrling",
       location: "Moabit, Januar 1933",
       born: "1913 in Berlin-Moabit; die Grosseltern kamen aus Posen",
@@ -134,6 +138,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Samira Rosenfeld",
       age: "14 Jahre",
+      portrait: "/portraits/04-samira-rosenfeld.jpg",
       role: "Schülerin und begeisterte Läuferin",
       location: "Prenzlauer Berg, Sommer 1936",
       born: "1922 in Berlin; ihre Grosseltern zogen aus Galizien in die Stadt",
@@ -166,6 +171,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Helene Krause",
       age: "38 Jahre",
+      portrait: "/portraits/05-helene-krause.jpg",
       role: "Straßenbahnschaffnerin und Mutter",
       location: "Tempelhof, Mai 1945",
       born: "1907 in Berlin-Rixdorf; seit ihrer Heirat in Tempelhof",
@@ -198,6 +204,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Kurt Bielefeld",
       age: "31 Jahre",
+      portrait: "/portraits/06-kurt-bielefeld.jpg",
       role: "Bauarbeiter an der Stalinallee",
       location: "Ost-Berlin, Juni 1953",
       born: "1922 in Berlin-Lichtenberg",
@@ -230,6 +237,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Peter Nguyen",
       age: "17 Jahre",
+      portrait: "/portraits/07-peter-nguyen.jpg",
       role: "Elektrolehrling",
       location: "Wedding, 1962",
       born: "1945 in Berlin als Sohn einer vietnamesischen Studentin und eines deutschen Krankenpflegers",
@@ -262,6 +270,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Derya Özkan",
       age: "20 Jahre",
+      portrait: "/portraits/08-derya-oezkan.jpg",
       role: "Auszubildende beim Rundfunk",
       location: "West-Berlin, 9. November 1989",
       born: "1969 in Kreuzberg als Tochter türkischer Einwanderer",
@@ -294,6 +303,7 @@ export const missionNarratives: Record<string, MissionNarrative> = {
     perspective: {
       name: "Aylin Demir",
       age: "34 Jahre",
+      portrait: "/portraits/09-aylin-demir.jpg",
       role: "Kioskbetreiberin und Mieterin",
       location: "Kreuzberg, 2018",
       born: "1984 in Berlin-Kreuzberg",

@@ -819,7 +819,8 @@ function PerspectiveCard({ mission }: { mission: Mission }) {
     <article className="perspective-card">
       <header><span>PERSPEKTIVFIGUR</span><small>fiktiv · quellenbasiert</small></header>
       <div className="perspective-identity">
-        <i>{figure.name.split(" ").map((part) => part[0]).join("")}</i>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={figure.portrait} alt={`Porträt der fiktiven Perspektivfigur ${figure.name}`} />
         <p><b>{figure.name}, {figure.age}</b><small>{figure.role}<br />{figure.location}</small></p>
       </div>
       <p>{figure.situation}</p>

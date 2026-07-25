@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function loadWorker() {
@@ -193,9 +193,13 @@ test("erzählt jede Akte mit eigener Perspektivfigur und vollständigem Spannung
   for (const field of ["chapter", "opening", "perspective", "stakes", "transitions", "closing"]) {
     assert.equal((narrative.match(new RegExp(`${field}:`, "g")) ?? []).length >= 9, true, `${field} fehlt in mindestens einer Akte`);
   }
-  for (const field of ["born", "family", "education", "work", "housing", "formativeExperience", "hopes", "traits", "portraitPrompt"]) {
+  for (const field of ["born", "family", "education", "work", "housing", "formativeExperience", "hopes", "traits", "portrait", "portraitPrompt"]) {
     assert.equal((narrative.match(new RegExp(`${field}:`, "g")) ?? []).length, 10, `${field} fehlt in einem Steckbrief`);
   }
+  const portraits = [...narrative.matchAll(/portrait: "([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(portraits.length, 9);
+  assert.equal(new Set(portraits).size, 9);
+  await Promise.all(portraits.map((portrait) => access(new URL(`../public${portrait}`, import.meta.url))));
   for (const marker of ["PERSPEKTIVFIGUR", "fiktiv · quellenbasiert", "WAS AUF DEM SPIEL STEHT", "ÜBERGANG · FILMARCHIV", "AKTE REKONSTRUIERT"]) {
     assert.match(gameUi, new RegExp(marker));
   }
