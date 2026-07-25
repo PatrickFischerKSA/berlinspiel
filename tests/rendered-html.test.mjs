@@ -84,32 +84,50 @@ test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", asy
 });
 
 test("stellt Filme vor Fragen und verlangt konkrete Timecodes", async () => {
-  const [gameData, gameUi] = await Promise.all([
+  const [gameData, tasks, gameUi] = await Promise.all([
     readFile(new URL("../data/game.ts", import.meta.url), "utf8"),
+    readFile(new URL("../data/tasks.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(gameData, /youtube-nocookie\.com\/embed/);
   assert.match(gameData, /ngp\.zdf\.de\/miniplayer\/embed/);
-  assert.match(gameUi, /Filmstelle angesehen/);
-  assert.match(gameUi, /Timecode im Film/);
+  assert.match(gameUi, /Benötigte Filmstelle angesehen/);
+  assert.match(tasks, /locatorLabel: "Timecode/);
   assert.doesNotMatch(gameUi, /PDF S\. 2–3|Transkriptbeleg/);
 });
 
 test("führt ohne Ratespiel über konkrete Filmfragen und Sofortfeedback", async () => {
-  const [gameData, gameUi] = await Promise.all([
-    readFile(new URL("../data/game.ts", import.meta.url), "utf8"),
+  const [tasks, gameUi] = await Promise.all([
+    readFile(new URL("../data/tasks.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(gameData, /researchQuestion:/);
-  assert.match(gameData, /signalWords:/);
-  assert.match(gameData, /successFeedback:/);
-  assert.match(gameUi, /Deine konkrete Filmfrage/);
-  assert.match(gameUi, /Suche die Information im Film/);
+  assert.match(tasks, /question:/);
+  assert.match(tasks, /signalWords:/);
+  assert.match(tasks, /successFeedback:/);
+  assert.match(gameUi, /FINDE HERAUS/);
+  assert.match(gameUi, /Deine Methode/);
   assert.doesNotMatch(gameUi, /Welche Aussage bestätigt der Film|type="radio"/);
   assert.match(gameUi, /Sofortfeedback zur Filmantwort/);
   assert.match(gameUi, /Timecode erkannt/);
-  assert.match(gameUi, /Die gesuchte Information fehlt noch/);
+  assert.match(gameUi, /Ein Teil der gesuchten Information fehlt noch/);
   assert.doesNotMatch(gameUi, /Welche sichtbare Beobachtung belegt Modernität/);
+});
+
+test("enthält pro Station drei eigenständige Aufgaben mit konsistenter Dramaturgie", async () => {
+  const [tasks, gameUi] = await Promise.all([
+    readFile(new URL("../data/tasks.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.equal((tasks.match(/\n      act: "SPUR SICHERN"/g) ?? []).length, 9);
+  assert.equal((tasks.match(/\n      act: "ZUSAMMENHANG REKONSTRUIEREN"/g) ?? []).length, 9);
+  assert.equal((tasks.match(/\n      act: "ARCHIVFEHLER PRÜFEN"/g) ?? []).length, 9);
+  assert.equal((tasks.match(/\n      id: "/g) ?? []).length, 27);
+  for (const type of ["Bilddetektiv", "Ablaufprotokoll", "Ursache–Folge", "Kontrastpaar", "Begriffsprüfung", "Quellenkritik", "Perspektivwechsel", "Netzwerkrekonstruktion", "Behauptungscheck"]) {
+    assert.match(tasks, new RegExp(`type: "${type}"`));
+  }
+  assert.match(gameUi, /missionTaskCount < 3/);
+  assert.match(gameUi, /Spur → Zusammenhang → Prüfung/);
+  assert.match(gameUi, /Nächster Ermittlungsschritt/);
 });
 
 test("erklärt gesperrte Phasen dezent und benennt den nächsten Schritt", async () => {

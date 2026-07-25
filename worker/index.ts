@@ -208,7 +208,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
     loaded.state.phase = Math.min(4, loaded.state.phase + 1);
     pushEvent(loaded.state, actor, "phase", `Phase ${loaded.state.phase + 1} freigeschaltet`);
   } else if (action === "set-mission") {
-    loaded.state.missionIndex = Math.max(0, Math.min(4, Number(body.missionIndex) || 0));
+    loaded.state.missionIndex = Math.max(0, Math.min(8, Number(body.missionIndex) || 0));
     loaded.state.phase = 0;
     loaded.state.evidence = [];
     loaded.state.mapPins = [];
@@ -225,6 +225,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
       actor,
       role: member?.role ?? "teacher",
       resourceId: String(body.resourceId ?? ""),
+      taskId: String(body.taskId ?? ""),
       locator: String(body.locator ?? "").slice(0, 80),
       note: String(body.note ?? "").slice(0, 600),
       category: String(body.category ?? "Beobachtung").slice(0, 40),

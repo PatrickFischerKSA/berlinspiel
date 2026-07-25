@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { finalPrompt, missions, roleLabels, type Mission } from "../data/game";
+import { stationTasks, type InvestigationTask } from "../data/tasks";
 import { timelineEras, timelineEvents, timelineSources, type TimelineEra } from "../data/timeline";
 
 type Role = keyof typeof roleLabels;
@@ -12,6 +13,7 @@ type Evidence = {
   actor: string;
   role: Role;
   resourceId: string;
+  taskId?: string;
   locator: string;
   note: string;
   category: string;
@@ -347,6 +349,7 @@ function reduceLocal(room: Room, action: string, payload: Record<string, unknown
       actor,
       role: (payload.role as Role) || next.viewer?.role || "source",
       resourceId: String(payload.resourceId),
+      taskId: String(payload.taskId || ""),
       locator: String(payload.locator),
       note: String(payload.note),
       category: String(payload.category),
@@ -690,40 +693,49 @@ function SourcesView({
   onEvidence(payload: Record<string, unknown>): void;
   onAdvance(): void;
 }) {
-  const [selected, setSelected] = useState(mission.resources[0]);
+  const tasks = stationTasks[mission.id];
+  const [taskIndex, setTaskIndex] = useState(0);
+  const task = tasks[taskIndex];
+  const selected = mission.resources.find((resource) => resource.id === task.resourceId) || mission.resources[0];
   const [locator, setLocator] = useState("");
   const [note, setNote] = useState("");
   const [category, setCategory] = useState("Sichtbare Beobachtung");
   const [watched, setWatched] = useState<Record<string, boolean>>({});
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
   useEffect(() => {
-    setSelected(mission.resources[0]);
+    setTaskIndex(0);
   }, [mission]);
   useEffect(() => {
     setLocator("");
     setNote("");
     setFeedback(null);
-  }, [selected.id]);
-  const timecodeOk = /\b\d{1,2}:\d{2}\b/.test(locator);
+    setCategory(taskCategoryOptions(task)[0]);
+  }, [task]);
+  const timecodes = locator.match(/\b\d{1,2}:\d{2}\b/g) || [];
+  const timecodeOk = timecodes.length >= task.locatorCount;
   const detailOk = note.trim().length >= 40;
   const normalize = (value: string) => value.toLocaleLowerCase("de").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replaceAll("ß", "ss");
   const normalizedNote = normalize(note);
-  const matchedSignal = selected.signalWords.find((word) => normalizedNote.includes(normalize(word)));
-  const signalOk = Boolean(matchedSignal);
-  const missionEvidenceCount = room.evidence.filter((item) => mission.resources.some((resource) => resource.id === item.resourceId)).length;
+  const matchedSignals = task.signalWords.filter((word) => normalizedNote.includes(normalize(word)));
+  const signalOk = matchedSignals.length >= task.minSignals;
+  const completedTaskIds = new Set(room.evidence.map((item) => item.taskId).filter(Boolean));
+  const missionTaskCount = tasks.filter((item) => completedTaskIds.has(item.id)).length;
+  const taskCompleted = completedTaskIds.has(task.id);
+  const categoryOptions = taskCategoryOptions(task);
   return (
     <div className="source-view">
-      <div className="section-title"><div><p className="eyebrow">QUELLENUNTERSUCHUNG</p><h1>Material als Beweis</h1></div><p>Rolle: <b>{roleForTeam(role, room.teamSize)}</b></p></div>
+      <div className="section-title"><div><p className="eyebrow">QUELLENUNTERSUCHUNG · DREI ERMITTLUNGSSCHRITTE</p><h1>Material als Beweis</h1></div><p>Rolle: <b>{roleForTeam(role, room.teamSize)}</b></p></div>
       <div className="source-layout">
         <aside className="resource-list">
-          {mission.resources.map((resource, index) => (
-            <button key={resource.id} className={selected.id === resource.id ? "active" : ""} onClick={() => setSelected(resource)}>
-              <span>{String(index + 1).padStart(2, "0")}</span><p><b>{resource.title}</b><small>{resource.kind}</small></p>
+          <div className="task-progress"><span>{missionTaskCount}/3</span><p><b>Aufgaben gesichert</b><small>Spur → Zusammenhang → Prüfung</small></p></div>
+          {tasks.map((item, index) => (
+            <button key={item.id} className={`${task.id === item.id ? "active" : ""} ${completedTaskIds.has(item.id) ? "completed" : ""}`} onClick={() => setTaskIndex(index)}>
+              <span>{completedTaskIds.has(item.id) ? "✓" : String(index + 1).padStart(2, "0")}</span><p><b>{item.title}</b><small>{item.type}</small></p>
             </button>
           ))}
         </aside>
         <article className="source-reader">
-          <header><span>FILM {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Film separat öffnen ↗</a></header>
+          <header><span>AUFGABE {taskIndex + 1}/3 · FILM {selected.id.toUpperCase()}</span><a href={selected.href} target="_blank" rel="noreferrer">Film separat öffnen ↗</a></header>
           <h2>{selected.title}</h2><p className="source-kind">{selected.kind} · {selected.duration}</p>
           {selected.embedUrl ? (
             <div className="film-frame"><iframe src={selected.embedUrl} title={`Film: ${selected.title}`} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
@@ -734,49 +746,63 @@ function SourcesView({
               <a href={selected.href} target="_blank" rel="noreferrer">Film starten ↗</a>
             </div>
           )}
-          <div className="viewing-focus"><span>FINDE HERAUS</span><p><b>Deine konkrete Filmfrage</b>{selected.researchQuestion}</p></div>
-          <div className="guided-task"><b>So arbeitest du</b><p>Suche die Information im Film und beantworte genau diese Frage. Der Timecode zeigt nur, <strong>woher deine Antwort stammt.</strong></p></div>
-          <label className="watched-check"><input type="checkbox" checked={Boolean(watched[selected.id])} onChange={(event) => setWatched((current) => ({ ...current, [selected.id]: event.target.checked }))} /><span><b>Filmstelle angesehen</b>Ich kann im Film einen Timecode nennen und meine Antwort auf Bild oder Ton beziehen.</span></label>
+          <div className="task-act"><span>{task.act}</span><b>{task.type}</b></div>
+          <div className="viewing-focus"><span>FINDE HERAUS</span><p><b>{task.title}</b>{task.question}</p></div>
+          <div className="guided-task"><b>Deine Methode</b><p>{task.method} Der Timecode zeigt, <strong>woher deine Antwort stammt.</strong></p></div>
+          <label className="watched-check"><input type="checkbox" checked={Boolean(watched[task.id])} onChange={(event) => setWatched((current) => ({ ...current, [task.id]: event.target.checked }))} /><span><b>Benötigte Filmstelle angesehen</b>Ich kann meine Antwort auf Bild oder Ton und einen überprüfbaren Timecode beziehen.</span></label>
         </article>
         <form className="evidence-form" onSubmit={(event) => {
           event.preventDefault();
-          if (!watched[selected.id]) {
+          if (!watched[task.id]) {
             setFeedback({ type: "error", text: "Bestätige zuerst, dass du die Filmstelle angesehen hast." });
             return;
           }
           if (!timecodeOk) {
-            setFeedback({ type: "error", text: "Der Timecode fehlt oder ist nicht lesbar. Nutze zum Beispiel 04:32 oder 04:32–05:10." });
+            setFeedback({ type: "error", text: task.locatorCount === 2 ? "Diese Aufgabe verlangt zwei Fundstellen. Nutze zum Beispiel 04:32 und 07:10." : "Der Timecode fehlt oder ist nicht lesbar. Nutze zum Beispiel 04:32." });
             return;
           }
           if (!detailOk) {
-            setFeedback({ type: "error", text: "Deine Antwort ist noch zu kurz. Nenne die gefragte Information und die passende Stelle aus Bild oder Ton." });
+            setFeedback({ type: "error", text: `Deine Antwort ist noch zu kurz. Arbeite nach der Methode: ${task.method}` });
             return;
           }
           if (!signalOk) {
-            setFeedback({ type: "error", text: `Die gesuchte Information fehlt noch. Achte im Film zum Beispiel auf: ${selected.signalWords.slice(0, 4).join(", ")}.` });
+            setFeedback({ type: "error", text: `Ein Teil der gesuchten Information fehlt noch. Achte im Film zum Beispiel auf: ${task.signalWords.slice(0, 5).join(", ")}.` });
             return;
           }
-          onEvidence({ resourceId: selected.id, locator, note, category });
-          setFeedback({ type: "success", text: selected.successFeedback });
+          onEvidence({ resourceId: selected.id, taskId: task.id, locator, note, category });
+          setFeedback({ type: "success", text: task.successFeedback });
         }}>
-          <p className="eyebrow">FILMANTWORT SICHERN</p>
-          <label>Art<select disabled={!watched[selected.id]} value={category} onChange={(e) => setCategory(e.target.value)}><option>Sichtbare Beobachtung</option><option>Aussage im Ton</option><option>Deutung des Films</option><option>Auslassung</option></select></label>
-          <label>Timecode im Film<input disabled={!watched[selected.id]} value={locator} onChange={(e) => { setLocator(e.target.value); setFeedback(null); }} placeholder="z. B. 04:32" /></label>
-          <label>Deine Antwort aus dem Film<textarea disabled={!watched[selected.id]} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder={selected.evidencePrompt} /></label>
+          <p className="eyebrow">{task.act}</p>
+          <label>Aufgabentyp<select disabled={!watched[task.id]} value={category} onChange={(e) => setCategory(e.target.value)}>{categoryOptions.map((option) => <option key={option}>{option}</option>)}</select></label>
+          <label>{task.locatorLabel}<input disabled={!watched[task.id]} value={locator} onChange={(e) => { setLocator(e.target.value); setFeedback(null); }} placeholder={task.locatorCount === 2 ? "z. B. 04:32 und 07:10" : "z. B. 04:32"} /></label>
+          <label>Deine Ermittlung aus dem Film<textarea disabled={!watched[task.id]} value={note} onChange={(e) => { setNote(e.target.value); setFeedback(null); }} placeholder={task.evidencePrompt} /></label>
           <ul className="live-checks" aria-label="Sofortfeedback zur Filmantwort">
-            <li className={timecodeOk ? "passed" : ""}><span>{timecodeOk ? "✓" : "○"}</span> Timecode erkannt</li>
-            <li className={detailOk ? "passed" : ""}><span>{detailOk ? "✓" : "○"}</span> Frage konkret beantwortet</li>
-            <li className={signalOk ? "passed" : ""}><span>{signalOk ? "✓" : "○"}</span> Gesuchte Filminformation genannt{matchedSignal ? `: ${matchedSignal}` : ""}</li>
+            <li className={timecodeOk ? "passed" : ""}><span>{timecodeOk ? "✓" : "○"}</span> {task.locatorCount === 2 ? "Zwei Timecodes erkannt" : "Timecode erkannt"}</li>
+            <li className={detailOk ? "passed" : ""}><span>{detailOk ? "✓" : "○"}</span> Aufgabe konkret bearbeitet</li>
+            <li className={signalOk ? "passed" : ""}><span>{signalOk ? "✓" : "○"}</span> {Math.min(matchedSignals.length, task.minSignals)}/{task.minSignals} benötigte Aspekte erkannt</li>
           </ul>
-          <button className="primary" type="submit" disabled={!watched[selected.id] || feedback?.type === "success"}>{feedback?.type === "success" ? "Filmantwort gesichert ✓" : "Antwort an Belegwand übergeben"}</button>
+          <button className="primary" type="submit" disabled={!watched[task.id] || feedback?.type === "success" || taskCompleted}>{feedback?.type === "success" || taskCompleted ? "Aufgabe gesichert ✓" : "Ermittlung an Belegwand übergeben"}</button>
           {feedback && <div className={`instant-feedback ${feedback.type}`} role="status"><b>{feedback.type === "success" ? "Antwort gesichert" : "Noch nicht gesichert"}</b><p>{feedback.text}</p></div>}
-          {!watched[selected.id] && <p className="form-lock">Sieh zuerst den Film beziehungsweise die benötigte Filmstelle an.</p>}
-          <small>{room.evidence.length} Belege im Team gesichert</small>
+          {(feedback?.type === "success" || taskCompleted) && taskIndex < 2 && <button className="secondary wide" type="button" onClick={() => setTaskIndex((current) => current + 1)}>Nächster Ermittlungsschritt →</button>}
+          {!watched[task.id] && <p className="form-lock">Sieh zuerst die für diese Aufgabe benötigte Filmstelle an.</p>}
+          <small>{missionTaskCount}/3 Aufgaben dieser Akte gesichert</small>
         </form>
       </div>
-      <div className="next-bar"><span>Die konkrete Filmfrage beantworten und den Fundort sichern.</span><button onClick={onAdvance} disabled={missionEvidenceCount < 1}>Kartenraum öffnen →</button></div>
+      <div className="next-bar"><span>Erst Spur, Zusammenhang und Archivfehler sichern – dann öffnet sich der Kartenraum.</span><button onClick={onAdvance} disabled={missionTaskCount < 3}>Kartenraum öffnen →</button></div>
     </div>
   );
+}
+
+function taskCategoryOptions(task: InvestigationTask) {
+  if (task.type === "Bilddetektiv") return ["Sichtbare Beobachtung", "Aussage im Ton"];
+  if (task.type === "Ablaufprotokoll") return ["Ereignisfolge", "Wendepunkt"];
+  if (task.type === "Ursache–Folge") return ["Ursache–Folge", "Folgewirkung"];
+  if (task.type === "Kontrastpaar") return ["Vergleich", "Gegensatz"];
+  if (task.type === "Perspektivwechsel") return ["Perspektive", "Auslassung"];
+  if (task.type === "Netzwerkrekonstruktion") return ["Beziehungsnetz", "Handlungskette"];
+  if (task.type === "Begriffsprüfung") return ["Begriffsprüfung", "Deutungsrahmen"];
+  if (task.type === "Quellenkritik") return ["Aussagegrenze", "Auslassung"];
+  return ["Behauptungscheck", "Gegenbeleg"];
 }
 
 function TimelineView({ mission }: { mission: Mission }) {
