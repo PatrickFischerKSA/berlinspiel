@@ -631,7 +631,10 @@ function CaseView({ mission, room, role, onAdvance, busy }: { mission: Mission; 
       </div>
       <div className="case-heading">
         <div><p className="eyebrow">{mission.number} · {mission.period}</p><h1>{mission.title}</h1><p>{mission.subtitle}</p></div>
-        <span className="classification">BESCHÄDIGT</span>
+        <div className="case-status">
+          <span className="classification">BESCHÄDIGT</span>
+          <span className="film-running"><i /> FILMARCHIV LÄUFT</span>
+        </div>
       </div>
       <div className="case-grid">
         <article className="damaged-document">
