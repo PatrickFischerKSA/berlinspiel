@@ -159,7 +159,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .film-running i { display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: #dfb665; box-shadow: 0 0 9px #dfb665; animation: filmPulse 1.8s ease-in-out infinite; }
 @keyframes filmPulse { 50% { opacity: .35; } }
 .classification { border: 2px solid var(--mission); padding: 9px 13px; color: var(--mission); font: 700 10px var(--mono); transform: rotate(4deg); }
-.narrative-prologue { margin-top: 28px; padding: clamp(24px, 4vw, 42px); border: 1px solid #383d3c; background: linear-gradient(135deg, #151919f2, #0c0f0fe8); display: grid; grid-template-columns: minmax(190px, .55fr) minmax(320px, 1.35fr) minmax(230px, .7fr); gap: clamp(22px, 4vw, 48px); }
+.narrative-prologue { margin-top: 28px; padding: clamp(24px, 4vw, 42px); border: 1px solid #ffffff30; background: linear-gradient(135deg, #101414a8, #080b0b8c); backdrop-filter: blur(2px); display: grid; grid-template-columns: minmax(190px, .55fr) minmax(320px, 1.35fr) minmax(230px, .7fr); gap: clamp(22px, 4vw, 48px); }
 .narrative-prologue span, .story-bridge span, .narrative-resolution span { color: var(--mission); font: 8px var(--mono); letter-spacing: .16em; }
 .narrative-prologue h2 { margin: 12px 0 0; font: 500 28px/1.08 var(--serif); }
 .narrative-prologue > div:nth-child(2) p { margin: 0 0 12px; color: #bbb7ae; font: 15px/1.65 var(--serif); }
@@ -180,7 +180,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .role-card span { color: var(--faint); font: 9px var(--mono); letter-spacing: .15em; }
 .role-card b { display: block; margin: 8px 0; font: 500 21px var(--serif); }
 .role-card p { margin: 0; color: #aaa7a0; font-size: 13px; line-height: 1.6; }
-.perspective-card { margin: 25px 0; border: 1px solid #3c4140; background: #101313e8; color: var(--ink); }
+.perspective-card { margin: 25px 0; border: 1px solid #ffffff35; background: #0b0e0e99; backdrop-filter: blur(2px); color: var(--ink); }
 .perspective-card > header { display: flex; justify-content: space-between; padding: 10px 13px; border-bottom: 1px solid #343938; }
 .perspective-card > header span { color: var(--mission); font: 8px var(--mono); letter-spacing: .14em; }
 .perspective-card > header small { color: var(--faint); font: 8px var(--mono); }
@@ -195,7 +195,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .perspective-card > div:not(.perspective-identity) span { color: var(--faint); font: 8px var(--mono); letter-spacing: .12em; }
 .perspective-card > div:not(.perspective-identity) p { margin: 6px 0 0; color: #b8b4ab; font-size: 11px; line-height: 1.55; }
 .perspective-card blockquote { margin: 0; padding: 16px; color: #d5d0c5; font: italic 15px/1.5 var(--serif); }
-.theory-lab { margin-top: 24px; padding: 22px; border: 1px solid #454948; background: #0b0d0ed9; display: grid; gap: 15px; }
+.theory-lab { margin-top: 24px; padding: 22px; border: 1px solid #ffffff38; background: #080a0a9c; backdrop-filter: blur(2px); display: grid; gap: 15px; }
 .theory-lab h3 { margin: -4px 0 2px; font: 500 23px/1.15 var(--serif); }
 .theory-lab label { display: grid; gap: 7px; color: var(--muted); font: 9px var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .theory-lab select { width: 100%; min-height: 48px; border: 1px solid #404544; background: #090b0c; color: var(--ink); padding: 10px 12px; text-transform: none; letter-spacing: 0; }
@@ -206,7 +206,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .theory-sealed p { margin: 0; }
 .theory-sealed b, .theory-sealed small { display: block; }
 .theory-sealed small { margin-top: 3px; color: #7e9283; font-size: 9px; }
-.investigation-thread { margin: -18px 0 24px; padding: 12px 15px; border: 1px solid #3b403f; border-left: 3px solid var(--mission); background: #111414e8; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; }
+.investigation-thread { margin: -18px 0 24px; padding: 12px 15px; border: 1px solid #ffffff2b; border-left: 3px solid var(--mission); background: #0b0e0e8f; backdrop-filter: blur(2px); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; }
 .investigation-thread > span { color: var(--faint); font: 8px var(--mono); letter-spacing: .13em; }
 .investigation-thread p { margin: 0; color: #c7c3bb; font: 13px/1.4 var(--serif); }
 .investigation-thread b { padding: 5px 8px; border: 1px solid #585d5b; color: #a8aaa5; font: 8px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
@@ -222,7 +222,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .team-strip .waiting { opacity: .5; border-style: dashed; }
 
 /* Sources */
-.story-bridge { margin: -10px 0 24px; padding: 17px 20px; border-left: 3px solid var(--mission); background: linear-gradient(90deg, color-mix(in srgb, var(--mission) 10%, #111), #111414); display: grid; grid-template-columns: 160px 1fr; gap: 5px 18px; }
+.story-bridge { margin: -10px 0 24px; padding: 17px 20px; border: 1px solid #ffffff24; border-left: 3px solid var(--mission); background: linear-gradient(90deg, color-mix(in srgb, var(--mission) 10%, transparent), #090c0c73); backdrop-filter: blur(2px); display: grid; grid-template-columns: 160px 1fr; gap: 5px 18px; }
 .story-bridge p { margin: 0; color: #c5c1b8; font: 14px/1.55 var(--serif); }
 .story-bridge small { grid-column: 2; color: #777b78; font-size: 9px; }
 .source-layout { display: grid; grid-template-columns: 230px minmax(350px, 1fr) 300px; min-height: 580px; border: 1px solid var(--line); background: #111415; }
