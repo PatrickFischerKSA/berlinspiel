@@ -5,6 +5,7 @@ import handler from "vinext/server/app-router-entry";
 interface Env {
   ASSETS: Fetcher;
   DB?: D1Database;
+  TEACHER_PASSWORD?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -26,7 +27,7 @@ type StoredMember = {
 type StoredRoom = {
   code: string;
   teamSize: 2 | 3;
-  mode: "multi" | "desktop" | "demo";
+  mode: "multi" | "desktop" | "demo" | "solo";
   missionIndex: number;
   phase: number;
   members: StoredMember[];
@@ -119,6 +120,53 @@ async function saveRoom(db: D1Database, room: StoredRoom) {
     .run();
 }
 
+function passwordMatches(candidate: string, expected: string) {
+  const left = new TextEncoder().encode(candidate);
+  const right = new TextEncoder().encode(expected);
+  if (left.length !== right.length) return false;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) difference |= left[index] ^ right[index];
+  return difference === 0;
+}
+
+async function teacherApi(request: Request, env: Env) {
+  if (!env.DB) return json({ error: "Die Raumdatenbank ist noch nicht verbunden." }, 503);
+  if (!env.TEACHER_PASSWORD) return json({ error: "Der Lehrerbereich ist noch nicht konfiguriert." }, 503);
+  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+  if (!passwordMatches(String(body.password ?? ""), env.TEACHER_PASSWORD)) {
+    return json({ error: "Passwort nicht korrekt." }, 403);
+  }
+  await ensureRooms(env.DB);
+  const action = String(body.action ?? "list");
+  if (action === "open") {
+    const code = String(body.code ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const loaded = await loadRoom(env.DB, code);
+    if (!loaded) return json({ error: "Raum nicht gefunden oder abgelaufen." }, 404);
+    return json({ room: publicRoom(loaded.state), token: loaded.teacherToken });
+  }
+  const result = await env.DB
+    .prepare("SELECT code, state, created_at, updated_at, expires_at FROM rooms WHERE expires_at > ? ORDER BY updated_at DESC LIMIT 100")
+    .bind(Date.now())
+    .all<{ code: string; state: string; created_at: number; updated_at: number; expires_at: number }>();
+  const rooms = (result.results ?? []).map((row) => {
+    const room = JSON.parse(row.state) as StoredRoom;
+    return {
+      code: row.code,
+      mode: room.mode,
+      teamSize: room.teamSize,
+      memberCount: room.members.length,
+      missionIndex: room.missionIndex,
+      phase: room.phase,
+      completedMissions: room.completedMissions.length,
+      evidenceCount: room.evidence.length,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      expiresAt: row.expires_at,
+    };
+  });
+  return json({ rooms });
+}
+
 async function roomApi(request: Request, env: Env, url: URL) {
   if (!env.DB) return json({ error: "Die Raumdatenbank ist noch nicht verbunden." }, 503);
   await ensureRooms(env.DB);
@@ -146,10 +194,11 @@ async function roomApi(request: Request, env: Env, url: URL) {
       joinedAt: now,
       lastSeenAt: now,
     };
+    const isSolo = body.mode === "solo";
     const room: StoredRoom = {
       code,
-      teamSize: Number(body.teamSize) === 2 ? 2 : 3,
-      mode: body.mode === "desktop" || body.mode === "demo" ? body.mode : "multi",
+      teamSize: isSolo ? 3 : Number(body.teamSize) === 2 ? 2 : 3,
+      mode: isSolo ? "solo" : body.mode === "desktop" || body.mode === "demo" ? body.mode : "multi",
       missionIndex: 0,
       phase: 0,
       members: [host],
@@ -167,7 +216,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
     await env.DB.prepare(
       "INSERT INTO rooms (code, state, teacher_token, created_at, updated_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)",
     )
-      .bind(code, JSON.stringify(room), teacherToken, now, now, now + 1000 * 60 * 60 * 12)
+      .bind(code, JSON.stringify(room), teacherToken, now, now, now + 1000 * 60 * 60 * 24 * 90)
       .run();
     return json({ room: publicRoom(room, hostToken), token: hostToken, teacherToken });
   }
@@ -180,6 +229,7 @@ async function roomApi(request: Request, env: Env, url: URL) {
   let member = loaded.state.members.find((item) => item.token === token);
 
   if (request.method === "POST" && action === "join") {
+    if (loaded.state.mode === "solo") return json({ error: "Dieser Einzelspielstand kann nicht als Teamraum geöffnet werden." }, 409);
     if (loaded.state.members.length >= loaded.state.teamSize) {
       return json({ error: "Dieser Raum ist vollständig." }, 409);
     }
@@ -213,6 +263,18 @@ async function roomApi(request: Request, env: Env, url: URL) {
   if (action === "advance") {
     loaded.state.phase = Math.min(4, loaded.state.phase + 1);
     pushEvent(loaded.state, actor, "phase", `Phase ${loaded.state.phase + 1} freigeschaltet`);
+  } else if (action === "reset") {
+    loaded.state.missionIndex = 0;
+    loaded.state.phase = 0;
+    loaded.state.evidence = [];
+    loaded.state.mapPins = [];
+    loaded.state.investigation = undefined;
+    loaded.state.verdict = "";
+    loaded.state.verdictSubmitted = false;
+    loaded.state.completedMissions = [];
+    loaded.state.finalMuseum = undefined;
+    loaded.state.scores = { source: 0, space: 0, perspective: 0, reconstruction: 0 };
+    pushEvent(loaded.state, actor, "reset", "Spielstand zurückgesetzt");
   } else if (action === "set-mission") {
     loaded.state.missionIndex = Math.max(0, Math.min(8, Number(body.missionIndex) || 0));
     loaded.state.phase = 0;
@@ -322,6 +384,10 @@ const worker = {
 
     if (url.pathname === "/api/rooms") {
       return roomApi(request, env, url);
+    }
+
+    if (url.pathname === "/api/teacher" && request.method === "POST") {
+      return teacherApi(request, env);
     }
 
     return handler.fetch(request, env, ctx);

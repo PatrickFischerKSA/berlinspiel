@@ -100,13 +100,18 @@ test("zeigt das offizielle Berliner Livebild geblurrt auf der Startseite", async
 });
 
 test("bietet einen persistenten Einzelspieler-Modus mit allen Perspektiven", async () => {
-  const gameUi = await readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8");
+  const [gameUi, worker] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
+  ]);
   assert.match(gameUi, /Einzelspiel neu starten/);
   assert.match(gameUi, /Einzelspiel bei Akte/);
   assert.match(gameUi, /Einzelspiel zurücksetzen/);
   assert.match(gameUi, /mode: "solo"/);
   assert.match(gameUi, /berlin-akte-solo/);
-  assert.match(gameUi, /const freshRoom = makeSoloRoom\(\)/);
+  assert.match(gameUi, /mode: "solo" \}/);
+  assert.match(worker, /isSolo/);
+  assert.match(worker, /60 \* 60 \* 24 \* 90/);
   assert.match(gameUi, /Quelle · Raum · Gegenprüfung/);
 });
 
@@ -264,4 +269,21 @@ test("macht die Erklärkacheln auf der Titelseite wirklich interaktiv", async ()
   assert.equal((gameUi.match(/Mehr erfahren/g) ?? []).length, 3);
   assert.match(gameUi, /Team-Demo starten/);
   assert.match(gameUi, /Direkt und ohne Raumcode testen/);
+});
+
+test("schützt den Lehrerbereich serverseitig und zeigt Cloud-Spielstände", async () => {
+  const [gameUi, worker, hosting] = await Promise.all([
+    readFile(new URL("../app/GameApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
+    readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"),
+  ]);
+  assert.match(hosting, /"d1": "DB"/);
+  assert.match(worker, /TEACHER_PASSWORD/);
+  assert.match(worker, /passwordMatches/);
+  assert.match(worker, /url\.pathname === "\/api\/teacher"/);
+  assert.match(worker, /SELECT code, state, created_at, updated_at, expires_at FROM rooms/);
+  assert.match(gameUi, /▦ Lehrerbereich/);
+  assert.match(gameUi, /Cloud-Spielstände/);
+  assert.match(gameUi, /Das Passwort wird nicht im Browser gespeichert/);
+  assert.doesNotMatch(gameUi, /FiP/);
 });

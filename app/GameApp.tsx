@@ -49,6 +49,19 @@ type Room = {
   };
   updatedAt?: number;
 };
+type TeacherRoomSummary = {
+  code: string;
+  mode: Room["mode"];
+  teamSize: 2 | 3;
+  memberCount: number;
+  missionIndex: number;
+  phase: number;
+  completedMissions: number;
+  evidenceCount: number;
+  createdAt: number;
+  updatedAt: number;
+  expiresAt: number;
+};
 
 const phases = ["Störung", "Spurensuche", "Quellen", "Karte", "Urteil"];
 const phaseIcons = ["!", "⌁", "◫", "⌖", "✓"];
@@ -146,13 +159,26 @@ async function api(payload: Record<string, unknown>, method: "GET" | "POST" = "P
   return data;
 }
 
+async function teacherApi(payload: Record<string, unknown>) {
+  const response = await fetch("/api/teacher", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = (await response.json()) as { rooms?: TeacherRoomSummary[]; room?: Room; token?: string; error?: string };
+  if (!response.ok) throw new Error(data.error || "Lehrerbereich nicht erreichbar.");
+  return data;
+}
+
 export function GameApp() {
   const [room, setRoom] = useState<Room | null>(null);
   const [session, saveSession] = usePersistentSession();
-  const [screen, setScreen] = useState<"welcome" | "join" | "create" | "game" | "teacher">("welcome");
+  const [screen, setScreen] = useState<"welcome" | "join" | "create" | "game" | "teacher" | "teacher-login" | "teacher-dashboard">("welcome");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [soloProgress, setSoloProgress] = useState<number | null>(null);
+  const [teacherPassword, setTeacherPassword] = useState("");
+  const [teacherRooms, setTeacherRooms] = useState<TeacherRoomSummary[]>([]);
 
   useEffect(() => {
     try {
@@ -164,14 +190,14 @@ export function GameApp() {
   }, []);
 
   const syncRoom = useCallback(async () => {
-    if (!session || room?.mode === "demo" || room?.mode === "desktop" || room?.mode === "solo") return;
+    if (!session || room?.mode === "demo" || room?.mode === "desktop" || (room?.mode === "solo" && room.code === "SOLO40")) return;
     try {
       const data = await api({ code: session.code, token: session.token }, "GET");
       if (data.room) setRoom(data.room);
     } catch {
       setMessage("Verbindung unterbrochen – Entwürfe bleiben auf diesem Gerät erhalten.");
     }
-  }, [room?.mode, session]);
+  }, [room, session]);
 
   useEffect(() => {
     if (!session || screen === "welcome") return;
@@ -181,15 +207,15 @@ export function GameApp() {
 
   useEffect(() => {
     if (room?.mode === "solo") {
-      localStorage.setItem("berlin-akte-solo", JSON.stringify(room));
       setSoloProgress(room.missionIndex);
+      if (room.code === "SOLO40") localStorage.setItem("berlin-akte-solo", JSON.stringify(room));
     }
   }, [room]);
 
   const remoteAction = useCallback(
     async (action: string, payload: Record<string, unknown> = {}) => {
       if (!room) return;
-      if (room.mode === "demo" || room.mode === "desktop" || room.mode === "solo") {
+      if (room.mode === "demo" || room.mode === "desktop" || (room.mode === "solo" && room.code === "SOLO40")) {
         setRoom((current) => (current ? reduceLocal(current, action, payload) : current));
         return;
       }
@@ -229,6 +255,54 @@ export function GameApp() {
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Raum konnte nicht erstellt werden.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function startSolo() {
+    setBusy(true);
+    try {
+      const data = await api({ action: "create", name: "Einzelermittlung", teamSize: 3, mode: "solo" });
+      if (data.room && data.token) {
+        setRoom(data.room);
+        saveSession({ code: data.room.code, token: data.token });
+        setSoloProgress(0);
+        setScreen("game");
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Cloud-Spielstand konnte nicht angelegt werden.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function enterTeacherArea(password: string) {
+    setBusy(true);
+    try {
+      const data = await teacherApi({ action: "list", password });
+      setTeacherPassword(password);
+      setTeacherRooms(data.rooms ?? []);
+      setMessage("");
+      setScreen("teacher-dashboard");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Lehrerbereich konnte nicht geöffnet werden.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function openTeacherRoom(code: string) {
+    setBusy(true);
+    try {
+      const data = await teacherApi({ action: "open", password: teacherPassword, code });
+      if (data.room && data.token) {
+        setRoom(data.room);
+        saveSession({ code, token: data.token, teacher: true });
+        setScreen("teacher");
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Raum konnte nicht geöffnet werden.");
     } finally {
       setBusy(false);
     }
@@ -290,13 +364,11 @@ export function GameApp() {
         onResume={resume}
         onCreate={() => setScreen("create")}
         onJoin={() => setScreen("join")}
-        onSolo={() => {
-          const freshRoom = makeSoloRoom();
-          localStorage.setItem("berlin-akte-solo", JSON.stringify(freshRoom));
-          setSoloProgress(0);
-          setRoom(freshRoom);
-          setScreen("game");
+        onTeacher={() => {
+          setMessage("");
+          setScreen("teacher-login");
         }}
+        onSolo={startSolo}
         onResumeSolo={() => {
           try {
             const saved = localStorage.getItem("berlin-akte-solo");
@@ -322,6 +394,14 @@ export function GameApp() {
     return <JoinRoom busy={busy} message={message} onBack={() => setScreen("welcome")} onJoin={joinRoom} />;
   }
 
+  if (screen === "teacher-login") {
+    return <TeacherLogin busy={busy} message={message} onBack={() => setScreen("welcome")} onLogin={enterTeacherArea} />;
+  }
+
+  if (screen === "teacher-dashboard") {
+    return <TeacherDashboard rooms={teacherRooms} busy={busy} onBack={() => setScreen("welcome")} onOpen={openTeacherRoom} onRefresh={() => enterTeacherArea(teacherPassword)} />;
+  }
+
   if (!room) return null;
 
   if (screen === "teacher") {
@@ -343,11 +423,15 @@ export function GameApp() {
       onAction={remoteAction}
       onTeacher={() => setScreen("teacher")}
       onReset={() => {
-        if (!window.confirm("Einzelspiel wirklich zurücksetzen? Alle lokalen Antworten und Fortschritte werden gelöscht.")) return;
-        const freshRoom = makeSoloRoom();
-        localStorage.setItem("berlin-akte-solo", JSON.stringify(freshRoom));
-        setSoloProgress(0);
-        setRoom(freshRoom);
+        if (!window.confirm("Einzelspiel wirklich zurücksetzen? Alle gespeicherten Antworten und Fortschritte werden gelöscht.")) return;
+        if (room.code === "SOLO40") {
+          const freshRoom = makeSoloRoom();
+          localStorage.setItem("berlin-akte-solo", JSON.stringify(freshRoom));
+          setSoloProgress(0);
+          setRoom(freshRoom);
+        } else {
+          void remoteAction("reset");
+        }
       }}
       onExit={() => {
         setScreen("welcome");
@@ -456,6 +540,7 @@ function Welcome({
   onResume,
   onCreate,
   onJoin,
+  onTeacher,
   onSolo,
   onResumeSolo,
   onDemo,
@@ -469,6 +554,7 @@ function Welcome({
   onResume(): void;
   onCreate(): void;
   onJoin(): void;
+  onTeacher(): void;
   onSolo(): void;
   onResumeSolo(): void;
   onDemo(size: 2 | 3): void;
@@ -479,9 +565,12 @@ function Welcome({
       <div className="noise" />
       <header className="welcome-nav">
         <Brand />
-        <a className="status-pill live-source-link" href="https://www.berlin.de/webcams/4350944-4350835-webcam-am-rotes-rathaus.html" target="_blank" rel="noreferrer">
-          <i /> Livebild Rotes Rathaus · Berlin.de ↗
-        </a>
+        <div className="welcome-nav-actions">
+          <button className="teacher-entry" onClick={onTeacher}>▦ Lehrerbereich</button>
+          <a className="status-pill live-source-link" href="https://www.berlin.de/webcams/4350944-4350835-webcam-am-rotes-rathaus.html" target="_blank" rel="noreferrer">
+            <i /> Livebild Rotes Rathaus · Berlin.de ↗
+          </a>
+        </div>
       </header>
       <section className="hero">
         <div className="hero-copy">
@@ -495,7 +584,7 @@ function Welcome({
           <div className="hero-actions">
             <button className="primary" onClick={onCreate}>Raum eröffnen <span>→</span></button>
             <button className="secondary" onClick={onJoin}>Mit Raumcode beitreten</button>
-            <button className="secondary solo-button" onClick={onSolo}>Einzelspiel neu starten</button>
+            <button className="secondary solo-button" disabled={busy} onClick={onSolo}>{busy ? "Cloud-Spielstand wird angelegt …" : "Einzelspiel neu starten"}</button>
           </div>
           {activeGame ? (
             <button className="resume-link active-game-resume" onClick={onResumeActive}>→ Laufendes Spiel fortsetzen <small>{activeGame}</small></button>
@@ -621,6 +710,69 @@ function JoinRoom({
       <button className="primary wide" disabled={busy || code.length !== 6 || !name.trim()} onClick={() => onJoin(code, name)}>{busy ? "Verbindung wird geprüft …" : "Rolle empfangen →"}</button>
       <button className="text-button" disabled={code.length !== 6} onClick={() => onJoin(code, "Spielleitung", true)}>Spielleitungsansicht öffnen</button>
     </SetupFrame>
+  );
+}
+
+function TeacherLogin({
+  busy,
+  message,
+  onBack,
+  onLogin,
+}: {
+  busy: boolean;
+  message: string;
+  onBack(): void;
+  onLogin(password: string): void;
+}) {
+  const [password, setPassword] = useState("");
+  return (
+    <SetupFrame title="Lehrerbereich" subtitle="Geschützter Überblick über gespeicherte Spiel- und Arbeitsstände." onBack={onBack}>
+      <label className="field">Passwort<input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && password) onLogin(password); }} /></label>
+      {message && <p className="alert">{message}</p>}
+      <button className="primary wide" disabled={busy || !password} onClick={() => onLogin(password)}>{busy ? "Zugang wird geprüft …" : "Lehrerbereich öffnen →"}</button>
+      <p className="privacy-note">Die Prüfung erfolgt auf dem Server. Das Passwort wird nicht im Browser gespeichert.</p>
+    </SetupFrame>
+  );
+}
+
+function TeacherDashboard({
+  rooms,
+  busy,
+  onBack,
+  onOpen,
+  onRefresh,
+}: {
+  rooms: TeacherRoomSummary[];
+  busy: boolean;
+  onBack(): void;
+  onOpen(code: string): void;
+  onRefresh(): void;
+}) {
+  return (
+    <main className="teacher-dashboard">
+      <header><Brand /><div><span>LEHRERBEREICH</span><b>Cloud-Spielstände</b></div><button onClick={onRefresh} disabled={busy}>↻ Aktualisieren</button><button onClick={onBack}>⌂ Titelseite</button></header>
+      <section className="teacher-dashboard-hero">
+        <p className="eyebrow">CLOUDFLARE D1 · 90 TAGE</p>
+        <h1>Arbeitsstände begleiten</h1>
+        <p>Öffne einen Raum, um Fortschritt, Belege, Kartenarbeit und Urteile einzusehen. Die neuesten Aktivitäten stehen oben.</p>
+      </section>
+      <section className="room-overview" aria-label="Gespeicherte Spielstände">
+        {rooms.map((item) => (
+          <article key={item.code}>
+            <div className="room-overview-title"><span>{item.mode === "solo" ? "EINZELSPIEL" : "TEAMRAUM"}</span><b>{item.code}</b></div>
+            <div className="room-overview-progress"><strong>Akte {String(item.missionIndex + 1).padStart(2, "0")}</strong><span>{phases[item.phase]}</span></div>
+            <dl>
+              <div><dt>Personen</dt><dd>{item.memberCount}</dd></div>
+              <div><dt>Belege</dt><dd>{item.evidenceCount}</dd></div>
+              <div><dt>Akten fertig</dt><dd>{item.completedMissions}/9</dd></div>
+              <div><dt>Letzte Arbeit</dt><dd>{new Date(item.updatedAt).toLocaleString("de-CH", { dateStyle: "short", timeStyle: "short" })}</dd></div>
+            </dl>
+            <button onClick={() => onOpen(item.code)} disabled={busy}>Spielstand öffnen →</button>
+          </article>
+        ))}
+        {rooms.length === 0 && <div className="empty cloud-empty"><b>Noch keine gespeicherten Spielstände</b><p>Sobald ein Einzelspiel oder Teamraum begonnen wurde, erscheint er hier.</p></div>}
+      </section>
+    </main>
   );
 }
 

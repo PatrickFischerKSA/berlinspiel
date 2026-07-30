@@ -50,6 +50,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .welcome-live-image { position: absolute; inset: -10px; background-position: center 36%; background-size: cover; filter: blur(4px) saturate(.9) brightness(1.03); transform: scale(1.02); transition: background-image .8s ease; }
 .noise { position: fixed; inset: 0; pointer-events: none; opacity: .16; z-index: 20; background-image: repeating-linear-gradient(0deg, transparent 0 3px, #ffffff07 4px), repeating-linear-gradient(90deg, transparent 0 11px, #ffffff04 12px); }
 .welcome-nav { height: 82px; padding: 0 clamp(24px, 6vw, 90px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #262929; }
+.welcome-nav-actions { display: flex; align-items: center; gap: 10px; }
+.teacher-entry { border: 1px solid #373b3a; background: #101313b8; padding: 9px 12px; color: #b8bbb7; font: 8px var(--mono); letter-spacing: .08em; cursor: pointer; text-transform: uppercase; }
+.teacher-entry:hover, .teacher-entry:focus-visible { border-color: #d4b47c; color: #fff; }
 .status-pill { color: #8d928d; font: 10px var(--mono); letter-spacing: .1em; }
 .live-source-link { text-decoration: none; transition: color .2s; }
 .live-source-link:hover { color: #d9d4c9; }
@@ -112,6 +115,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .choice-group button { padding: 16px; display: grid; gap: 5px; text-align: left; border: 1px solid #353939; background: #151818; cursor: pointer; }
 .choice-group button.selected { border-color: var(--red); background: #271a17; }
 .choice-group small { color: var(--faint); font-size: 10px; }
+.privacy-note { margin: 0; color: var(--faint); font-size: 10px; line-height: 1.5; }
 
 /* Game shell */
 .game { min-height: 100vh; display: grid; grid-template-columns: 76px 1fr 84px; grid-template-rows: 70px 64px minmax(calc(100vh - 134px), auto); background: #0d0f10; }
@@ -460,6 +464,29 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .final-save { margin-top: 18px; float: right; }
 
 /* Teacher */
+.teacher-dashboard { min-height: 100vh; background: #0e1011; padding-bottom: 60px; }
+.teacher-dashboard > header { height: 72px; padding: 0 28px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--line); }
+.teacher-dashboard > header > div:nth-child(2) { margin-left: auto; text-align: right; }
+.teacher-dashboard > header span { display: block; color: #d4b47c; font: 8px var(--mono); letter-spacing: .12em; }
+.teacher-dashboard > header b { font: 13px var(--mono); }
+.teacher-dashboard > header button { border: 1px solid #383c3b; background: #171a1a; padding: 10px 14px; cursor: pointer; font-size: 10px; }
+.teacher-dashboard-hero { padding: 42px clamp(25px, 5vw, 70px) 30px; border-bottom: 1px solid var(--line); }
+.teacher-dashboard-hero h1 { margin: 4px 0 10px; font: 500 clamp(38px, 5vw, 64px) var(--serif); }
+.teacher-dashboard-hero > p:last-child { max-width: 720px; color: #a7aaa6; line-height: 1.6; }
+.room-overview { padding: 28px clamp(25px, 5vw, 70px); display: grid; grid-template-columns: repeat(3, minmax(260px, 1fr)); gap: 14px; }
+.room-overview article { border: 1px solid #353938; background: #121515; padding: 20px; }
+.room-overview-title { display: flex; justify-content: space-between; align-items: start; padding-bottom: 15px; border-bottom: 1px solid #2c302f; }
+.room-overview-title span { color: #d4b47c; font: 8px var(--mono); letter-spacing: .12em; }
+.room-overview-title b { font: 700 18px var(--mono); letter-spacing: .16em; }
+.room-overview-progress { display: flex; justify-content: space-between; padding: 16px 0; }
+.room-overview-progress strong { font: 500 20px var(--serif); }
+.room-overview-progress span { color: var(--faint); font: 9px var(--mono); }
+.room-overview dl { margin: 0 0 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.room-overview dl div { padding: 10px; background: #191c1b; }
+.room-overview dt { color: var(--faint); font: 8px var(--mono); text-transform: uppercase; }
+.room-overview dd { margin: 5px 0 0; font: 13px var(--mono); }
+.room-overview article > button { width: 100%; border: 1px solid #5b4b31; background: #211d16; color: #e2c68f; padding: 11px; cursor: pointer; }
+.cloud-empty { grid-column: 1/-1; padding: 50px; border: 1px dashed #343837; text-align: center; }
 .teacher { min-height: 100vh; background: #0e1011; padding-bottom: 50px; }
 .teacher > header { height: 72px; padding: 0 28px; display: flex; align-items: center; gap: 20px; border-bottom: 1px solid var(--line); }
 .teacher > header > div:nth-child(2) { margin-left: auto; text-align: right; }
@@ -507,6 +534,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 
 @media (max-width: 760px) {
   .welcome-nav { padding-inline: 18px; }
+  .live-source-link { display: none; }
   .hero { padding: 45px 20px; min-height: auto; }
   .hero-copy h1 { font-size: 55px; }
   .hero-actions { flex-direction: column; }
@@ -558,6 +586,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .score-panel { grid-template-columns: 1fr 1fr; }
   .museum-grid, .final-writing { grid-template-columns: 1fr; }
   .teacher > header .brand { display: none; }
+  .teacher-dashboard > header .brand { display: none; }
+  .teacher-dashboard > header > div:nth-child(2) { margin-left: 0; margin-right: auto; text-align: left; }
+  .room-overview { grid-template-columns: 1fr; padding-inline: 15px; }
   .teacher-hero { align-items: start; flex-direction: column; gap: 20px; }
   .teacher-grid { grid-template-columns: 1fr; padding-inline: 15px; }
   .metrics { grid-template-columns: 1fr 1fr; }

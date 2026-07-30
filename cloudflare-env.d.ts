@@ -11,6 +11,7 @@ interface D1PreparedStatement {
   bind(...values: unknown[]): D1PreparedStatement;
   run<T = unknown>(): Promise<D1Result<T>>;
   first<T = Record<string, unknown>>(): Promise<T | null>;
+  all<T = Record<string, unknown>>(): Promise<D1Result<T>>;
 }
 
 interface D1Database {
@@ -21,5 +22,6 @@ interface D1Database {
 declare module "cloudflare:workers" {
   export const env: {
     DB?: D1Database;
+    TEACHER_PASSWORD?: string;
   };
 }
